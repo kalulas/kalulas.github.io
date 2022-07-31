@@ -221,7 +221,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2022-07-31 22:24:57 / 修改时间：22:38:02" itemprop="dateCreated datePublished" datetime="2022-07-31T22:24:57+08:00">2022-07-31</time>
+      <time title="创建时间：2022-07-31 22:24:57 / 修改时间：22:50:51" itemprop="dateCreated datePublished" datetime="2022-07-31T22:24:57+08:00">2022-07-31</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -248,14 +248,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>380</span>
+      <span>8.8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>8 分钟</span>
     </span>
 </div>
 
@@ -279,50 +279,345 @@
 <p>Go语言有两个版本编译器：Go原生编译器gc和非原生编译器gccgo，Go语言的编译器和链接器都是C语言编写并产生本地代码</p>
 <p>Go的<strong>自举</strong>：在 1.4 版本后，Go 编译器实现了自举，即通过
 1.4 版本来编译安装之后版本的编译器。</p>
-<p><a href="/p/e842888b11eb/Untitled.png" class="gallery-item"><img src="/p/e842888b11eb/Untitled.png" class="" title="在自己的服务器上编译Go}&lt;&#x2F;p&gt; &lt;h2 id&#x3D;go环境变量&gt;2.2 Go环境变量&lt;&#x2F;h2&gt; &lt;ul&gt; &lt;li&gt;$GOROOT：Go在电脑上的安装位置，一般是$Home&#x2F;go（注意不要配置成bin目录了，bin目录是添加到path让你方便执行go.exe的…）&lt;&#x2F;li&gt; &lt;li&gt;$GOPATH：此路径下必须包含src &#x2F; pkg &#x2F; bin三个目录存放源码，包文件和可执行文件&lt;&#x2F;li&gt; &lt;li&gt;$GOMAXPROCS：用于设置应用程序可使用的处理器个数与核数&lt;&#x2F;li&gt; &lt;&#x2F;ul&gt; &lt;h3 id&#x3D;go-运行时runtime&gt;2.7 Go 运行时（runtime）&lt;&#x2F;h3&gt; &lt;ul&gt; &lt;li&gt;尽管Go编译器产生的是本地可执行代码，但仍然运行在Go的runtime中，这个runtime負責管理包括内存分配、垃圾回收、栈处理、goroutine、channel、切片、map和反射。Go的runtime嵌入到每一个可执行文件当中，所以可执行文件会比相应的源文件大得多。&lt;&#x2F;li&gt; &lt;&#x2F;ul&gt; &lt;h1 id&#x3D;chapter4&gt;Chapter4&lt;&#x2F;h1&gt; &lt;h2 id&#x3D;go程序基本结构和要素&gt;4.2 Go程序基本结构和要素&lt;&#x2F;h2&gt; &lt;p&gt;每个程序都由包（通常简称为 pkg）的概念组成，可以使用自身的包或者从其它包中导入内容。每个Go文件都属于且仅属于一个包，一个包可以由许多.go源文件组成，文件名和包名一般都是不同的。&lt;&#x2F;p&gt; &lt;p&gt;如果要编译包名不是为main的源文件如pack1，编译后产生的对象文件将会是pack1.a而不是可执行程序。&lt;&#x2F;p&gt; &lt;p&gt;所有包名应该使用小写字母。&lt;&#x2F;p&gt; &lt;p&gt;Go标准库位于Go根目录下的子目录pkg，以64位windows为例，标准库位于windows_amd64下。&lt;&#x2F;p&gt; &lt;p&gt;{% asset_img Untitled_1.png windows_amd64目录}&lt;&#x2F;p&gt; &lt;p&gt;&lt;strong&gt;包的导入和搜索&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt; &lt;p&gt;如果包名不是以 &lt;code&gt;.&lt;&#x2F;code&gt;或 &lt;code&gt;&#x2F;&lt;&#x2F;code&gt;开头，如 &lt;code&gt;fmt&lt;&#x2F;code&gt;或者 &lt;code&gt;container&#x2F;list&lt;&#x2F;code&gt;，则 Go 会在全局文件进行查找；如果包名以 &lt;code&gt;.&#x2F;&lt;&#x2F;code&gt;开头，则 Go 会在相对目录中查找；如果包名以 &lt;code&gt;&#x2F;&lt;&#x2F;code&gt;开头（在 Windows 下也可以这样使用），则会在系统的绝对路径中查找。&lt;&#x2F;p&gt; &lt;p&gt;&lt;strong&gt;可见性规则&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt; &lt;p&gt;包通过这个强制执行的规则决定自身代码是否暴露给外部文件：如果标识符（包括常量、变量、类型、函数名、结构字段等等）以大写字母开头，那么可以被外部包使用，如果以小写字母开头，就对包外不可见，仅在包内可见并且可用。&lt;&#x2F;p&gt; &lt;p&gt;只有当某个函数需要被外部包调用的时候才使用大写字母开头，并遵循 Pascal 命名法；否则就遵循骆驼命名法，即第一个单词的首字母小写，其余单词的首字母大写。&lt;&#x2F;p&gt; &lt;h3 id&#x3D;函数&gt;4.2.2 函数&lt;&#x2F;h3&gt; &lt;p&gt;每一个可执行程序必须包含main()，是除init()外启动后第一个执行的函数。如果main包的没有包含main函数会引发build error。main没有参数也没有返回类型。&lt;&#x2F;p&gt; &lt;p&gt;对相同类型的函数参数，可以这样描述函数&lt;&#x2F;p&gt; <pre class="line-numbers language-go" data-language="go"></a><code class="language-go">func Add(param1, param2 int) int &#123;
-	&#x2F;&#x2F; ...
-&#125;</code></pre> &lt;h3 id&#x3D;类型&gt;4.2.4 类型&lt;&#x2F;h3&gt; &lt;p&gt;使用 var 声明的变量的值会&lt;strong&gt;自动初始化为该类型的零值&lt;&#x2F;strong&gt;。&lt;&#x2F;p&gt; &lt;p&gt;类型定义了某个变量的值的集合与可对其进行操作的集合。&lt;&#x2F;p&gt; &lt;p&gt;类型可以是基本类型，如：int、float、bool、string；结构化的（复合的），如：struct、array、slice、map、channel；只描述类型的行为的，如：interface。&lt;&#x2F;p&gt; &lt;p&gt;结构化的类型没有真正的值，它使用 nil 作为默认值（在 Objective-C 中是 nil，在 Java 中是 null，在 C 和 C++ 中是NULL或 0）。值得注意的是，Go 语言中不存在类型继承。&lt;&#x2F;p&gt; &lt;h2 id&#x3D;常量&gt;4.3 常量&lt;&#x2F;h2&gt; &lt;p&gt;常量值必须在编译时能够确定，同时无法在运行过程修改它的值&lt;&#x2F;p&gt; &lt;h2 id&#x3D;变量&gt;4.4 变量&lt;&#x2F;h2&gt; &lt;p&gt;使用关键词&lt;code&gt;var&lt;&#x2F;code&gt;来声明一个变量&lt;&#x2F;p&gt; &lt;p&gt;在&lt;strong&gt;包级别&lt;&#x2F;strong&gt;声明变量&lt;&#x2F;p&gt; <pre class="line-numbers language-go" data-language="go"><code class="language-go">var a int &#x3D; 5 &#x2F;&#x2F; 显式声明类型
-var b &#x3D; 5 &#x2F;&#x2F; 隐式声明类型</code></pre> &lt;p&gt;在&lt;strong&gt;函数内部&lt;&#x2F;strong&gt;的简短形式，省略var&lt;&#x2F;p&gt; <pre class="line-numbers language-go" data-language="go"><code class="language-go">func Sample() &#123;
-	a :&#x3D; 5
-&#125;</code></pre> &lt;p&gt;交换变量，不用写tmp了&lt;&#x2F;p&gt; <pre class="line-numbers language-go" data-language="go"><code class="language-go">a, b &#x3D; b, a</code></pre> &lt;h3 id&#x3D;值类型与引用类型&gt;4.4.2 值类型与引用类型&lt;&#x2F;h3&gt; &lt;p&gt;基本数值类型，字符串，数组，结构都是值类型，内容直接存放在变量分配得的内存上&lt;&#x2F;p&gt; &lt;p&gt;更复杂的类型（？）使用引用类型保存，变量分配得的内存上，存放“内容所在的地址”&lt;&#x2F;p&gt; &lt;h3 id&#x3D;格式字符串&gt;4.4.3格式字符串&lt;&#x2F;h3&gt; &lt;p&gt;用来记录一些输出类型（格式化说明符）&lt;&#x2F;p&gt; &lt;ul&gt; &lt;li&gt;%v 通用&lt;&#x2F;li&gt; &lt;li&gt;%t 布尔型&lt;&#x2F;li&gt; &lt;li&gt;%d 格式化整数（%x和%X用于格式化16进制&lt;&#x2F;li&gt; &lt;li&gt;%g 格式化浮点型（%f输出浮点数，%e输出科学计数法&lt;&#x2F;li&gt; &lt;li&gt;%p 显示地址格式&lt;&#x2F;li&gt; &lt;&#x2F;ul&gt; &lt;h3 id&#x3D;init函数&gt;4.4.5 init函数&lt;&#x2F;h3&gt; &lt;p&gt;不能被人为调用，在包完成初始化（变量全局声明初始化）后自动执行，可以作为另一种初始化途径&lt;&#x2F;p&gt; &lt;p&gt;初始化以单线程执行，且按照包的依赖关系执行，另一种用途可以在开始执行程序前对数据进行检验修复&lt;&#x2F;p&gt; &lt;h2 id&#x3D;基本类型与运算符&gt;4.5 基本类型与运算符&lt;&#x2F;h2&gt; &lt;p&gt;注意go没有隐式类型转换，在类型转换是要注意用显式的方式进行&lt;&#x2F;p&gt; &lt;h3 id&#x3D;数字类型&gt;4.5.2 数字类型&lt;&#x2F;h3&gt; &lt;p&gt;Go 也有基于架构的类型，例如：int、uint 和 uintptr。这些类型的长度都是&lt;strong&gt;根据运行程序所在的操作系统类型所决定&lt;&#x2F;strong&gt;的：&lt;&#x2F;p&gt; &lt;ul&gt; &lt;li&gt;&lt;code&gt;int&lt;&#x2F;code&gt; 和 &lt;code&gt;uint&lt;&#x2F;code&gt; 在 32 位操作系统上，它们均使用 32 位（4 个字节），在 64 位操作系统上，它们均使用 64 位（8 个字节）。&lt;&#x2F;li&gt; &lt;li&gt;&lt;code&gt;uintptr&lt;&#x2F;code&gt; 的长度被设定为足够存放一个指针即可。&lt;&#x2F;li&gt; &lt;&#x2F;ul&gt; &lt;p&gt;Go 语言中没有 float 类型。（Go语言中只有 float32 和 float64）没有double类型。&lt;&#x2F;p&gt; &lt;p&gt;float32 精确到小数点后 7 位，float64 精确到小数点后 15 位。由于精确度的缘故，你在使用 &lt;code&gt;&#x3D;&#x3D;&lt;&#x2F;code&gt; 或者 &lt;code&gt;!&#x3D;&lt;&#x2F;code&gt;来比较浮点数时应当非常小心。&lt;&#x2F;p&gt; &lt;h3 id&#x3D;算术运算符&gt;4.5.2.5 算术运算符&lt;&#x2F;h3&gt; &lt;ul&gt; &lt;li&gt;相对于一般规则而言，Go 在进行字符串拼接时允许使用对运算符 &lt;code&gt;+&lt;&#x2F;code&gt; 的重载，但 Go 本身不允许开发者进行自定义的运算符重载&lt;&#x2F;li&gt; &lt;li&gt;&lt;code&gt;&#x2F;&lt;&#x2F;code&gt; 对于整数运算而言，结果依旧为整数，例如：&lt;code&gt;9 &#x2F; 4 -&gt; 2&lt;&#x2F;code&gt;。取余运算符只能作用于整数：&lt;code&gt;9 % 4 -&gt; 1&lt;&#x2F;code&gt;。&lt;&#x2F;li&gt; &lt;li&gt;你可以将语句 &lt;code&gt;b &#x3D; b + a&lt;&#x2F;code&gt; 简写为 &lt;code&gt;b +&#x3D; a&lt;&#x2F;code&gt;&lt;&#x2F;li&gt; &lt;li&gt;带有 &lt;code&gt;++&lt;&#x2F;code&gt;和 &lt;code&gt;--&lt;&#x2F;code&gt; 的&lt;strong&gt;只能作为语句，而非表达式&lt;&#x2F;strong&gt;，因此 &lt;code&gt;n &#x3D; i++&lt;&#x2F;code&gt; 这种写法是无效的，&lt;&#x2F;li&gt; &lt;&#x2F;ul&gt; &lt;h3 id&#x3D;类型别名&gt;4.5.4 类型别名&lt;&#x2F;h3&gt; &lt;p&gt;给某个类型起另一个名字，新类型不会拥有原类型附带方法，新类型也可自定义方法&lt;&#x2F;p&gt; &lt;h3 id&#x3D;字符类型&gt;4.5.5 字符类型&lt;&#x2F;h3&gt; &lt;p&gt;&lt;code&gt;byte&lt;&#x2F;code&gt;类型是 &lt;code&gt;uint8&lt;&#x2F;code&gt; 的别名，对于只占用 1 个字节的传统 ASCII 编码的字符来说&lt;&#x2F;p&gt; &lt;p&gt;&lt;code&gt;\x&lt;&#x2F;code&gt;总是紧跟着长度为 2 的 16 进制数&lt;&#x2F;p&gt; <pre class="line-numbers language-go" data-language="go"><code class="language-go">var ch byte &#x3D; 65 或 var ch byte &#x3D; &#39;\x41&#39; &#x2F;&#x2F; one byte</code></pre> &lt;p&gt;Go 同样支持 Unicode（UTF-8），因此字符同样称为 Unicode 代码点或者 runes，并在内存中使用 int 来表示。在书写 Unicode 字符时，需要在 16 进制数之前加上前缀 &lt;code&gt;\u&lt;&#x2F;code&gt; 或者 &lt;code&gt;\U&lt;&#x2F;code&gt;。&lt;&#x2F;p&gt; &lt;p&gt;因为 Unicode 至少占用 2 个字节，所以我们使用 &lt;code&gt;int16&lt;&#x2F;code&gt; 或者 &lt;code&gt;int&lt;&#x2F;code&gt; 类型来表示。如果需要使用到 4 字节，则会加上 &lt;code&gt;\U&lt;&#x2F;code&gt; 前缀；前缀 &lt;code&gt;\u&lt;&#x2F;code&gt; 则总是紧跟着长度为 4 的 16 进制数，前缀 &lt;code&gt;\U&lt;&#x2F;code&gt; 紧跟着长度为 8 的 16 进制数。&lt;&#x2F;p&gt; <pre class="line-numbers language-go" data-language="go"><code class="language-go">var ch int &#x3D; &#39;\u0041&#39; &#x2F;&#x2F; two bytes
-var ch2 int &#x3D; &#39;\u03B2&#39;
-var ch3 int &#x3D; &#39;\U00101234&#39; &#x2F;&#x2F; four bytes</code></pre> &lt;p&gt;包&lt;code&gt;unicode&lt;&#x2F;code&gt;包含的测试字符函数&lt;&#x2F;p&gt; &lt;ul&gt; &lt;li&gt;判断是否为字母：&lt;code&gt;unicode.IsLetter(ch)&lt;&#x2F;code&gt;&lt;&#x2F;li&gt; &lt;li&gt;判断是否为数字：&lt;code&gt;unicode.IsDigit(ch)&lt;&#x2F;code&gt;&lt;&#x2F;li&gt; &lt;li&gt;判断是否为空白符号：&lt;code&gt;unicode.IsSpace(ch)&lt;&#x2F;code&gt;&lt;&#x2F;li&gt; &lt;&#x2F;ul&gt; &lt;h2 id&#x3D;字符串&gt;4.6 字符串&lt;&#x2F;h2&gt; &lt;p&gt;字符串是UTF-8字符的序列，所以字符串内的字符可能根据需要占用1至4字节，与其他语言不同，好处是减少内存、硬盘空间占用，也不需要进行文本编码解码。&lt;&#x2F;p&gt; &lt;p&gt;双引号内的转义符照常处理；反引号内的会解释为字符串，会将转义符原样输出&lt;&#x2F;p&gt; <pre class="line-numbers language-go" data-language="go"><code class="language-go">&#96;This is a raw string \n&#96; 中的 &#96;\n\&#96; 会被原样输出。</code></pre> &lt;ul&gt; &lt;li&gt;可以进行索引，但索引到的是字节&lt;&#x2F;li&gt; &lt;li&gt;根据长度限定，而不是特殊字符’\0’&lt;&#x2F;li&gt; &lt;li&gt;是一种&lt;strong&gt;值类型&lt;&#x2F;strong&gt;，内容不可变，是字节的定长数组&lt;&#x2F;li&gt; &lt;&#x2F;ul&gt; &lt;p&gt;字符串与[]byte的转换&lt;&#x2F;p&gt; <pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; 逆转！
-func ReverseString(input string) string &#123;
-	c :&#x3D; []byte(input)
-	for i :&#x3D; 0; i &lt; len(c)&#x2F;2; i++ &#123;
-		other :&#x3D; len(c) - i - 1
-		c[i], c[other] &#x3D; c[other], c[i]
-	&#125;
+<a href="/p/e842888b11eb/Untitled.png" class="gallery-item"><img src="/p/e842888b11eb/Untitled.png" class="" title="在自己的服务器上编译Go"></a>
+<h2 id="go环境变量">2.2 Go环境变量</h2>
+<ul>
+<li>$GOROOT：Go在电脑上的安装位置，一般是$Home/go（注意不要配置成bin目录了，bin目录是添加到path让你方便执行go.exe的…）</li>
+<li>$GOPATH：此路径下必须包含src / pkg /
+bin三个目录存放源码，包文件和可执行文件</li>
+<li>$GOMAXPROCS：用于设置应用程序可使用的处理器个数与核数</li>
+</ul>
+<h3 id="go-运行时runtime">2.7 Go 运行时（runtime）</h3>
+<ul>
+<li>尽管Go编译器产生的是本地可执行代码，但仍然运行在Go的runtime中，这个runtime負責管理包括内存分配、垃圾回收、栈处理、goroutine、channel、切片、map和反射。Go的runtime嵌入到每一个可执行文件当中，所以可执行文件会比相应的源文件大得多。</li>
+</ul>
+<h1 id="chapter4">Chapter4</h1>
+<h2 id="go程序基本结构和要素">4.2 Go程序基本结构和要素</h2>
+<p>每个程序都由包（通常简称为
+pkg）的概念组成，可以使用自身的包或者从其它包中导入内容。每个Go文件都属于且仅属于一个包，一个包可以由许多.go源文件组成，文件名和包名一般都是不同的。</p>
+<p>如果要编译包名不是为main的源文件如pack1，编译后产生的对象文件将会是pack1.a而不是可执行程序。</p>
+<p>所有包名应该使用小写字母。</p>
+<p>Go标准库位于Go根目录下的子目录pkg，以64位windows为例，标准库位于windows_amd64下。</p>
+<a href="/p/e842888b11eb/Untitled_1.png" title="fmt" class="gallery-item"><img src="/p/e842888b11eb/Untitled_1.png" class="" title="windows_amd64目录} **包的导入和搜索** 如果包名不是以 &#96;.&#96;或 &#96;&#x2F;&#96;开头，如 &#96;" alt="fmt"></a>
+<pre><code>&#123;% asset_img Untitled_3.png 这里是enable go modules integration状态 %&#125;
 
-	return string(c)
-&#125;</code></pre> &lt;h1 id&#x3D;chapter5&gt;Chapter5&lt;&#x2F;h1&gt; &lt;h2 id&#x3D;if-else-结构&gt;5.1 if-else 结构&lt;&#x2F;h2&gt; &lt;p&gt;特点：条件不需要圆括号，但是语句需要大括号&lt;&#x2F;p&gt; &lt;p&gt;可以使用初始化语句，在if语句的作用域中声明一个变量，需要在声明语句后面跟上一个分号&lt;&#x2F;p&gt; <pre class="line-numbers language-go" data-language="go"><code class="language-go">if val :&#x3D; 10; val &gt; max &#123;
-	&#x2F;&#x2F; do something
-&#125;</code></pre> &lt;h2 id&#x3D;测试多返回值函数的错误&gt;5.2 测试多返回值函数的错误&lt;&#x2F;h2&gt; &lt;p&gt;Go语言函数经常使用两个返回值来表示执行是否成功，通常返回零值、nil、false来表示失败，或者使用一个error类型的变量来代替作为第二个返回值；成功执行的话，error值为nil。&lt;&#x2F;p&gt; &lt;p&gt;如果判断函数执行一定能成功，可以使用&lt;code&gt;_&lt;&#x2F;code&gt;来接收第二个参数。&lt;&#x2F;p&gt; &lt;p&gt;有时当错误没有发生时，继续运行就是唯一要做的事情，所以if语句块后面不需要使用else分支（卫语句）&lt;&#x2F;p&gt; <pre class="line-numbers language-go" data-language="go"><code class="language-go">value, err :&#x3D; pack1.Function1(param1)
-if err !&#x3D; nil &#123;
-	fmt.Printf(&quot;An error occured in pack1.Function1 with parameter %v&quot;, param1)
-	return err
+这里是enable go modules integration状态</code></pre>
+<ol start="3" type="1">
+<li><p><strong>（module mode）</strong>如果需要用go install / go get
+来下载package，需要打开module mode</p>
+<p><a href="/p/e842888b11eb/Untitled_4.png" class="gallery-item"><img src="/p/e842888b11eb/Untitled_4.png" class="" title="提示当前modules被关闭"></a></p></li>
+<li><p><strong>（module mode）</strong>通过go env 来查看是否打开了GO
+MODULE MODE</p>
+<p><a href="/p/e842888b11eb/Untitled_5.png" class="gallery-item"><img src="/p/e842888b11eb/Untitled_5.png" class="" title="go env输出结果"></a></p></li>
+<li><p><strong>（module mode）</strong>通过go install / go
+get下载的package，会被下载到$GOPATH的pkg目录下</p></li>
+<li><p><strong>（module
+mode）</strong>要使用下载的package，需要编辑项目的go.mod（是不是IDE帮我自动编辑了我不是很清楚）</p>
+<p><a href="/p/e842888b11eb/Untitled_6.png" class="gallery-item"><img src="/p/e842888b11eb/Untitled_6.png" class="" title="go.mod文件内容"></a></p></li>
+<li><p>使用<code>import [name]
+“path”</code>，来给import的包起一个别名，使用<code>import _
+“path”</code>，来忽略这个包，仅通过import执行package的init方法</p></li>
+</ol>
+<h1 id="chapter10">Chapter10</h1>
+<h2 id="结构与方法">10.0 结构与方法</h2>
+<ol type="1">
+<li>Go通过类型别名和结构体的形式支持用户自定义类型</li>
+<li>结构体也是<strong>值类型</strong>，所以通过<code>new()</code>函数来创建</li>
+<li>Go语言中没有类的概念，因此结构体有着更为重要的地位</li>
+</ol>
+<h2 id="结构体定义">10.1 结构体定义</h2>
+<ol type="1">
+<li><p>结构体的定义方式：</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type identifier struct &#123;
+	field1 type1
+	field2 type2
+&#125;</code></pre></p></li>
+<li><p>声明结构体变量的方式</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">var t *T
+t &#x3D; new(T) &#x2F;&#x2F; 使用new()，t的类型是*T
+
+var s T
+T.a &#x3D; 5 &#x2F;&#x2F; 直接声明结构体变量，t的类型是T
+
+&#x2F;&#x2F;结构体字面量：struct-literal
+ms :&#x3D; struct1&#123;10, 15.5, &quot;Chris&quot;&#125; &#x2F;&#x2F;必须按照字段顺序写，ms的类型是struct1
+ms :&#x3D; &amp;struct1&#123;10, 15.5, &quot;Chris&quot;&#125; &#x2F;&#x2F; 同上，ms的类型是*struct1
+intr :&#x3D; Interval&#123;end:5, start:1&#125; &#x2F;&#x2F; 可以不按照字段顺序，可以不给每一个字段赋值
+r1 :&#x3D; Rect1&#123;Point&#123;10, 20&#125;, Point&#123;50, 60&#125;&#125; &#x2F;&#x2F; 嵌套</code></pre></p></li>
+<li><p>对于一个结构体类型和一个结构体类型指针，都可以用相同的<strong>选择器符（selector-notation）</strong>，即<code>.</code>符号来引用结构体的字段</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type myStruct struct &#123; i int &#125;
+var v myStruct    &#x2F;&#x2F; v 是结构体类型变量
+var p *myStruct   &#x2F;&#x2F; p 是指向一个结构体类型变量的指针
+v.i
+p.i &#x2F;&#x2F; 这里会报错，因为p指针为nil</code></pre></p></li>
+<li><p>当为结构体定义了一个<code>alias</code>类型时，结构体和它的<code>alias</code>类型具有相同的底层类型，可以互相转换</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type number struct &#123;
+    f float32
 &#125;
-&#x2F;&#x2F; 未发生错误，继续执行：</code></pre> &lt;h2 id&#x3D;switch-语句&gt;5.3 switch 语句&lt;&#x2F;h2&gt; &lt;p&gt;与其他语言switch语句的不同之处：&lt;&#x2F;p&gt; &lt;ol type&#x3D;1&gt; &lt;li&gt;&lt;p&gt;可以同时测试多个符合条件的值：case val1, val2, val3&lt;&#x2F;p&gt;&lt;&#x2F;li&gt; &lt;li&gt;&lt;p&gt;匹配某个分支后，会退出整个switch语句，所以不需要特别使用break来结束&lt;&#x2F;p&gt;&lt;&#x2F;li&gt; &lt;li&gt;&lt;p&gt;如果想要执行后续分支的代码，可以使用&lt;code&gt;fallthrough&lt;&#x2F;code&gt;关键字&lt;&#x2F;p&gt;&lt;&#x2F;li&gt; &lt;li&gt;&lt;p&gt;switch语句也可以不提供任何被判断的值，然后在每个case分支中进行不同条件的测试，可用于替代测试条件非常多的&lt;code&gt;if-else&lt;&#x2F;code&gt;语句&lt;&#x2F;p&gt; &lt;p&gt;<pre class="line-numbers language-go" data-language="go"><code class="language-go">switch &#123;
-	case i &lt; 0:
-		f1()
-	case i &#x3D;&#x3D; 0:
-		f2()
-	case i &gt; 0:
-		f3()
-&#125;</code></pre>&lt;&#x2F;p&gt;&lt;&#x2F;li&gt; &lt;li&gt;&lt;p&gt;同样的类似if-else结构，也可以在switch后跟上一个初始化语句&lt;&#x2F;p&gt; &lt;p&gt;<pre class="line-numbers language-go" data-language="go"><code class="language-go">switch result :&#x3D; calculate(); &#123;
-	case result &lt; 0:
-		...
-	case result &gt; 0:
-		...
-	default:
-		&#x2F;&#x2F; 0
-&#125;</code></pre>&lt;&#x2F;p&gt;&lt;&#x2F;li&gt; &lt;li&gt;&lt;&#x2F;li&gt; &lt;&#x2F;ol&gt; &lt;h2 id&#x3D;for-结构&gt;5.4 for 结构&lt;&#x2F;h2&gt; &lt;ol type&#x3D;1&gt; &lt;li&gt;常见的for结构与其他语言一致 for A; B; C { }&lt;&#x2F;li&gt; &lt;li&gt;没有while结构，存在根据条件判断进行的 for condition {}&lt;&#x2F;li&gt; &lt;li&gt;无限循环结构形如，for {}&lt;&#x2F;li&gt; &lt;li&gt;形如foreach的结构，使用&lt;strong&gt;range&lt;&#x2F;strong&gt;关键字，for pos, value &lt;strong&gt;range&lt;&#x2F;strong&gt; array {} 注意value为集合中对应索引的&lt;strong&gt;值拷贝&lt;&#x2F;strong&gt;，因此它一般只具有只读性质（如果value为指针，则会产生指针的拷贝，依旧可以修改集合中的原值）写操作并不生效&lt;&#x2F;li&gt; &lt;li&gt;（5.5-5.6） break, continue, goto 没有什么不同&lt;&#x2F;li&gt; &lt;&#x2F;ol&gt; &lt;h1 id&#x3D;chapter6&gt;Chapter6&lt;&#x2F;h1&gt; &lt;h2 id&#x3D;函数-介绍&gt;6.1 函数-介绍&lt;&#x2F;h2&gt; &lt;ol type&#x3D;1&gt; &lt;li&gt;go中不支持函数重载（函数重载需要多余的类型匹配，影响性能），同名函数将会导致编译报错&lt;&#x2F;li&gt; &lt;li&gt;函数是一等公民（first-class value），可以赋值给变量&lt;&#x2F;li&gt; &lt;li&gt;go没有泛型的概念，在注重性能的场合最好为每一个类型单独创建一个函数，使代码可读性更强&lt;&#x2F;li&gt; &lt;&#x2F;ol&gt; &lt;h2 id&#x3D;函数参数与返回值&gt;6.2 函数参数与返回值&lt;&#x2F;h2&gt; &lt;ol type&#x3D;1&gt; &lt;li&gt;&lt;p&gt;go默认使用按值传递来传递参数，也就是传递参数的副本&lt;&#x2F;p&gt;&lt;&#x2F;li&gt; &lt;li&gt;&lt;p&gt;如果希望直接修改参数的值，可以传递参数的地址（&amp;variable），相当于传递一个指针，可以通过这个指针来修改指向地址上的值。&lt;&#x2F;p&gt;&lt;&#x2F;li&gt; &lt;li&gt;&lt;p&gt;注意指针也是变量，指针变量的值是另一个变量的地址，所以传递指针也是按值传递。当函数内改变一个占用内存较大的变量时，传递指针不需要赋值变量的值，性能优势就更加明显了。&lt;&#x2F;p&gt;&lt;&#x2F;li&gt; &lt;li&gt;&lt;p&gt;使用多重返回值：可以使用命名返回值，或者非命名返回值；&lt;strong&gt;尽量使用命名返回值，使代码更容易读懂&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;&lt;&#x2F;li&gt; &lt;li&gt;&lt;p&gt;使用命名返回值时，可以为返回值变量赋值后return，也可以return对应的返回值变量，但以返回的明确值为准&lt;&#x2F;p&gt; &lt;p&gt;<pre class="line-numbers language-go" data-language="go"><code class="language-go">func GetX2AndX3_2(input int) (x2 int, x3 int) &#123; &#x2F;&#x2F; 假设输入为10
-	x2 &#x3D; input * 2
-	x3 &#x3D; input * 3
-	&#x2F;&#x2F;return &#x2F;&#x2F; 返回 20，30
-	&#x2F;&#x2F;return x2, x3 &#x2F;&#x2F; 同样返回 20，30
-	return input, input &#x2F;&#x2F; 返回10，10，x2和x3也被赋值为10
-&#125;</code></pre>&lt;&#x2F;p&gt;&lt;&#x2F;li&gt; &lt;&#x2F;ol&gt; &lt;h2 id&#x3D;传递变长参数&gt;6.3 传递变长参数&lt;&#x2F;h2&gt; &lt;ol type&#x3D;1&gt; &lt;li&gt;&lt;p&gt;如果函数最后一个参数采用...type的形式，这个函数就可以处理一个变长参数，接收一个类似于切片（slice）的参数，如下，变量 &lt;code&gt;who&lt;&#x2F;code&gt;的值为 &lt;code&gt;[]string&amp;#123;" alt="Joe"></div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+
+type nr number   &#x2F;&#x2F; alias type</code></pre></p></li>
+<li><p>使用 <code>fmt.Println()</code>打印一个结构体的默认输出可以很好的显示它的内容，类似使用 <code>%v</code>选项。使用<code>%+v</code>选项会先输出字段名字再输出字段的值，使用<code>%#v</code>字段会在前者基础上先输出结构体的名字</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">The name of person is &#123;EDWARD CHEN&#125;
+The name of person is &amp;&#123;firstName:EDWARD lastName:CHEN&#125;
+The name of person is chapter10.Person&#123;firstName:&quot;EDWARD&quot;, lastName:&quot;CHEN&quot;&#125;</code></pre></p></li>
+<li><p><code>fmt.Printf</code> / <code>fmt.Print</code> /
+<code>fmt.Println</code> 均会自动使用结构体的String
+方法，通过给出结构体为接收者的String方法来进行自定义</p></li>
+</ol>
+<h2 id="使用工厂方法创建结构体实例">10.2 使用工厂方法创建结构体实例</h2>
+<ol type="1">
+<li>Go语言不支持面向对象编程语言中的构造方法，但是可以可以很容易实现“构造子工厂”方法，按惯例以“new…”或“New…”开头</li>
+<li>通过可见性原则可以将结构体由小写开始，来禁止使用<code>new()</code>函数，强制用户使用工厂方法</li>
+</ol>
+<h2 id="带标签的结构体">10.4 带标签的结构体</h2>
+<p>类似注释，在结构体的字段类型后面可以用<code>""</code>进行字段的解释，称为标签(tag)</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">type TagType struct &#123; &#x2F;&#x2F; tags
+	field1 bool   &quot;An important answer&quot;
+	field2 string &quot;The name of the thing&quot;
+	field3 int    &quot;How much there are&quot;
+&#125;</code></pre>
+<h2 id="匿名字段和内嵌结构体">10.5 匿名字段和内嵌结构体</h2>
+<ol type="1">
+<li>可以包含一个或多个匿名字段，这些字段只有<strong>类型</strong>是必须的，匿名字段本身也可以是一个结构体，即内嵌结构体；结构体中每一种数据类型只能有一个匿名字段</li>
+<li>匿名字段/内嵌结构体
+被用来模拟类似继承的行为，Go语言通过<strong>内嵌或组合</strong>来实现</li>
+<li>当只有一个内嵌结构体时，可能看起来像是继承；当有多个内嵌结构体，看起来就会像是组合；实际上当只有一个内嵌结构体时，按组合去理解也会更贴近go的设计</li>
+<li>不难得到，类型A内嵌了类型B时，类型B指针无法指向类型A实例（即使类型B是唯一的内嵌类型）</li>
+<li>外层结构体可以直接通过选择器符<code>.</code>直接访问内层结构体的字段</li>
+<li>两个字段拥有相同名字时：外层名字覆盖内层名字，同一层级的相同名字字段需要明确来自哪一个类型（c.A.a，c.B.a）</li>
+</ol>
+<h2 id="方法">10.6 方法</h2>
+<h3 id="section">10.6.1</h3>
+<ol type="1">
+<li>结构体像是类的简化形式，而方法是在接收者上的函数，接收者可以是某种类型的值，或者是其他允许类型的指针。</li>
+<li>接收器不可以是一个接口类型，因为接口是抽象定义。</li>
+<li>一个结构体加上它的方法等价于面向对象中的一个类，在Go中结构体和绑定的方法可以不在一起，但是需要在同一个包内</li>
+<li>不允许方法重载，可以重载类型</li>
+<li>调用方法的方式：<code>recv.Method1()</code>，如果recv可以是类型值，或类型指针（自动解引用）</li>
+</ol>
+<h3 id="函数方法的区别">10.6.2 函数方法的区别</h3>
+<p>函数将变量作为参数：<code>Function1(recv)</code>，方法在变量上被调用：<code>recv.Method1()</code></p>
+<h3 id="指针或值作为接收者">10.6.3 指针或值作为接收者</h3>
+<ol type="1">
+<li>recv常见的是一个指向receiver_type的指针，这样就不会产生结构体的拷贝，而且可以修改结构体的内容</li>
+<li>指针方法和值方法都可以在指针或者非指针（值）上被调用，go会自动为你做类型转换</li>
+</ol>
+<h3 id="方法与未导出字段">10.6.4 方法与未导出字段</h3>
+<p>对于未导出的字段，使用<code>getter</code>和<code>setter</code>方法进行修改，在Go中<code>setter</code>方法会使用Set前缀，而<code>getter</code>只使用成员名</p>
+<h3 id="内嵌类型的方法和继承">10.6.5 内嵌类型的方法和继承</h3>
+<ol type="1">
+<li><p>匿名类型被内嵌到结构体中时，匿名类型的可见方法也被内嵌，这相当于实现了继承</p></li>
+<li><p>内嵌将一个已存在类型的字段和方法注入到了另一个类型里：匿名字段上的方法“晋升”成为了外层类型的方法。</p></li>
+<li><p>外层类型的方法会覆写内嵌类型对应的方法，想要调用内嵌类型的方法，用内嵌类型名进行访问</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">func (n *NamedPoint) Abs() float64 &#123;
+	return n.Point.Abs() * 100.
+&#125;</code></pre></p></li>
+</ol>
+<h3 id="如何在类型中嵌入功能">10.6.6 如何在类型中嵌入功能</h3>
+<ol type="1">
+<li><p>聚合（组合）：包含所需功能类型的具体字段；内嵌：使用内嵌类型，把所需的功能类型内嵌</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; 聚合（组合）
+type Customer struct &#123;
+	Name string
+	log  *Log
+&#125;
+&#x2F;&#x2F; 内嵌
+type Customer struct &#123;
+	Name string
+	Log
+&#125;</code></pre></p></li>
+</ol>
+<h3 id="多重继承">10.6.7 多重继承</h3>
+<p>在类型中嵌入必要的父类型就能简单地实现多重继承</p>
+<h3 id="与其他面向对象语言的比较">10.6.8 与其他面向对象语言的比较…</h3>
+<ol type="1">
+<li>go中分离了类型与方法，方法只要定义就可以调用，与其他类型是否存在方法并无关系</li>
+<li>go中并不使用类继承的概念，“继承”的两个好处，代码复用通过<strong>组合</strong>和<strong>委托</strong>实现，多态通过<strong>接口</strong>的使用来实现。又是这也叫<strong>组件编程
+(Component Programming) <a
+target="_blank" rel="noopener" href="https://www.notion.so/OOP-0c9b2e9623044a28b70d39fe959e34be">面向对象设计
+OOP</a></strong></li>
+</ol>
+<h2 id="垃圾回收与setfinalizer">10.8 垃圾回收与SetFinalizer</h2>
+<p>如果需要在一个对象被内存移出前做一些特殊操作，可以通过如下方法调用实现</p>
+<h1 id="chapter11">Chapter11</h1>
+<h2 id="接口">11.1 接口</h2>
+<ol type="1">
+<li><p>接口定义了一组方法，不包含实现，不包含变量</p></li>
+<li><p>可以声明一个接口类型的变量，初始值为nil，本质是一个指针（内部的receiver为类型变量，method
+table ptr指向该类型的方法表）</p>
+<p><a href="/p/e842888b11eb/Untitled_7.png" class="gallery-item"><img src="/p/e842888b11eb/Untitled_7.png" class="" title="一个接口变量的内容"></a></p></li>
+<li><p><strong>如果类型的所有方法组成的集合，包含了该接口的方法集，这个类型就实现了这个接口</strong></p></li>
+<li><p>除了接口被<strong>隐式</strong>地实现，其他都与你熟悉的接口差不多</p></li>
+<li><p>接口类型的变量可以指向实现了此接口的实例</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type Shaper interface &#123;
+	Area() float32
+&#125;
+
+type Square struct &#123;
+	side float32
+&#125;
+
+func (sq *Square) Area() float32 &#123;
+	return sq.side * sq.side
+&#125;
+
+func main() &#123;
+	sq1 :&#x3D; new(Square)
+	sq1.side &#x3D; 5
+
+	var areaIntf Shaper
+	areaIntf &#x3D; sq1
+	&#x2F;&#x2F; shorter,without separate declaration:
+	&#x2F;&#x2F; areaIntf :&#x3D; Shaper(sq1)
+	&#x2F;&#x2F; or even:
+	&#x2F;&#x2F; areaIntf :&#x3D; sq1
+	fmt.Printf(&quot;The square has area: %f\n&quot;, areaIntf.Area())
+&#125;</code></pre></p></li>
+<li><p>实现了同一接口的实例可以填充到同一个数组 / 切片中</p></li>
+<li><p>接口是一种契约，实现接口的类型必须满足它，它描述了类型的行为，规定类型可以做什么。接口将类型能做什么，与如何做分离开来，使得变量可以在不同时刻表现出不同行为。</p></li>
+</ol>
+<h2 id="接口嵌套接口">11.2 接口嵌套接口</h2>
+<p>一个接口可以包含一个或多个其他接口，相当于将内嵌接口的方法列举在外层接口中</p>
+<h2 id="类型断言">11.3 类型断言</h2>
+<ol type="1">
+<li><p>使用类型断言来检测接口varI是否包含类型T的值</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">if v, ok :&#x3D; varI.(T); ok &#123;  &#x2F;&#x2F; checked type assertion
+    Process(v)
+    return
+&#125;
+&#x2F;&#x2F; varI is not of type T
+&#x2F;&#x2F; -------
+&#x2F;&#x2F; 如果只是想测试一下是否是类型T
+if _, ok :&#x3D; varI.(T); ok &#123;
+    &#x2F;&#x2F; ...
+&#125;</code></pre></p></li>
+<li><p>注意如果实现接口的receiver是<code>T</code>类型，那么<code>T</code>和<code>*T</code>的检测都可行（不会有编译报错，是否通过取决于3↓）；如果receiver是<code>*T</code>类型，那么<code>T</code>的检测会有编译报错</p></li>
+<li><p><strong>即：使用T指针类型作为receiver，导致：</strong></p>
+<ol type="1">
+<li>无法进行接口变量的T类型断言</li>
+<li>无法将T类型值赋值给接口变量</li>
+</ol>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; 举例：receiver是*T类型
+type Shaper interface &#123;
+	Area() float32
+&#125;
+
+func (sq *Square) Area() float32 &#123;
+	return sq.side * sq.side
+&#125;
+
+func main() &#123;
+	var areaIntf Shaper
+	sq1 :&#x3D; new(Square)
+	sq1.side &#x3D; 5
+
+	areaIntf &#x3D; sq1
+	&#x2F;&#x2F; Is Square the type of areaIntf?
+	if t, ok :&#x3D; areaIntf.(*Square); ok &#123;
+		fmt.Printf(&quot;The type of areaIntf is: %T\n&quot;, t)
+	&#125;
+&#125;</code></pre></p>
+<p><a href="/p/e842888b11eb/Untitled_8.png" class="gallery-item"><img src="/p/e842888b11eb/Untitled_8.png" class="" title="实现Shaper接口的是*Square类型，对Square类型断言会有编译报错"></a></p></li>
+<li><p>至于<code>T</code>类型还是<code>*T</code>类型的检测会通过，取决于赋值给接口变量的是结构体值还是结构体的指针</p></li>
+</ol>
+<h2 id="类型判断">11.4 类型判断</h2>
+<p>接口变量的类型可以用以下特殊形式（在11.3的类型处使用<code>type</code>关键字）的switch语句来进行检测：<code>type-switch</code></p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">switch t :&#x3D; areaIntf.(type) &#123; &#x2F;&#x2F; &lt;-
+case *Square:
+	fmt.Printf(&quot;Type Square %T with value %v\n&quot;, t, t)
+case *Circle:
+	fmt.Printf(&quot;Type Circle %T with value %v\n&quot;, t, t)
+case nil:
+	fmt.Printf(&quot;nil value: nothing to check?\n&quot;)
+default:
+	fmt.Printf(&quot;Unexpected type %T\n&quot;, t)
+&#125;</code></pre>
+<h2 id="测试是否实现了接口">11.5 测试是否实现了接口</h2>
+<p>与11.3类似，不同的是将类型替换为接口名，即可检测变量是否实现了特定接口</p>
+<h2 id="使用方法集与接口">11.6 使用方法集与接口</h2>
+<p>在方法一节我们讨论过，当调用变量的方法是，变量是指针还是值都能够正常工作。但是当变量是接口类型时多了一些限制，原因是接口变量中存储的具体值是<strong>不可寻址</strong>的（可以理解为接口变量内存储了一个结构体的值，而非存储了存有结构体地址的指针，但是unsafe.Sizeof打印出来大小都是两个地址的16byte…）：</p>
+<p>所以分两种调用方法的情况：（1）将结构体<strong>值</strong>赋值给了接口变量，以及（2）将结构体<strong>指针</strong>赋值给了接口变量。</p>
+<p>对于后者，结构体实现的接口方法中，接收者是值以及是指针的方法都能正常调用；但是对于前者，结构体实现的接口方法中，接收者是指针的方法将无法调用</p>
+<p><strong>总结</strong></p>
+<ul>
+<li>指针方法可以通过指针调用</li>
+<li>值方法可以通过值调用</li>
+<li>接收者是值的方法可以通过指针调用，因为指针会首先被解引用</li>
+<li>接收者是指针的方法不可以通过值调用，因为存储在接口中的值没有地址</li>
+</ul>
+<p><strong>结合11.3 可以得到</strong></p>
+<ol type="1">
+<li>只要存在一个用类型指针作为接收者的接口方法，就不能用值来给接口变量赋值，从而值类型断言也没有意义了；</li>
+<li>反之，如果所有的接口方法都只用值作为接收者实现，就有很大的局限性（方法不能改变结构成员），反而没有意义；虽然可以自由地用值
+/
+指针给接口变量赋值，但是意义不大；不用担心无法调用接收者是指针的方法，因为不存在这种方法；</li>
+<li>所以可以考虑一般情况下：实现接口方法时，接收者是值还是指针从实际出发，并且统一用指针给接口变量赋值，类型断言也用指针类型来判断；虽然无法用值给接口变量赋值，少一种选择反而少一些负担，不用担心无法调用接收者是指针的方法，因为不会用值来给接口变量赋值、也让类型断言变简单，只要考虑接口的指针类型断言就可以了</li>
+</ol>
+<p>*实际上是类型A实现了接口还是指针类型A实现了接口本身就是两种情况，不要混为一谈会更好理解。方法调用时不区分值还是指针可以看作是语法糖，而此处指针赋值的接口变量，可以调用接收者是值得方法也是做了额外处理。</p>
+<h2 id="空接口">11.9 空接口</h2>
+<p>一个空接口对实现不做任何要求</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">type Any interface &#123;&#125; &#x2F;&#x2F; 对于函数参数 interface &#123;&#125; 也是可行的
+var val interface &#123;&#125; &#x2F;&#x2F; 空接口类型</code></pre>
+<ol type="1">
+<li><p>空接口类似 <code>Java/C#</code>中所有类的基类： <code>Object</code>类，二者的目标也很相近，可以给一个空接口类型变量赋任何类型的值</p></li>
+<li><p>使用空接口来实现类似泛型的功能，将一个空接口类型作为Element</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type Vector struct &#123;
+	a []Element
+&#125;
+
+func (p *Vector) At(i int) Element &#123;
+	return p.a[i]
+&#125;
+
+func (p *Vector) Set(i int, e Element) &#123;
+	p.a[i] &#x3D; e
+&#125;</code></pre></p></li>
+<li><p>不能将特定类型的切片直接赋值给空接口切片，因为他们的内存布局不一致，需要for-range来一个一个显式赋值</p></li>
+<li><p>一个接口的值可以赋值给另一个接口变量，只要底层类型实现了必要的方法，注意这个转换在<strong>运行时</strong>检查，转换失败将导致一个<strong>运行时错误</strong></p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type myPrintInterface interface &#123;
+	print()
+&#125;
+
+func f3(x myInterface) &#123;
+	x.(myPrintInterface).print() &#x2F;&#x2F; type assertion to myPrintInterface
+&#125;</code></pre></p></li>
+</ol>
+<h2 id="反射">11.10 反射</h2>
+<ol type="1">
+<li>使用reflect包来进行反射</li>
+<li><code>reflect.TypeOf</code>和<code>reflect.ValueOf</code>用于返回被检查对象的类型和值，他们的参数类型都是interface{}</li>
+<li><code>reflect.ValueOf</code>返回的reflect.Value类型对象存在<code>Type()</code>返回类型，<code>Kind()</code>返回一个常量来表示类型，同样当你确定了reflect.Value的确切类型，有叫做Int()，Float()的方法来获取存储值，或者直接用<code>Interface</code>来获取空接口类型值</li>
+<li>通过反射来修改值时，可以通过对Value的CanSet方法来检查是否可设置，如果想要Value对象可设置，有时需要用指针来调用<code>ValueOf</code>，并且需要使用<code>Elem()</code>函数</li>
+<li>使用<code>Field(index
+int)</code>来获取结构体的成员，并且通过<code>SetInt</code>，<code>SetString</code>等接口设置值</li>
+<li>使用<code>NumField</code>来获取结构体有多少个成员</li>
+<li>使用<code>Method(index
+int)</code>来获取结构体的方法，并且使用<code>Call()</code>进行调用</li>
+</ol>
+<h2 id="接口与动态类型">11.12 接口与动态类型</h2>
+<ol type="1">
+<li><p>Go中没有类，数据（结构体或是一般类型）与方法是一种松耦合的正交关系</p></li>
+<li><p>Go中的接口都是必须提供一个方法集的实现，但是更灵活，都是隐式实现而不用显式声明，类型和接口之间也是松耦合的</p></li>
+<li><p>使用接口类型作为参数的函数，类似于动态类型，更看重对象能做什么，而不是对象是什么</p></li>
+<li><p>Go的动态方法调用，需要编译器静态检查的支持，变量赋值给接口类型变量时，编译器会检查类型是否实现了接口所有的函数。一般传入像<code>interface&#123;&#125;</code>这样的泛型变量，之后再用类型断言来进行变量的检查。</p></li>
+<li><p>接口的继承：当类型内嵌另一个实现了接口的类型指针时，该类型就可以使用另一个类型的所有接口方法，通过组合的方式实现了继承</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type Task struct &#123;
+	Command string
+	*log.Logger &#x2F;&#x2F; log.Logger实现了Log()方法
+&#125;
+
+task.Log() &#x2F;&#x2F; Task类型的实例调用Logger的Log()方法</code></pre></p></li>
+</ol>
+<h2 id="go中的面向对象总结">11.13 Go中的面向对象总结</h2>
+<p>面向对象中的重要概念：封装、继承、多态</p>
+<p>（之前读到的内容说继承是实现多态的一种方式 <a
+target="_blank" rel="noopener" href="https://www.notion.so/OOP-0c9b2e9623044a28b70d39fe959e34be">面向对象设计
+OOP</a>
+…不过这里就先不把问题复杂化了，先看Go语言如何实现面向对象的重要概念）</p>
+<p><strong>封装</strong>：简化的访问层级，首字母小写的标识符包内可见，首字母大写的标识符包外可见</p>
+<p><strong>继承</strong>：用内嵌类型这样“组合”的方式来实现</p>
+<p><strong>多态</strong>：用接口来实现，实现了接口规定方法集的类型实例，可以赋给接口类型变量</p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
         };
