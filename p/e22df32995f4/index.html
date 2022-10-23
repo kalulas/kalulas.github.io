@@ -20,29 +20,29 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="需求 目前项目组的开发工作流中，读取表格配置需要重复较多机械性的工作：首先是字段的名称和类型规定上有一定的心智负担，在多种使用渠道（如client，server）下可能要认为进行多次同步，其次是完成读表代码也比较模式化，理论上这些工作都可以由工具提供辅助并最终由工具生成代码。 功能概览  将表格的所有字段在工具中显示，由用户来自定义表格属性：字段的类型，用途和默认值 工具能够将表格属性以json形">
+<meta name="description" content="Chapter 13 错误处理与测试 错误处理与测试  Go通常在函数和方法中返回错误对象作为返回值，如果返回nil则没有错误发生 永远不要忽略错误，否则可能会导致程序崩溃！调用函数后必须检查错误 为了让代码更清晰，应该使用包含错误值变量的if 符合语句 if value, err :&#x3D; pack1.Func1(param1); err !&#x3D; nil &amp;#123; 	fmt.P">
 <meta property="og:type" content="article">
-<meta property="og:title" content="关于配置代码生成器的构想">
-<meta property="og:url" content="https://www.threegates.net/p/ab7a58fcc8d2/index.html">
+<meta property="og:title" content="《The Way to Go》Chapter13 错误处理与测试">
+<meta property="og:url" content="https://www.threegates.net/p/e22df32995f4/index.html">
 <meta property="og:site_name" content="ThreeGates">
-<meta property="og:description" content="需求 目前项目组的开发工作流中，读取表格配置需要重复较多机械性的工作：首先是字段的名称和类型规定上有一定的心智负担，在多种使用渠道（如client，server）下可能要认为进行多次同步，其次是完成读表代码也比较模式化，理论上这些工作都可以由工具提供辅助并最终由工具生成代码。 功能概览  将表格的所有字段在工具中显示，由用户来自定义表格属性：字段的类型，用途和默认值 工具能够将表格属性以json形">
+<meta property="og:description" content="Chapter 13 错误处理与测试 错误处理与测试  Go通常在函数和方法中返回错误对象作为返回值，如果返回nil则没有错误发生 永远不要忽略错误，否则可能会导致程序崩溃！调用函数后必须检查错误 为了让代码更清晰，应该使用包含错误值变量的if 符合语句 if value, err :&#x3D; pack1.Func1(param1); err !&#x3D; nil &amp;#123; 	fmt.P">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-12-11T06:15:36.000Z">
-<meta property="article:modified_time" content="2022-01-09T13:00:51.792Z">
+<meta property="article:published_time" content="2022-10-23T14:48:36.000Z">
+<meta property="article:modified_time" content="2022-10-23T14:57:55.376Z">
 <meta property="article:author" content="Edward Chen">
-<meta property="article:tag" content="记录">
-<meta property="article:tag" content="游戏开发工具">
+<meta property="article:tag" content="编程语言">
+<meta property="article:tag" content="Go">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://www.threegates.net/p/ab7a58fcc8d2/">
+<link rel="canonical" href="https://www.threegates.net/p/e22df32995f4/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.threegates.net/p/ab7a58fcc8d2/","path":"p/ab7a58fcc8d2/","title":"关于配置代码生成器的构想"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.threegates.net/p/e22df32995f4/","path":"p/e22df32995f4/","title":"《The Way to Go》Chapter13 错误处理与测试"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>关于配置代码生成器的构想 | ThreeGates</title>
+<title>《The Way to Go》Chapter13 错误处理与测试 | ThreeGates</title>
   
 
 
@@ -121,7 +121,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82"><span class="nav-number">1.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E6%A6%82%E8%A7%88"><span class="nav-number">2.</span> <span class="nav-text">功能概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">3.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3"><span class="nav-number">4.</span> <span class="nav-text">工具需求文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95"><span class="nav-number">5.</span> <span class="nav-text">开发记录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%BD%A2%E5%BC%8F%E8%AF%B4%E6%98%8E"><span class="nav-number">5.1.</span> <span class="nav-text">配置形式说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%85%E5%8A%9E%E4%BA%8B%E9%A1%B9"><span class="nav-number">5.2.</span> <span class="nav-text">待办事项</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter-13-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E4%B8%8E%E6%B5%8B%E8%AF%95"><span class="nav-number">1.</span> <span class="nav-text">Chapter 13 错误处理与测试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E4%B8%8E%E6%B5%8B%E8%AF%95"><span class="nav-number">1.1.</span> <span class="nav-text">错误处理与测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">错误处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%BC%82%E5%B8%B8%E5%92%8Cpanic"><span class="nav-number">1.3.</span> <span class="nav-text">运行时异常和panic</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8Epanic%E4%B8%AD%E6%81%A2%E5%A4%8Drecover"><span class="nav-number">1.4.</span> <span class="nav-text">从panic中恢复（recover）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8C%85%E4%B8%AD%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E5%92%8Cpanicking"><span class="nav-number">1.5.</span> <span class="nav-text">自定义包中的错误处理和panicking</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#go%E4%B8%AD%E7%9A%84%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%92%8C%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95"><span class="nav-number">1.6.</span> <span class="nav-text">Go中的单元测试和基准测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E5%88%86%E6%9E%90%E5%B9%B6%E4%BC%98%E5%8C%96go%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.7.</span> <span class="nav-text">性能调试：分析并优化Go程序</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -201,7 +201,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.threegates.net/p/ab7a58fcc8d2/">
+    <link itemprop="mainEntityOfPage" href="https://www.threegates.net/p/e22df32995f4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/disney-burger.jpg">
@@ -214,7 +214,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          关于配置代码生成器的构想
+          《The Way to Go》Chapter13 错误处理与测试
         </h1>
 
         <div class="post-meta-container">
@@ -224,27 +224,25 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2021-12-11 14:15:36" itemprop="dateCreated datePublished" datetime="2021-12-11T14:15:36+08:00">2021-12-11</time>
+      <time title="创建时间：2022-10-23 22:48:36 / 修改时间：22:57:55" itemprop="dateCreated datePublished" datetime="2022-10-23T22:48:36+08:00">2022-10-23</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-01-09 21:00:51" itemprop="dateModified" datetime="2022-01-09T21:00:51+08:00">2022-01-09</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E7%A8%BF/" itemprop="url" rel="index"><span itemprop="name">开发设计稿</span></a>
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">计算机科学</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E7%A8%BF/%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">工具</span></a>
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">编程语言</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Go/" itemprop="url" rel="index"><span itemprop="name">Go</span></a>
         </span>
     </span>
 
@@ -262,7 +260,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.7k</span>
+      <span>2.3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -280,133 +278,92 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h3 id="需求">需求</h3>
-<p>目前项目组的开发工作流中，读取表格配置需要重复较多机械性的工作：首先是字段的名称和类型规定上有一定的心智负担，在多种使用渠道（如client，server）下可能要认为进行多次同步，其次是完成读表代码也比较模式化，理论上这些工作都可以由工具提供辅助并最终由工具生成代码。</p>
-<h3 id="功能概览">功能概览</h3>
+        <h1 id="chapter-13-错误处理与测试">Chapter 13 错误处理与测试</h1>
+<h2 id="错误处理与测试">错误处理与测试</h2>
 <ol type="1">
-<li>将表格的所有字段在工具中显示，由用户来自定义表格属性：字段的类型，用途和默认值</li>
-<li>工具能够将表格属性以json形式序列化，以json文件形式进行持久化存储</li>
-<li>工具能够依据表格属性以及用户自定义的代码模板来生成读表代码</li>
+<li><p>Go通常在函数和方法中返回错误对象作为返回值，如果返回nil则没有错误发生</p></li>
+<li><p>永远不要忽略错误，否则可能会导致程序崩溃！调用函数后必须检查错误</p></li>
+<li><p>为了让代码更清晰，应该使用包含错误值变量的if 符合语句</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">if value, err :&#x3D; pack1.Func1(param1); err !&#x3D; nil &#123;
+	fmt.Printf(&quot;Error %s in pack1.Func1 with parameter %v&quot;, err.Error(), param1)
+	return    &#x2F;&#x2F; or: return err
+&#125; else &#123;
+	&#x2F;&#x2F; Process(value)
+&#125;</code></pre></p></li>
 </ol>
-<h3 id="定义">定义</h3>
-<p>表名：即配置文件的文件名</p>
-<p>字段：即配置表中有实际用途的一列</p>
-<p>读表代码：并不提供从资源文件中读取配置数据的功能，仅提供从配置数据解析出对应类型字段的功能</p>
 <span id="more"></span>
-<h3 id="工具需求文档">工具需求文档</h3>
-<p>csv只是配置的一种形式，希望能兼容所有表格类型的配置</p>
+<h2 id="错误处理">错误处理</h2>
 <ol type="1">
-<li>ConfigCodeGenLib：以dll的形式提供基础功能，包括
-<ul class="task-list">
-<li><input type="checkbox" disabled="" checked="" />
-指定表格的字段可以有有哪些用途（usage）和类型（type），包括值类型与容器类型</li>
-<li><input type="checkbox" disabled="" checked="" />
-指定生成代码模板目录和生成代码目录，生成读表代码时从这些目录读取</li>
-<li><input type="checkbox" disabled="" checked="" />
-指定用途（usage）和生成代码模板（template）/生成代码目录之间的关联</li>
-<li><input type="checkbox" disabled="" checked="" />
-传入配置文件路径，生成表名到字段的属性列表的映射</li>
-<li><input type="checkbox" disabled="" checked="" />
-在不提供json文件时，仅所有字段的属性都设置为初始值</li>
-<li><input type="checkbox" disabled="" checked="" />
-在提供json文件时，从json文件中读出字段的属性</li>
-<li><input type="checkbox" disabled="" />
-提供表名可以获取字段属性列表</li>
-<li><input type="checkbox" disabled="" />
-提供表名和字段名可以获得到字段的配置信息</li>
-<li><input type="checkbox" disabled="" />
-可以根据表名和字段名来设置字段的属性</li>
-<li><input type="checkbox" disabled="" checked="" />
-传入存储路径，可以将表格的配置属性以json形式写入</li>
-<li><input type="checkbox" disabled="" />
-指定表名和用途，可以根据生成代码模板来生成读表代码（这里需要提供特殊的语法解析，提供给用户一定的自由度，代码模板需要支持if，for等控制结构）</li>
-<li><input type="checkbox" disabled="" />
-...</li>
-</ul></li>
-<li>ConfigCodeGen：依赖ConfigCodeGenLib的图形化工具，提供功能包括
-<ol type="1">
-<li>提供配置目录，生成所有表格配置的选取列表</li>
-<li>选取表格后，显示字段的编辑界面</li>
-<li>保存字段属性的编辑结果，生成json配置文件</li>
-<li>生成特定用途（usage）下的生成代码</li>
-</ol></li>
+<li><p>使用errors包来创建一个错误类型对象，附带上错误信息</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">err :&#x3D; errors.New(&quot;math - square root of negative number&quot;)</code></pre></p></li>
+<li><p>自定义一个错误结构，除了低层级错误信息还附带一些额外信息；在不同错误可能发生的场景下，对错误使用类型断言/类型判断(type-switch)</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; PathError records an error and the operation and file path that caused it.
+type PathError struct &#123;
+	Op string    &#x2F;&#x2F; &quot;open&quot;, &quot;unlink&quot;, etc.
+	Path string  &#x2F;&#x2F; The associated file.
+	Err error  &#x2F;&#x2F; Returned by the system call. 低层级错误信息
+&#125;
+
+&#x2F;&#x2F;  err !&#x3D; nil
+if e, ok :&#x3D; err.(*os.PathError); ok &#123;
+	&#x2F;&#x2F; remedy situation
+&#125;</code></pre></p></li>
 </ol>
-<h3 id="开发记录">开发记录</h3>
-<p>github传送门：https://github.com/KaLuLas/ConfigCodeGen</p>
-<p>配置json文件存放于Solution根目录下，路径先用绝对路径写死在Console的启动参数里面</p>
+<h2 id="运行时异常和panic">运行时异常和panic</h2>
 <ol type="1">
-<li>ConfigCodeGenLib: .Net Standard Library
-<ol type="1">
-<li>Configuration：静态类，用于根据json文件配置工具环境</li>
-<li>ConfigManager：单例模式，用于根据配置文件和json文件生成运行时数据</li>
-<li>CodeGeneration.Generator：代码生成器</li>
-</ol></li>
-<li>ConfigCodeGenConsole: 调试Library用的Console类型project</li>
+<li>当发生了需要将程序停止的错误时，使用<code>panic()</code>产生一个中止程序的运行时错误。</li>
+<li>传递任意类型的参数给<code>panic()</code>，会在程序终止的信息中被打印出来。</li>
+<li><code>panic()</code>所在函数的后一行代码不会执行，但panic会把执行控制权交还给上层，并执行每层的defer，这个过程叫做<code>panicking</code></li>
 </ol>
-<h4 id="配置形式说明">配置形式说明</h4>
-<p>config.json</p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;
-    &quot;DataValueType&quot;: [&quot;int&quot;, &quot;float&quot;, &quot;boolean&quot;, &quot;string&quot;], &#x2F;&#x2F; 支持的值类型
-    &quot;DataCollectionType&quot;: [&quot;none&quot;, &quot;array&quot;, &quot;list&quot;], &#x2F;&#x2F; 支持的容器类型
-    &quot;ConfigJsonPath&quot;: &quot;Example\\ConfigJson\\&quot;, &#x2F;&#x2F; 相对路径，在该目录下存放描述配置的json
-    &quot;CodeTemplatePath&quot;: &quot;Example\\CodeTemplate\\&quot;, &#x2F;&#x2F; 相对路径，在该目录下代码生成模板
-    &quot;ConfigUsageType&quot;:&#123; &#x2F;&#x2F; 用户的自定义生成类型
-        &quot;client&quot;:&#123; 
-            &quot;CodeTemplateName&quot;: &quot;csharp.txt&quot;, &#x2F;&#x2F; 代码模板名
-            &quot;TargetPath&quot;: &quot;Example\\Generated-C#\\&quot;, &#x2F;&#x2F; 生成代码目录
-            &quot;TargetFileType&quot;: &quot;.cs&quot; &#x2F;&#x2F; 生成后缀名
-        &#125;,
-        &quot;server&quot;:&#123;
-            &quot;CodeTemplateName&quot;: &quot;go.txt&quot;,
-            &quot;TargetPath&quot;: &quot;Example\\Generated-go\\&quot;,
-            &quot;TargetFileType&quot;: &quot;.go&quot;
-        &#125;
-    &#125;
+<h2 id="从panic中恢复recover">从panic中恢复（recover）</h2>
+<p><code>recover</code>只能在<code>defer</code>修饰的函数中使用，如果发生了panic，那么<code>defer</code>修饰的函数会执行，且<code>recover</code>将得到对应的错误值，否者将返回nil并且没有其他效果</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">func protect(g func()) &#123;
+	defer func() &#123;
+		log.Println(&quot;done&quot;)
+		&#x2F;&#x2F; Println executes normally even if there is a panic
+		if err :&#x3D; recover(); err !&#x3D; nil &#123;
+			log.Printf(&quot;run time panic: %v&quot;, err)
+		&#125; &#x2F;&#x2F; 这里之后执行protect()之后的指令
+	&#125;()
+	log.Println(&quot;start&quot;)
+	g() &#x2F;&#x2F;   possible runtime-error
 &#125;</code></pre>
-<p>table.json（配置文件对应json）</p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;
-    &quot;ConfigName&quot; : &quot;AutoPickupConfig&quot;,
-    &quot;Usage&quot;      : [
-    ],
-    &quot;Attributes&quot; : [
-        &#123;
-            &quot;AttributeName&quot; : &quot;Id&quot;,
-            &quot;ValueType&quot;     : &quot;&quot;,
-            &quot;CollectionType&quot; : &quot;&quot;,
-            &quot;Usage&quot;          : [
-            ]
-        &#125;,
-        &#123;
-            &quot;AttributeName&quot; : &quot;Desc&quot;,
-            &quot;ValueType&quot;     : &quot;&quot;,
-            &quot;CollectionType&quot; : &quot;&quot;,
-            &quot;Usage&quot;          : [
-            ]
-        &#125;,
-        &#x2F;&#x2F; ...
-    ]
-&#125;</code></pre>
-<h4 id="待办事项">待办事项</h4>
-<ul class="task-list">
-<li><input type="checkbox" disabled="" checked="" />
-当json文件存在时，读取json构建Attributes的属性</li>
-<li><input type="checkbox" disabled="" checked="" />
-将日志器独立出来，方便后面添加回调</li>
-<li><input type="checkbox" disabled="" checked="" />
-表格的用途（usage）不是必要字段，可以考虑去掉</li>
-<li><input type="checkbox" disabled="" checked="" />
-提供自定义字段标记（tag）用于标记主键等</li>
-<li><input type="checkbox" disabled="" checked="" />
-根据现成的项目组读表代码写一个伪代码模板（见csharp.txt）</li>
-<li><input type="checkbox" disabled="" />
-根据伪代码模板给出终结/非终结符号与产生式</li>
-<li><input type="checkbox" disabled="" />
-实现代码模板的词法，语法分析</li>
-<li><input type="checkbox" disabled="" />
-实现代码模板中使用的各个功能</li>
-<li><input type="checkbox" disabled="" />
-用lua / 自实现语言来结合txt文本进行内容生成？ &lt;- here</li>
-</ul>
+<h2
+id="自定义包中的错误处理和panicking">自定义包中的错误处理和panicking</h2>
+<p>应该遵守的最佳实践：</p>
+<ol type="1">
+<li>在包内部，总是应该从panic中recover，不允许显式的超出包范围的panic()</li>
+<li>向包的调用者返回错误值（而不是panic）</li>
+</ol>
+<h2 id="go中的单元测试和基准测试">Go中的单元测试和基准测试</h2>
+<p>测试使用的工具是gotest，使用名为<code>testing</code>的包，测试代码和包中的业务代码是分开的，<code>_test</code>代码与程序不会被普通的Go编译器编译，只有gotest会编译所有的程序。</p>
+<p>使用<code>go
+test</code>来编译测试程序，对于通过的测试会打印PASS，对于<code>go test
+-test.bench=.*</code>会运行基准测试，调用N次并展示N次的值和执行的平均时间。</p>
+<h2 id="性能调试分析并优化go程序">性能调试：分析并优化Go程序</h2>
+<ol type="1">
+<li><p>unix命令行中可以使用<code>time</code>命令，输出程序的执行时间和内存占用等</p></li>
+<li><p>使用Go中的<code>testing</code>包进行基准测试，使用-cpuprofile /
+-memprofile 标志向指定文件写入CPU或内存使用情况报告</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">go test -x -v -cpuprofile&#x3D;prof.out -file x_test.go</code></pre></p></li>
+<li><p>可以在程序中引入 <code>runtime/pprof</code>
+包，这个包以pprof可视化工具需要的格式写入运行时报告数据。gopprof是Google
+pprofC++
+分析器的一个轻微变种，如果开启此性能分析，Go程序会以大约每秒100次的频率阻塞。为实现性能分析，你可以像下面这样添加代码：</p></li>
+</ol>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">var cpuprofile &#x3D; flag.String(&quot;cpuprofile&quot;, &quot;&quot;, &quot;write cpu profile to file&quot;)
+
+func main() &#123;
+	flag.Parse()
+	if *cpuprofile !&#x3D; &quot;&quot; &#123;
+		f, err :&#x3D; os.Create(*cpuprofile)
+		if err !&#x3D; nil &#123;
+			log.Fatal(err)
+		&#125;
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	&#125;
+...</code></pre>
 
     </div>
 
@@ -416,21 +373,21 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E8%AE%B0%E5%BD%95/" rel="tag"># 记录</a>
-              <a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" rel="tag"># 游戏开发工具</a>
+              <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" rel="tag"># 编程语言</a>
+              <a href="/tags/Go/" rel="tag"># Go</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/p/c9e58284d744/" rel="prev" title="使用hexo快速进行博客搭建">
-                  <i class="fa fa-chevron-left"></i> 使用hexo快速进行博客搭建
+                <a href="/p/e842888b11eb/" rel="prev" title="《The Way to Go》阅读笔记">
+                  <i class="fa fa-chevron-left"></i> 《The Way to Go》阅读笔记
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/27ad02cebc90/" rel="next" title="unity中的原生对象与托管对象">
-                  unity中的原生对象与托管对象 <i class="fa fa-chevron-right"></i>
+                <a href="/p/4aa7a9cb350b/" rel="next" title="《The Way to Go》Chapter14 协程">
+                  《The Way to Go》Chapter14 协程 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -510,7 +467,7 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
 
-<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"KaLuLas","repo":"personal-blog-comment","client_id":"5f00e4fd837e829d14ae","client_secret":"5d77d75f1d6c6d207c7897170d739630770bc92a","admin_user":"KaLuLas","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"2705f27182bed91a8b8929131db08285"}</script>
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"KaLuLas","repo":"personal-blog-comment","client_id":"5f00e4fd837e829d14ae","client_secret":"5d77d75f1d6c6d207c7897170d739630770bc92a","admin_user":"KaLuLas","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"109aba5f7e6c67cd7833966210887ab6"}</script>
 <script src="/js/third-party/comments/gitalk.js"></script>
 
 </body>
