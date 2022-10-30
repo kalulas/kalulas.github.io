@@ -20,29 +20,29 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="需求 目前项目组的开发工作流中，读取表格配置需要重复较多机械性的工作：首先是字段的名称和类型规定上有一定的心智负担，在多种使用渠道（如client，server）下可能要认为进行多次同步，其次是完成读表代码也比较模式化，理论上这些工作都可以由工具提供辅助并最终由工具生成代码。 功能概览  将表格的所有字段在工具中显示，由用户来自定义表格属性：字段的类型，用途和默认值 工具能够将表格属性以json形">
+<meta name="description" content="Chapter16 常见陷阱与错误 前15章提及了一些错误使用方式，就不再赘述，https:&#x2F;&#x2F;github.com&#x2F;unknwon&#x2F;the-way-to-go_ZH_CN&#x2F;blob&#x2F;master&#x2F;eBook&#x2F;16.0.md 中也都列出了，重要的是有以下最佳实践：  使用正确的方式初始化值是切片slice的一个映射map 使用逗号ok模式进行类型断言 使用一个工厂函数创建并实例化自己的定义的类型">
 <meta property="og:type" content="article">
-<meta property="og:title" content="关于配置代码生成器的构想">
-<meta property="og:url" content="https://www.threegates.net/p/ab7a58fcc8d2/index.html">
+<meta property="og:title" content="《The Way to Go》Chapter16 常见陷阱与错误">
+<meta property="og:url" content="https://www.threegates.net/p/c629bb3de01f/index.html">
 <meta property="og:site_name" content="ThreeGates">
-<meta property="og:description" content="需求 目前项目组的开发工作流中，读取表格配置需要重复较多机械性的工作：首先是字段的名称和类型规定上有一定的心智负担，在多种使用渠道（如client，server）下可能要认为进行多次同步，其次是完成读表代码也比较模式化，理论上这些工作都可以由工具提供辅助并最终由工具生成代码。 功能概览  将表格的所有字段在工具中显示，由用户来自定义表格属性：字段的类型，用途和默认值 工具能够将表格属性以json形">
+<meta property="og:description" content="Chapter16 常见陷阱与错误 前15章提及了一些错误使用方式，就不再赘述，https:&#x2F;&#x2F;github.com&#x2F;unknwon&#x2F;the-way-to-go_ZH_CN&#x2F;blob&#x2F;master&#x2F;eBook&#x2F;16.0.md 中也都列出了，重要的是有以下最佳实践：  使用正确的方式初始化值是切片slice的一个映射map 使用逗号ok模式进行类型断言 使用一个工厂函数创建并实例化自己的定义的类型">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-12-11T06:15:36.000Z">
-<meta property="article:modified_time" content="2022-01-09T13:00:51.792Z">
+<meta property="article:published_time" content="2022-10-30T10:30:30.000Z">
+<meta property="article:modified_time" content="2022-10-30T10:38:03.590Z">
 <meta property="article:author" content="Edward Chen 陈柏铭">
-<meta property="article:tag" content="记录">
-<meta property="article:tag" content="游戏开发工具">
+<meta property="article:tag" content="编程语言">
+<meta property="article:tag" content="Go">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://www.threegates.net/p/ab7a58fcc8d2/">
+<link rel="canonical" href="https://www.threegates.net/p/c629bb3de01f/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.threegates.net/p/ab7a58fcc8d2/","path":"p/ab7a58fcc8d2/","title":"关于配置代码生成器的构想"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.threegates.net/p/c629bb3de01f/","path":"p/c629bb3de01f/","title":"《The Way to Go》Chapter16 常见陷阱与错误"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>关于配置代码生成器的构想 | ThreeGates</title>
+<title>《The Way to Go》Chapter16 常见陷阱与错误 | ThreeGates</title>
   
 
 
@@ -121,7 +121,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82"><span class="nav-number">1.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E6%A6%82%E8%A7%88"><span class="nav-number">2.</span> <span class="nav-text">功能概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">3.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3"><span class="nav-number">4.</span> <span class="nav-text">工具需求文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95"><span class="nav-number">5.</span> <span class="nav-text">开发记录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%BD%A2%E5%BC%8F%E8%AF%B4%E6%98%8E"><span class="nav-number">5.1.</span> <span class="nav-text">配置形式说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%85%E5%8A%9E%E4%BA%8B%E9%A1%B9"><span class="nav-number">5.2.</span> <span class="nav-text">待办事项</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter16-%E5%B8%B8%E8%A7%81%E9%99%B7%E9%98%B1%E4%B8%8E%E9%94%99%E8%AF%AF"><span class="nav-number">1.</span> <span class="nav-text">Chapter16 常见陷阱与错误</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AF%E7%94%A8%E7%9F%AD%E5%A3%B0%E6%98%8E%E5%AF%BC%E8%87%B4%E5%8F%98%E9%87%8F%E8%A6%86%E7%9B%96"><span class="nav-number">1.0.1.</span> <span class="nav-text">误用短声明导致变量覆盖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AF%E7%94%A8%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.0.2.</span> <span class="nav-text">误用字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%9C%B0%E4%BD%BF%E7%94%A8defer"><span class="nav-number">1.0.3.</span> <span class="nav-text">错误地使用defer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E4%BD%BF%E7%94%A8new%E5%92%8Cmake"><span class="nav-number">1.0.4.</span> <span class="nav-text">何时使用new()和make()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E8%A6%81%E5%AF%B9%E6%8E%A5%E5%8F%A3%E4%BD%BF%E7%94%A8%E6%8C%87%E9%92%88%E7%B1%BB%E5%9E%8B%E5%87%8F%E5%B0%91%E5%AF%B9%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%BD%BF%E7%94%A8%E6%8C%87%E9%92%88"><span class="nav-number">1.0.5.</span> <span class="nav-text">不要对接口使用指针类型，减少对值类型使用指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AD%E5%8C%85%E4%B8%8E%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.0.6.</span> <span class="nav-text">闭包与协程的使用</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -201,7 +201,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.threegates.net/p/ab7a58fcc8d2/">
+    <link itemprop="mainEntityOfPage" href="https://www.threegates.net/p/c629bb3de01f/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/disney-burger.jpg">
@@ -214,7 +214,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          关于配置代码生成器的构想
+          《The Way to Go》Chapter16 常见陷阱与错误
         </h1>
 
         <div class="post-meta-container">
@@ -224,27 +224,25 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2021-12-11 14:15:36" itemprop="dateCreated datePublished" datetime="2021-12-11T14:15:36+08:00">2021-12-11</time>
+      <time title="创建时间：2022-10-30 18:30:30 / 修改时间：18:38:03" itemprop="dateCreated datePublished" datetime="2022-10-30T18:30:30+08:00">2022-10-30</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-01-09 21:00:51" itemprop="dateModified" datetime="2022-01-09T21:00:51+08:00">2022-01-09</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E7%A8%BF/" itemprop="url" rel="index"><span itemprop="name">开发设计稿</span></a>
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">计算机科学</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E7%A8%BF/%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">工具</span></a>
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">编程语言</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Go/" itemprop="url" rel="index"><span itemprop="name">Go</span></a>
         </span>
     </span>
 
@@ -262,14 +260,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.7k</span>
+      <span>1.3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -280,133 +278,72 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h3 id="需求">需求</h3>
-<p>目前项目组的开发工作流中，读取表格配置需要重复较多机械性的工作：首先是字段的名称和类型规定上有一定的心智负担，在多种使用渠道（如client，server）下可能要认为进行多次同步，其次是完成读表代码也比较模式化，理论上这些工作都可以由工具提供辅助并最终由工具生成代码。</p>
-<h3 id="功能概览">功能概览</h3>
+        <h1 id="chapter16-常见陷阱与错误">Chapter16 常见陷阱与错误</h1>
+<p>前15章提及了一些错误使用方式，就不再赘述，<a
+target="_blank" rel="noopener" href="https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/16.0.md">https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/16.0.md</a>
+中也都列出了，重要的是有以下最佳实践：</p>
 <ol type="1">
-<li>将表格的所有字段在工具中显示，由用户来自定义表格属性：字段的类型，用途和默认值</li>
-<li>工具能够将表格属性以json形式序列化，以json文件形式进行持久化存储</li>
-<li>工具能够依据表格属性以及用户自定义的代码模板来生成读表代码</li>
+<li>使用正确的方式初始化值是切片slice的一个映射map</li>
+<li>使用逗号ok模式进行类型断言</li>
+<li>使用一个工厂函数创建并实例化自己的定义的类型</li>
+<li>只有当想要改变结构体时，使用结构体指针作为方法接收者，否则都使用结构体值类型</li>
 </ol>
-<h3 id="定义">定义</h3>
-<p>表名：即配置文件的文件名</p>
-<p>字段：即配置表中有实际用途的一列</p>
-<p>读表代码：并不提供从资源文件中读取配置数据的功能，仅提供从配置数据解析出对应类型字段的功能</p>
 <span id="more"></span>
-<h3 id="工具需求文档">工具需求文档</h3>
-<p>csv只是配置的一种形式，希望能兼容所有表格类型的配置</p>
+<h3 id="误用短声明导致变量覆盖">误用短声明导致变量覆盖</h3>
+<p>如果在语句块内使用了短声明<code>:=</code>，那么语句块内的同名变量仅在语句块内有效，退出语句块后仍然是外部的变量生效</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">var remember bool &#x3D; false
+if something &#123;
+    remember :&#x3D; true &#x2F;&#x2F;错误
+&#125;
+&#x2F;&#x2F; 使用remember，得到的仍然是false
+
+&#x2F;&#x2F; ------
+&#x2F;&#x2F; 正确做法
+if something &#123;
+    remember &#x3D; true
+&#125;</code></pre>
+<h3 id="误用字符串">误用字符串</h3>
+<p>字符串是不可变的，使用 <code>a+=b</code>
+会导致大量内存开销和拷贝，考虑使用字符数组代替字符串，将字符串内容写入到缓存中，即
+<code>bytes.Buffer</code></p>
+<h3 id="错误地使用defer">错误地使用defer</h3>
+<p><code>defer</code>仅在函数返回时执行，在循环的结尾或者有限范围的代码内不会执行</p>
+<h3 id="何时使用new和make">何时使用new()和make()</h3>
+<p>重复内容：</p>
 <ol type="1">
-<li>ConfigCodeGenLib：以dll的形式提供基础功能，包括
-<ul class="task-list">
-<li><input type="checkbox" disabled="" checked="" />
-指定表格的字段可以有有哪些用途（usage）和类型（type），包括值类型与容器类型</li>
-<li><input type="checkbox" disabled="" checked="" />
-指定生成代码模板目录和生成代码目录，生成读表代码时从这些目录读取</li>
-<li><input type="checkbox" disabled="" checked="" />
-指定用途（usage）和生成代码模板（template）/生成代码目录之间的关联</li>
-<li><input type="checkbox" disabled="" checked="" />
-传入配置文件路径，生成表名到字段的属性列表的映射</li>
-<li><input type="checkbox" disabled="" checked="" />
-在不提供json文件时，仅所有字段的属性都设置为初始值</li>
-<li><input type="checkbox" disabled="" checked="" />
-在提供json文件时，从json文件中读出字段的属性</li>
-<li><input type="checkbox" disabled="" />
-提供表名可以获取字段属性列表</li>
-<li><input type="checkbox" disabled="" />
-提供表名和字段名可以获得到字段的配置信息</li>
-<li><input type="checkbox" disabled="" />
-可以根据表名和字段名来设置字段的属性</li>
-<li><input type="checkbox" disabled="" checked="" />
-传入存储路径，可以将表格的配置属性以json形式写入</li>
-<li><input type="checkbox" disabled="" />
-指定表名和用途，可以根据生成代码模板来生成读表代码（这里需要提供特殊的语法解析，提供给用户一定的自由度，代码模板需要支持if，for等控制结构）</li>
-<li><input type="checkbox" disabled="" />
-...</li>
-</ul></li>
-<li>ConfigCodeGen：依赖ConfigCodeGenLib的图形化工具，提供功能包括
-<ol type="1">
-<li>提供配置目录，生成所有表格配置的选取列表</li>
-<li>选取表格后，显示字段的编辑界面</li>
-<li>保存字段属性的编辑结果，生成json配置文件</li>
-<li>生成特定用途（usage）下的生成代码</li>
-</ol></li>
+<li>对切片slice、映射map、通道channel使用make()</li>
+<li>对数组、结构体和值类型，使用new()</li>
 </ol>
-<h3 id="开发记录">开发记录</h3>
-<p>github传送门：https://github.com/KaLuLas/ConfigCodeGen</p>
-<p>配置json文件存放于Solution根目录下，路径先用绝对路径写死在Console的启动参数里面</p>
-<ol type="1">
-<li>ConfigCodeGenLib: .Net Standard Library
-<ol type="1">
-<li>Configuration：静态类，用于根据json文件配置工具环境</li>
-<li>ConfigManager：单例模式，用于根据配置文件和json文件生成运行时数据</li>
-<li>CodeGeneration.Generator：代码生成器</li>
-</ol></li>
-<li>ConfigCodeGenConsole: 调试Library用的Console类型project</li>
-</ol>
-<h4 id="配置形式说明">配置形式说明</h4>
-<p>config.json</p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;
-    &quot;DataValueType&quot;: [&quot;int&quot;, &quot;float&quot;, &quot;boolean&quot;, &quot;string&quot;], &#x2F;&#x2F; 支持的值类型
-    &quot;DataCollectionType&quot;: [&quot;none&quot;, &quot;array&quot;, &quot;list&quot;], &#x2F;&#x2F; 支持的容器类型
-    &quot;ConfigJsonPath&quot;: &quot;Example\\ConfigJson\\&quot;, &#x2F;&#x2F; 相对路径，在该目录下存放描述配置的json
-    &quot;CodeTemplatePath&quot;: &quot;Example\\CodeTemplate\\&quot;, &#x2F;&#x2F; 相对路径，在该目录下代码生成模板
-    &quot;ConfigUsageType&quot;:&#123; &#x2F;&#x2F; 用户的自定义生成类型
-        &quot;client&quot;:&#123; 
-            &quot;CodeTemplateName&quot;: &quot;csharp.txt&quot;, &#x2F;&#x2F; 代码模板名
-            &quot;TargetPath&quot;: &quot;Example\\Generated-C#\\&quot;, &#x2F;&#x2F; 生成代码目录
-            &quot;TargetFileType&quot;: &quot;.cs&quot; &#x2F;&#x2F; 生成后缀名
-        &#125;,
-        &quot;server&quot;:&#123;
-            &quot;CodeTemplateName&quot;: &quot;go.txt&quot;,
-            &quot;TargetPath&quot;: &quot;Example\\Generated-go\\&quot;,
-            &quot;TargetFileType&quot;: &quot;.go&quot;
-        &#125;
+<h3
+id="不要对接口使用指针类型减少对值类型使用指针">不要对接口使用指针类型，减少对值类型使用指针</h3>
+<p>如使用接口的指针类型函数参数，这会导致编译错误 →
+接口本身已是一个指针</p>
+<p>尽管值类型的拷贝似乎是对内存的滥用，但值类型内存的栈上分配快速且开销小；如果传递值类型的指针会导致对象的创建，且移动到了堆上。</p>
+<h3 id="闭包与协程的使用">闭包与协程的使用</h3>
+<p>注意在循环中对索引值（index）使用闭包时，可能指向的是同一个变量，在闭包逻辑执行时，可能循环已经结束，得到的都是索引的最终值；可选的方法是创建局部变量（值复制），让闭包指向这些变量，或者用这些值启动协程</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">var values &#x3D; [5]int&#123;10, 11, 12, 13, 14&#125;
+func main() &#123;
+		&#x2F;&#x2F; ...
+    &#x2F;&#x2F; 版本 B：和 A 版本类似，但是通过调用闭包作为一个协程
+    for ix :&#x3D; range values &#123;
+        go func() &#123;
+            fmt.Print(ix, &quot; &quot;)
+        &#125;()
     &#125;
-&#125;</code></pre>
-<p>table.json（配置文件对应json）</p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;
-    &quot;ConfigName&quot; : &quot;AutoPickupConfig&quot;,
-    &quot;Usage&quot;      : [
-    ],
-    &quot;Attributes&quot; : [
-        &#123;
-            &quot;AttributeName&quot; : &quot;Id&quot;,
-            &quot;ValueType&quot;     : &quot;&quot;,
-            &quot;CollectionType&quot; : &quot;&quot;,
-            &quot;Usage&quot;          : [
-            ]
-        &#125;,
-        &#123;
-            &quot;AttributeName&quot; : &quot;Desc&quot;,
-            &quot;ValueType&quot;     : &quot;&quot;,
-            &quot;CollectionType&quot; : &quot;&quot;,
-            &quot;Usage&quot;          : [
-            ]
-        &#125;,
-        &#x2F;&#x2F; ...
-    ]
-&#125;</code></pre>
-<h4 id="待办事项">待办事项</h4>
-<ul class="task-list">
-<li><input type="checkbox" disabled="" checked="" />
-当json文件存在时，读取json构建Attributes的属性</li>
-<li><input type="checkbox" disabled="" checked="" />
-将日志器独立出来，方便后面添加回调</li>
-<li><input type="checkbox" disabled="" checked="" />
-表格的用途（usage）不是必要字段，可以考虑去掉</li>
-<li><input type="checkbox" disabled="" checked="" />
-提供自定义字段标记（tag）用于标记主键等</li>
-<li><input type="checkbox" disabled="" checked="" />
-根据现成的项目组读表代码写一个伪代码模板（见csharp.txt）</li>
-<li><input type="checkbox" disabled="" />
-根据伪代码模板给出终结/非终结符号与产生式</li>
-<li><input type="checkbox" disabled="" />
-实现代码模板的词法，语法分析</li>
-<li><input type="checkbox" disabled="" />
-实现代码模板中使用的各个功能</li>
-<li><input type="checkbox" disabled="" />
-用lua / 自实现语言来结合txt文本进行内容生成？ &lt;- here</li>
-</ul>
+    fmt.Println()
+    time.Sleep(5e9)
+		&#x2F;&#x2F; 4 4 4 4 4
+    &#x2F;&#x2F; 版本 C：正确的处理方式
+    for ix :&#x3D; range values &#123;
+        go func(ix interface&#123;&#125;) &#123;
+            fmt.Print(ix, &quot; &quot;)
+        &#125;(ix)
+    &#125;
+    fmt.Println()
+    time.Sleep(5e9)
+		&#x2F;&#x2F; 1 0 3 4 2
+&#125;
+</code></pre>
 
     </div>
 
@@ -416,22 +353,19 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E8%AE%B0%E5%BD%95/" rel="tag"># 记录</a>
-              <a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" rel="tag"># 游戏开发工具</a>
+              <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" rel="tag"># 编程语言</a>
+              <a href="/tags/Go/" rel="tag"># Go</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/p/c9e58284d744/" rel="prev" title="使用hexo快速进行博客搭建">
-                  <i class="fa fa-chevron-left"></i> 使用hexo快速进行博客搭建
+                <a href="/p/4aa7a9cb350b/" rel="prev" title="《The Way to Go》Chapter14 协程">
+                  <i class="fa fa-chevron-left"></i> 《The Way to Go》Chapter14 协程
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/27ad02cebc90/" rel="next" title="unity中的原生对象与托管对象">
-                  unity中的原生对象与托管对象 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -510,7 +444,7 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
 
-<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"KaLuLas","repo":"personal-blog-comment","client_id":"5f00e4fd837e829d14ae","client_secret":"5d77d75f1d6c6d207c7897170d739630770bc92a","admin_user":"KaLuLas","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"2705f27182bed91a8b8929131db08285"}</script>
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"KaLuLas","repo":"personal-blog-comment","client_id":"5f00e4fd837e829d14ae","client_secret":"5d77d75f1d6c6d207c7897170d739630770bc92a","admin_user":"KaLuLas","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"46d343acd81644bd4fb3734bfb6085a1"}</script>
 <script src="/js/third-party/comments/gitalk.js"></script>
 
 </body>
