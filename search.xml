@@ -639,8 +639,6 @@ Lock的现象。</p>
         }</script>]]></content>
       <categories>
         <category>计算机图形学</category>
-        <category>坐标变换</category>
-        <category>四元数</category>
       </categories>
       <tags>
         <tag>计算机图形学</tag>
@@ -794,7 +792,6 @@ AssetBundle中的应用以及实现原理，而没有太多涉及游戏运行时
         }</script>]]></content>
       <categories>
         <category>游戏开发</category>
-        <category>Unity</category>
         <category>引擎实现原理</category>
       </categories>
       <tags>
@@ -2124,6 +2121,138 @@ func main() &#123;
       <tags>
         <tag>编程语言</tag>
         <tag>Go</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生成3D模型在2DUI上的包围盒</title>
+    <url>/p/8d386e7b10e2/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="前言">前言</h1>
+<p>在实际开发中遇到了这个问题，需要判断一个3D模型在专用相机下的显示范围，将其展示在UI上。在这里记录一下实现步骤和代码。</p>
+<h1 id="实现方法">实现方法</h1>
+<ol type="1">
+<li>从需要渲染的对象上获取Renderer组件（对于复杂的3D模型，一般得到的是<code>MeshRenderer</code>）</li>
+<li>根据Renderer组件的bounds.center，bounds.extents计算出世界坐标的八个点</li>
+<li>使用拍摄渲染对象的Camera调用接口<code>UnityEngine.Camera.WorldToScreenPoint</code>，获取八个点的屏幕坐标</li>
+<li>遍历八个点，取出x方向与y方向的最大最小值，返回一个<code>Vector4(minX,
+minY, maxX,
+maxY)</code>，这个坐标即是3D模型在2DUI上的显示包围盒（bounds）</li>
+<li>最后在UI层调整包围矩形的位置和大小即可</li>
+</ol>
+<span id="more"></span>
+<h1 id="代码示例">代码示例</h1>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">     &#x2F;&#x2F; Static Toolkit Code
+     &#x2F;&#x2F;&#x2F; &lt;summary&gt;
+     &#x2F;&#x2F;&#x2F; calculate all worldCorners with bounds, and translate into screen point(minX, minY, maxX, maxY)
+     &#x2F;&#x2F;&#x2F; &lt;&#x2F;summary&gt;
+     &#x2F;&#x2F;&#x2F; &lt;param name&#x3D;&quot;target&quot;&gt;&lt;&#x2F;param&gt;
+     &#x2F;&#x2F;&#x2F; &lt;param name&#x3D;&quot;camera&quot;&gt;&lt;&#x2F;param&gt;
+     &#x2F;&#x2F;&#x2F; &lt;param name&#x3D;&quot;zTest&quot;&gt;if ture, x and y will be set to 0 if z less or equal than 0 if screen point&lt;&#x2F;param&gt;
+     &#x2F;&#x2F;&#x2F; &lt;returns&gt;&lt;&#x2F;returns&gt;
+     public static Vector4 GetScreenCorners(GameObject target, UnityEngine.Camera camera, bool zTest)
+     &#123;
+         var renderer &#x3D; target.GetComponentInChildren&lt;Renderer&gt;();
+         if (renderer &#x3D;&#x3D; null)
+         &#123;
+             return Vector4.zero;
+         &#125;
+
+         var bounds &#x3D; renderer.bounds;
+         var center &#x3D; bounds.center;
+         var extents &#x3D; bounds.extents;
+
+         var worldCorners &#x3D; new[]
+         &#123;
+             new Vector3(center.x - extents.x, center.y - extents.y, center.z - extents.z),
+             new Vector3(center.x - extents.x, center.y - extents.y, center.z + extents.z),
+             new Vector3(center.x - extents.x, center.y + extents.y, center.z - extents.z),
+             new Vector3(center.x - extents.x, center.y + extents.y, center.z + extents.z),
+             new Vector3(center.x + extents.x, center.y - extents.y, center.z - extents.z),
+             new Vector3(center.x + extents.x, center.y - extents.y, center.z + extents.z),
+             new Vector3(center.x + extents.x, center.y + extents.y, center.z - extents.z),
+             new Vector3(center.x + extents.x, center.y + extents.y, center.z + extents.z),
+         &#125;;
+
+         var screenCornerArray &#x3D; new Vector3[8];
+         for (int i &#x3D; 0; i &lt; 8; i++)
+         &#123;
+             screenCornerArray[i] &#x3D; camera.WorldToScreenPoint(worldCorners[i]);
+             if (zTest &amp;&amp; screenCornerArray[i].z &lt;&#x3D; 0)
+             &#123;
+                 screenCornerArray[i].x &#x3D; 0;
+                 screenCornerArray[i].y &#x3D; 0;
+             &#125;
+         &#125;
+         
+         var minX &#x3D; float.MaxValue;
+         var minY &#x3D; float.MaxValue;
+         var maxX &#x3D; float.MinValue;
+         var maxY &#x3D; float.MinValue;
+         for (int i &#x3D; 0; i &lt; screenCornerArray.Length; i++)
+         &#123;
+             var corner &#x3D; screenCornerArray[i];
+             if (corner.x &lt; minX)
+             &#123;
+                 minX &#x3D; corner.x;
+             &#125;
+
+             if (corner.x &gt; maxX)
+             &#123;
+                 maxX &#x3D; corner.x;
+             &#125;
+
+             if (corner.y &lt; minY)
+             &#123;
+                 minY &#x3D; corner.y;
+             &#125;
+
+             if (corner.y &gt; maxY)
+             &#123;
+                 maxY &#x3D; corner.y;
+             &#125;
+         &#125;
+         
+         return new Vector4(minX, minY, maxX, maxY);
+     &#125;
+
+     &#x2F;&#x2F; UI Controller Code: Size adjustment
+     private void OnTargetObjectScreenBoundsUpdate(object[] param)
+     &#123;
+         if (param.Length !&#x3D; 2)
+         &#123;
+             return;
+         &#125;
+
+         var targetName &#x3D; (string) param[0];
+         var vec4 &#x3D; (Vector4) param[1];
+         &#x2F;&#x2F; Debug.LogFormat(&quot;[ScreenCornerController.OnTargetObjectScreenBoundsUpdate] &#123;0&#125;&quot;, vec4);
+         var centerX &#x3D; (vec4[2] + vec4[0]) &#x2F; 2;
+         var centerY &#x3D; (vec4[3] + vec4[1]) &#x2F; 2;
+         var width &#x3D; vec4[2] - vec4[0];
+         var height &#x3D; vec4[3] - vec4[1];
+         
+         &#x2F;&#x2F; selectorImage&lt;UnityEngine.UI.Image&gt;
+         selectorImage.rectTransform.anchoredPosition &#x3D; new Vector2(centerX, centerY);
+         selectorImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
+         selectorImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+&#x2F;&#x2F; selectorText&lt;TMPro.TextMeshProUGUI&gt;
+         selectorText.text &#x3D; $&quot;&#123;targetName&#125;\nminX:&#123;vec4[0]&#125; minY:&#123;vec4[1]&#125;\nmaxX:&#123;vec4[2]&#125; maxY:&#123;vec4[3]&#125;&quot;;
+         selectorImage.gameObject.SetActive(width &gt; 0.001f &amp;&amp; height &gt; 0.001f);
+     &#125;</code></pre>
+<h1 id="效果示例">效果示例</h1>
+<a href="/p/8d386e7b10e2/3bounds2.gif" class="gallery-item"><img src="/p/8d386e7b10e2/3bounds2.gif" class="" title="UI包围盒的大小随着兔子模型绕z轴旋转而变化"></a>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>计算机图形学</category>
+      </categories>
+      <tags>
+        <tag>计算机图形学</tag>
+        <tag>游戏开发</tag>
+        <tag>Unity</tag>
       </tags>
   </entry>
 </search>
