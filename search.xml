@@ -2258,7 +2258,7 @@ func main() &#123;
   </entry>
   <entry>
     <title>向搜索引擎提交hexo站点sitemap</title>
-    <url>/p/1669d609a639/</url>
+    <url>/p/e620710b2f05/</url>
     <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1
 id="向搜索引擎提交hexo站点sitemap">向搜索引擎提交hexo站点sitemap</h1>
 <h2 id="简介">简介</h2>
@@ -2283,7 +2283,7 @@ sitemap:
 <ol start="3" type="1">
 <li><p>回到个人博客根目录，执行<code>hexo g -d</code>
 生成并部署（threegates是部署在github-pages上的），观察到以下输出则为生成成功</p>
-<a href="/p/1669d609a639/image-20221211173054833.png" class="gallery-item"><img src="/p/1669d609a639/image-20221211173054833.png" class="" title="命令数据结果"></a></li>
+<a href="/p/e620710b2f05/image-20221211173054833.png" class="gallery-item"><img src="/p/e620710b2f05/image-20221211173054833.png" class="" title="命令数据结果"></a></li>
 <li><p>等待github部署完成后，访问个人博客站点<code>url/sitemap.xml</code>能访问到对应xml内容即生成成功</p></li>
 </ol>
 <h2 id="提交sitemap">提交sitemap</h2>
@@ -2291,14 +2291,14 @@ sitemap:
 <ol type="1">
 <li><p>Google：<a href="https://search.google.com/search-console">Google
 Search Console</a> 需要先注册自己的站点资源，提交位置如下</p>
-<a href="/p/1669d609a639/image-20221211173607448.png" class="gallery-item"><img src="/p/1669d609a639/image-20221211173607448.png" class="" title="image-20221211173607448"></a></li>
+<a href="/p/e620710b2f05/image-20221211173607448.png" class="gallery-item"><img src="/p/e620710b2f05/image-20221211173607448.png" class="" title="image-20221211173607448"></a></li>
 <li><p>Bing：<a href="https://www.bing.com/webmasters/">Webmaster
 Tools</a> 同上，提交位置在</p>
-<a href="/p/1669d609a639/image-20221211173724782.png" class="gallery-item"><img src="/p/1669d609a639/image-20221211173724782.png" class="" title="image-20221211173724782"></a></li>
+<a href="/p/e620710b2f05/image-20221211173724782.png" class="gallery-item"><img src="/p/e620710b2f05/image-20221211173724782.png" class="" title="image-20221211173724782"></a></li>
 <li><p>百度：<a
 href="https://ziyuan.baidu.com/linksubmit/index">搜索资源平台</a>
 使用的是<strong>普通收录</strong>下的sitemap方法，也类似上面两种，填写xml文件地址即可</p>
-<a href="/p/1669d609a639/image-20221211173911628.png" class="gallery-item"><img src="/p/1669d609a639/image-20221211173911628.png" class="" title="image-20221211173911628"></a></li>
+<a href="/p/e620710b2f05/image-20221211173911628.png" class="gallery-item"><img src="/p/e620710b2f05/image-20221211173911628.png" class="" title="image-20221211173911628"></a></li>
 </ol>
 <h2 id="结语">结语</h2>
 <p>threegates的sitemap已经上传到上述几个搜索平台上了，未来几天会关注一下搜索得到的结果如何，如果有不错的结果再到这篇博客里同步一下。</p>
