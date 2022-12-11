@@ -2256,4 +2256,64 @@ func main() &#123;
         <tag>Go</tag>
       </tags>
   </entry>
+  <entry>
+    <title>向搜索引擎提交hexo站点sitemap</title>
+    <url>/p/1669d609a639/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1
+id="向搜索引擎提交hexo站点sitemap">向搜索引擎提交hexo站点sitemap</h1>
+<h2 id="简介">简介</h2>
+<p>为自己的站点创建sitemap，并通过搜索引擎提供的后台工具进行提交，可以增强个人网站的曝光率。这里简单记录一下hexo要如何生成sitemap，并提交到各大搜索引擎上。</p>
+<h2 id="生成sitemap">生成sitemap</h2>
+<ol type="1">
+<li><p>进入到个人hexo博客<code>_config.yml</code>同级目录下，使用npm安装<code>hexo-generator-sitemap</code>以及<code>hexo-generator-baidu-sitemap</code>，命令如下</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">npm install hexo-generator-sitemap --save
+npm install hexo-generator-baidu-sitemap --save</code></pre></li>
+<li><p>安装完成后，编辑博客的配置文件<code>_config.yml</code>，加入以下内容</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"># For generating google &#x2F; bing &#x2F; baidu sitemap↓
+Plugins:
+- hexo-generator-sitemap
+- hexo-generator-baidu-sitemap
+
+baidusitemap:
+  path: baidusitemap.xml # 百度用的sitemap生成在public根目录的此文件内
+sitemap:
+  path: sitemap.xml # 其他sitemap生成在public根目录的此文件内</code></pre></li>
+</ol>
+<span id="more"></span>
+<ol start="3" type="1">
+<li><p>回到个人博客根目录，执行<code>hexo g -d</code>
+生成并部署（threegates是部署在github-pages上的），观察到以下输出则为生成成功</p>
+<a href="/p/1669d609a639/image-20221211173054833.png" class="gallery-item"><img src="/p/1669d609a639/image-20221211173054833.png" class="" title="命令数据结果"></a></li>
+<li><p>等待github部署完成后，访问个人博客站点<code>url/sitemap.xml</code>能访问到对应xml内容即生成成功</p></li>
+</ol>
+<h2 id="提交sitemap">提交sitemap</h2>
+<p>几大常用搜索引擎对应的站点管理员后台，提交sitemap位置如下：</p>
+<ol type="1">
+<li><p>Google：<a href="https://search.google.com/search-console">Google
+Search Console</a> 需要先注册自己的站点资源，提交位置如下</p>
+<a href="/p/1669d609a639/image-20221211173607448.png" class="gallery-item"><img src="/p/1669d609a639/image-20221211173607448.png" class="" title="image-20221211173607448"></a></li>
+<li><p>Bing：<a href="https://www.bing.com/webmasters/">Webmaster
+Tools</a> 同上，提交位置在</p>
+<a href="/p/1669d609a639/image-20221211173724782.png" class="gallery-item"><img src="/p/1669d609a639/image-20221211173724782.png" class="" title="image-20221211173724782"></a></li>
+<li><p>百度：<a
+href="https://ziyuan.baidu.com/linksubmit/index">搜索资源平台</a>
+使用的是<strong>普通收录</strong>下的sitemap方法，也类似上面两种，填写xml文件地址即可</p>
+<a href="/p/1669d609a639/image-20221211173911628.png" class="gallery-item"><img src="/p/1669d609a639/image-20221211173911628.png" class="" title="image-20221211173911628"></a></li>
+</ol>
+<h2 id="结语">结语</h2>
+<p>threegates的sitemap已经上传到上述几个搜索平台上了，未来几天会关注一下搜索得到的结果如何，如果有不错的结果再到这篇博客里同步一下。</p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>博客搭建</category>
+        <category>hexo</category>
+      </categories>
+      <tags>
+        <tag>博客搭建</tag>
+      </tags>
+  </entry>
 </search>
