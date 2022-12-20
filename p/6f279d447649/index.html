@@ -20,29 +20,32 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="Chapter16 常见陷阱与错误 前15章提及了一些错误使用方式，就不再赘述，https:&#x2F;&#x2F;github.com&#x2F;unknwon&#x2F;the-way-to-go_ZH_CN&#x2F;blob&#x2F;master&#x2F;eBook&#x2F;16.0.md 中也都列出了，重要的是有以下最佳实践：  使用正确的方式初始化值是切片slice的一个映射map 使用逗号ok模式进行类型断言 使用一个工厂函数创建并实例化自己的定义的类型">
+<meta name="description" content="使用ssh进行GitHub身份验证 生成ssh key 使用ssh key进行连接&#x2F;身份校验，需要先生成公私密钥，将公钥放到对应代码托管平台上，并在连接时使用相应的私钥。github目前推荐的keygen签名算法，以及密钥对生成方式： $ ssh-keygen -t ed25519 -C &quot;your_email@example.com&quot; &gt; ... 生成公私密钥对后，将公">
 <meta property="og:type" content="article">
-<meta property="og:title" content="《The Way to Go》Chapter16 常见陷阱与错误">
-<meta property="og:url" content="https://www.threegates.net/p/c629bb3de01f/index.html">
+<meta property="og:title" content="使用SSH进行远端仓库身份验证">
+<meta property="og:url" content="https://www.threegates.net/p/6f279d447649/index.html">
 <meta property="og:site_name" content="ThreeGates">
-<meta property="og:description" content="Chapter16 常见陷阱与错误 前15章提及了一些错误使用方式，就不再赘述，https:&#x2F;&#x2F;github.com&#x2F;unknwon&#x2F;the-way-to-go_ZH_CN&#x2F;blob&#x2F;master&#x2F;eBook&#x2F;16.0.md 中也都列出了，重要的是有以下最佳实践：  使用正确的方式初始化值是切片slice的一个映射map 使用逗号ok模式进行类型断言 使用一个工厂函数创建并实例化自己的定义的类型">
+<meta property="og:description" content="使用ssh进行GitHub身份验证 生成ssh key 使用ssh key进行连接&#x2F;身份校验，需要先生成公私密钥，将公钥放到对应代码托管平台上，并在连接时使用相应的私钥。github目前推荐的keygen签名算法，以及密钥对生成方式： $ ssh-keygen -t ed25519 -C &quot;your_email@example.com&quot; &gt; ... 生成公私密钥对后，将公">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-10-30T10:30:30.000Z">
-<meta property="article:modified_time" content="2022-10-30T10:38:03.590Z">
+<meta property="og:image" content="https://www.threegates.net/p/6f279d447649/github-ssh-example.png">
+<meta property="article:published_time" content="2022-12-20T12:15:56.000Z">
+<meta property="article:modified_time" content="2022-12-20T12:53:17.385Z">
 <meta property="article:author" content="Edward Chen 陈柏铭">
-<meta property="article:tag" content="编程语言">
-<meta property="article:tag" content="Go">
+<meta property="article:tag" content="git">
+<meta property="article:tag" content="github">
+<meta property="article:tag" content="ssh">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.threegates.net/p/6f279d447649/github-ssh-example.png">
 
 
-<link rel="canonical" href="https://www.threegates.net/p/c629bb3de01f/">
+<link rel="canonical" href="https://www.threegates.net/p/6f279d447649/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.threegates.net/p/c629bb3de01f/","path":"p/c629bb3de01f/","title":"《The Way to Go》Chapter16 常见陷阱与错误"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.threegates.net/p/6f279d447649/","path":"p/6f279d447649/","title":"使用SSH进行远端仓库身份验证"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>《The Way to Go》Chapter16 常见陷阱与错误 | ThreeGates</title>
+<title>使用SSH进行远端仓库身份验证 | ThreeGates</title>
   
 
 
@@ -122,7 +125,8 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter16-%E5%B8%B8%E8%A7%81%E9%99%B7%E9%98%B1%E4%B8%8E%E9%94%99%E8%AF%AF"><span class="nav-number">1.</span> <span class="nav-text">Chapter16 常见陷阱与错误</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AF%E7%94%A8%E7%9F%AD%E5%A3%B0%E6%98%8E%E5%AF%BC%E8%87%B4%E5%8F%98%E9%87%8F%E8%A6%86%E7%9B%96"><span class="nav-number">1.0.1.</span> <span class="nav-text">误用短声明导致变量覆盖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AF%E7%94%A8%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.0.2.</span> <span class="nav-text">误用字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%9C%B0%E4%BD%BF%E7%94%A8defer"><span class="nav-number">1.0.3.</span> <span class="nav-text">错误地使用defer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E4%BD%BF%E7%94%A8new%E5%92%8Cmake"><span class="nav-number">1.0.4.</span> <span class="nav-text">何时使用new()和make()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E8%A6%81%E5%AF%B9%E6%8E%A5%E5%8F%A3%E4%BD%BF%E7%94%A8%E6%8C%87%E9%92%88%E7%B1%BB%E5%9E%8B%E5%87%8F%E5%B0%91%E5%AF%B9%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%BD%BF%E7%94%A8%E6%8C%87%E9%92%88"><span class="nav-number">1.0.5.</span> <span class="nav-text">不要对接口使用指针类型，减少对值类型使用指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AD%E5%8C%85%E4%B8%8E%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.0.6.</span> <span class="nav-text">闭包与协程的使用</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8ssh%E8%BF%9B%E8%A1%8Cgithub%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81"><span class="nav-number">1.</span> <span class="nav-text">使用ssh进行GitHub身份验证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90ssh-key"><span class="nav-number">1.1.</span> <span class="nav-text">生成ssh key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ssh-config-%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">ssh config 配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E9%80%9A%E8%BF%87https%E7%9A%84ssh%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.</span> <span class="nav-text">问题解决：通过HTTPS的SSH连接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87ssh-config%E5%BB%BA%E7%AB%8B%E5%9F%BA%E4%BA%8Ehttps%E7%9A%84ssh%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.1.</span> <span class="nav-text">通过ssh
+config建立基于https的ssh连接</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -202,7 +206,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.threegates.net/p/c629bb3de01f/">
+    <link itemprop="mainEntityOfPage" href="https://www.threegates.net/p/6f279d447649/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/disney-burger.jpg">
@@ -215,7 +219,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          《The Way to Go》Chapter16 常见陷阱与错误
+          使用SSH进行远端仓库身份验证
         </h1>
 
         <div class="post-meta-container">
@@ -227,7 +231,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2022-10-30 18:30:30 / 修改时间：18:38:03" itemprop="dateCreated datePublished" datetime="2022-10-30T18:30:30+08:00">2022-10-30</time>
+      <time title="创建时间：2022-12-20 20:15:56 / 修改时间：20:53:17" itemprop="dateCreated datePublished" datetime="2022-12-20T20:15:56+08:00">2022-12-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -235,15 +239,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">计算机科学</span></a>
+          <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" itemprop="url" rel="index"><span itemprop="name">工具使用指南</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">编程语言</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Go/" itemprop="url" rel="index"><span itemprop="name">Go</span></a>
+          <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/git/" itemprop="url" rel="index"><span itemprop="name">git</span></a>
         </span>
     </span>
 
@@ -261,14 +261,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.3k</span>
+      <span>2.5k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -279,73 +279,93 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="chapter16-常见陷阱与错误">Chapter16 常见陷阱与错误</h1>
-<p>前15章提及了一些错误使用方式，就不再赘述，<a
-target="_blank" rel="noopener" href="https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/16.0.md">https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/16.0.md</a>
-中也都列出了，重要的是有以下最佳实践：</p>
-<ol type="1">
-<li>使用正确的方式初始化值是切片slice的一个映射map</li>
-<li>使用逗号ok模式进行类型断言</li>
-<li>使用一个工厂函数创建并实例化自己的定义的类型</li>
-<li>只有当想要改变结构体时，使用结构体指针作为方法接收者，否则都使用结构体值类型</li>
-</ol>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h2 id="使用ssh进行github身份验证">使用ssh进行GitHub身份验证</h2>
+<h3 id="生成ssh-key">生成ssh key</h3>
+<p>使用ssh
+key进行连接/身份校验，需要先生成公私密钥，将公钥放到对应代码托管平台上，并在连接时使用相应的私钥。github目前推荐的keygen签名算法，以及<a
+target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">密钥对生成方式</a>：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh-keygen -t ed25519 -C &quot;your_email@example.com&quot;
+&gt; ...</code></pre>
+<p>生成公私密钥对后，将公钥放到对应代码托管平台上看起来像是下面这样。在进行ssh连接时，默认会使用唯一的私钥进行校验</p>
+<a href="/p/6f279d447649/github-ssh-example.png" class="gallery-item"><img src="/p/6f279d447649/github-ssh-example.png" class="" title="github用户信息页的Authentication Keys"></a>
+<p>同时，可以将github的public
+key存放到自己设备的<code>~/.ssh/known_hosts</code>下，就不会在初次使用ssh连接github时需要手动校验</p>
+<p><a
+target="_blank" rel="noopener" href="https://docs.github.com/cn/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints">GitHub
+的 SSH 密钥指纹 - GitHub Docs</a></p>
+<div class="note info"><p>😅 手动校验时会输出下述类似内容，你可能已经见过了…</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&gt; The authenticity of host &#39;[ssh.github.com]:443 ([140.82.112.36]:443)&#39; can&#39;t be established.&gt; ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF&#x2F;zLDA0zPMSvHdkr4UvCOqU...</code></pre>
+</div>
 <span id="more"></span>
-<h3 id="误用短声明导致变量覆盖">误用短声明导致变量覆盖</h3>
-<p>如果在语句块内使用了短声明<code>:=</code>，那么语句块内的同名变量仅在语句块内有效，退出语句块后仍然是外部的变量生效</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">var remember bool &#x3D; false
-if something &#123;
-    remember :&#x3D; true &#x2F;&#x2F;错误
-&#125;
-&#x2F;&#x2F; 使用remember，得到的仍然是false
+<h3 id="ssh-config-配置">ssh config 配置</h3>
+<p>在一台设备上使用ssh-keygen生成多个公私密钥，将公钥放到对应代码托管平台上，再通过编辑<code>~/.ssh/config</code>来决定什么情况下使用哪一个私钥进行校验。</p>
+<p>在一些情况下，还需要编辑.git目录下的config文件，来指定fetch /
+push时使用的url。</p>
+<p>生成多个公私钥对之后，使用config如此配置</p>
+<pre class="line-numbers language-text" data-language="text"><code class="language-text"># Default GitHub
+Host github.com # 使用&#96;ssh -T username@host&#96;中匹配的&#96;host&#96;会被解析为下面的HostName
+ HostName github.com
+ User git
+ PreferredAuthentications publickey
+ IdentityFile ~&#x2F;.ssh&#x2F;id_ed25519 # 对应的私钥
 
-&#x2F;&#x2F; ------
-&#x2F;&#x2F; 正确做法
-if something &#123;
-    remember &#x3D; true
-&#125;</code></pre>
-<h3 id="误用字符串">误用字符串</h3>
-<p>字符串是不可变的，使用 <code>a+=b</code>
-会导致大量内存开销和拷贝，考虑使用字符数组代替字符串，将字符串内容写入到缓存中，即
-<code>bytes.Buffer</code></p>
-<h3 id="错误地使用defer">错误地使用defer</h3>
-<p><code>defer</code>仅在函数返回时执行，在循环的结尾或者有限范围的代码内不会执行</p>
-<h3 id="何时使用new和make">何时使用new()和make()</h3>
-<p>重复内容：</p>
-<ol type="1">
-<li>对切片slice、映射map、通道channel使用make()</li>
-<li>对数组、结构体和值类型，使用new()</li>
-</ol>
-<h3
-id="不要对接口使用指针类型减少对值类型使用指针">不要对接口使用指针类型，减少对值类型使用指针</h3>
-<p>如使用接口的指针类型函数参数，这会导致编译错误 →
-接口本身已是一个指针</p>
-<p>尽管值类型的拷贝似乎是对内存的滥用，但值类型内存的栈上分配快速且开销小；如果传递值类型的指针会导致对象的创建，且移动到了堆上。</p>
-<h3 id="闭包与协程的使用">闭包与协程的使用</h3>
-<p>注意在循环中对索引值（index）使用闭包时，可能指向的是同一个变量，在闭包逻辑执行时，可能循环已经结束，得到的都是索引的最终值；可选的方法是创建局部变量（值复制），让闭包指向这些变量，或者用这些值启动协程</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">var values &#x3D; [5]int&#123;10, 11, 12, 13, 14&#125;
-func main() &#123;
-		&#x2F;&#x2F; ...
-    &#x2F;&#x2F; 版本 B：和 A 版本类似，但是通过调用闭包作为一个协程
-    for ix :&#x3D; range values &#123;
-        go func() &#123;
-            fmt.Print(ix, &quot; &quot;)
-        &#125;()
-    &#125;
-    fmt.Println()
-    time.Sleep(5e9)
-		&#x2F;&#x2F; 4 4 4 4 4
-    &#x2F;&#x2F; 版本 C：正确的处理方式
-    for ix :&#x3D; range values &#123;
-        go func(ix interface&#123;&#125;) &#123;
-            fmt.Print(ix, &quot; &quot;)
-        &#125;(ix)
-    &#125;
-    fmt.Println()
-    time.Sleep(5e9)
-		&#x2F;&#x2F; 1 0 3 4 2
-&#125;
-</code></pre>
+# Work GitHub 第二个账号
+Host work.github.com # 同理，这里用&#96;work.github.com&#96;匹配此规则，会被解析为github.com
+ HostName github.com
+ User git
+ PreferredAuthentications publickey
+ IdentityFile ~&#x2F;.ssh&#x2F;id_rsa_work # 指定对应的私钥</code></pre>
+<p>测试配置是否成功</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh -T git@github.com
+Hi stefano! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
 
+$ ssh -T git@work.github.com
+Hi stefano! You&#39;ve successfully authenticated, but GitHub does not provide shell access.</code></pre>
+<p>参考：</p>
+<p><a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/3225862/multiple-github-accounts-ssh-config">https://stackoverflow.com/questions/3225862/multiple-github-accounts-ssh-config</a></p>
+<h2 id="问题解决通过https的ssh连接">问题解决：通过HTTPS的SSH连接</h2>
+<p>在命令行执行<code>ssh -T
+git@github.com</code>时可能得到下述的输出结果</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ssh: connect to host github.com port 22: Connection timed out</code></pre>
+<p>这个问题可能是由于所在设备防火墙禁用了ssh连接（我也怀疑可能是因为墙导致github.com解析失败，因为同样使用port22的我自己的gitea是可以使用ssh连接/验证的，而我使用的clash只设置了http
+/ https的代理）。</p>
+<p>这个问题可以参考stackoverflow或者官方的解决方案：</p>
+<p><a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/15589682/ssh-connect-to-host-github-com-port-22-connection-timed-out">ssh:
+connect to host github.com port 22: Connection timed out</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port">Using
+SSH over the HTTPS port - GitHub Docs</a></p>
+<div class="note info"><p>💡 443是https使用的端口，顺带一提，http使用的端口是80。</p>
+<p>核心思路是github也部署了<code>ssh.github.com</code>这个域名，并借用443端口来建立ssh连接，因为大多数设备环境是不会禁用443端口的。</p>
+</div>
+<p>在命令行执行以下命令来测试是否可以使用此解决方案：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T -p 443 git@ssh.github.com
+&gt; Hi USERNAME! You&#39;ve successfully authenticated, but GitHub does not
+&gt; provide shell access.</code></pre>
+<p>如果得到了上述输出，现在你可以通过以下命令来clone你的仓库了：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ git clone ssh:&#x2F;&#x2F;git@ssh.github.com:443&#x2F;YOUR-USERNAME&#x2F;YOUR-REPOSITORY.git
+&gt; ...</code></pre>
+<h3 id="通过ssh-config建立基于https的ssh连接">通过ssh
+config建立基于https的ssh连接</h3>
+<p>想要更便利地使用443端口来建立与github的ssh连接，可以使用编辑<code>~/.ssh/config</code>的方式，在配置文件中加入/调整下述内容</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">Host github.com
+ Hostname ssh.github.com # 注意这里是另一个github域名
+ Port 443 # 使用443端口
+ User git</code></pre>
+<p>现在，你可以像之前一样使用ssh连接GitHub.com了</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T git@github.com
+&gt; Hi USERNAME! You&#39;ve successfully authenticated, but GitHub does not
+&gt; provide shell access.</code></pre>
+<p>P.S. gitlab也有类似的解决方案，可以参考：<a
+target="_blank" rel="noopener" href="https://about.gitlab.com/blog/2016/02/18/gitlab-dot-com-now-supports-an-alternate-git-plus-ssh-port/">gitlab使用https建立ssh连接</a></p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
     </div>
 
     
@@ -354,22 +374,20 @@ func main() &#123;
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" rel="tag"># 编程语言</a>
-              <a href="/tags/Go/" rel="tag"># Go</a>
+              <a href="/tags/git/" rel="tag"># git</a>
+              <a href="/tags/github/" rel="tag"># github</a>
+              <a href="/tags/ssh/" rel="tag"># ssh</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/p/4aa7a9cb350b/" rel="prev" title="《The Way to Go》Chapter14 协程">
-                  <i class="fa fa-chevron-left"></i> 《The Way to Go》Chapter14 协程
+                <a href="/p/e620710b2f05/" rel="prev" title="向搜索引擎提交hexo站点sitemap">
+                  <i class="fa fa-chevron-left"></i> 向搜索引擎提交hexo站点sitemap
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/8d386e7b10e2/" rel="next" title="如何在2DUI上生成3D模型的包围盒">
-                  如何在2DUI上生成3D模型的包围盒 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
