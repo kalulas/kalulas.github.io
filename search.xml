@@ -395,6 +395,106 @@ marked:
       </tags>
   </entry>
   <entry>
+    <title>使用SSH进行远端仓库身份验证</title>
+    <url>/p/6f279d447649/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h2 id="使用ssh进行github身份验证">使用ssh进行GitHub身份验证</h2>
+<h3 id="生成ssh-key">生成ssh key</h3>
+<p>使用ssh
+key进行连接/身份校验，需要先生成公私密钥，将公钥放到对应代码托管平台上，并在连接时使用相应的私钥。github目前推荐的keygen签名算法，以及<a
+href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">密钥对生成方式</a>：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh-keygen -t ed25519 -C &quot;your_email@example.com&quot;
+&gt; ...</code></pre>
+<p>生成公私密钥对后，将公钥放到对应代码托管平台上看起来像是下面这样。在进行ssh连接时，默认会使用唯一的私钥进行校验</p>
+<a href="/p/6f279d447649/github-ssh-example.png" class="gallery-item"><img src="/p/6f279d447649/github-ssh-example.png" class="" title="github用户信息页的Authentication Keys"></a>
+<p>同时，可以将github的public
+key存放到自己设备的<code>~/.ssh/known_hosts</code>下，就不会在初次使用ssh连接github时需要手动校验</p>
+<p><a
+href="https://docs.github.com/cn/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints">GitHub
+的 SSH 密钥指纹 - GitHub Docs</a></p>
+<div class="note info"><p>😅 手动校验时会输出下述类似内容，你可能已经见过了…</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&gt; The authenticity of host &#39;[ssh.github.com]:443 ([140.82.112.36]:443)&#39; can&#39;t be established.&gt; ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF&#x2F;zLDA0zPMSvHdkr4UvCOqU...</code></pre>
+</div>
+<span id="more"></span>
+<h3 id="ssh-config-配置">ssh config 配置</h3>
+<p>在一台设备上使用ssh-keygen生成多个公私密钥，将公钥放到对应代码托管平台上，再通过编辑<code>~/.ssh/config</code>来决定什么情况下使用哪一个私钥进行校验。</p>
+<p>在一些情况下，还需要编辑.git目录下的config文件，来指定fetch /
+push时使用的url。</p>
+<p>生成多个公私钥对之后，使用config如此配置</p>
+<pre class="line-numbers language-text" data-language="text"><code class="language-text"># Default GitHub
+Host github.com # 使用&#96;ssh -T username@host&#96;中匹配的&#96;host&#96;会被解析为下面的HostName
+ HostName github.com
+ User git
+ PreferredAuthentications publickey
+ IdentityFile ~&#x2F;.ssh&#x2F;id_ed25519 # 对应的私钥
+
+# Work GitHub 第二个账号
+Host work.github.com # 同理，这里用&#96;work.github.com&#96;匹配此规则，会被解析为github.com
+ HostName github.com
+ User git
+ PreferredAuthentications publickey
+ IdentityFile ~&#x2F;.ssh&#x2F;id_rsa_work # 指定对应的私钥</code></pre>
+<p>测试配置是否成功</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh -T git@github.com
+Hi stefano! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
+
+$ ssh -T git@work.github.com
+Hi stefano! You&#39;ve successfully authenticated, but GitHub does not provide shell access.</code></pre>
+<p>参考：</p>
+<p><a
+href="https://stackoverflow.com/questions/3225862/multiple-github-accounts-ssh-config">https://stackoverflow.com/questions/3225862/multiple-github-accounts-ssh-config</a></p>
+<h2 id="问题解决通过https的ssh连接">问题解决：通过HTTPS的SSH连接</h2>
+<p>在命令行执行<code>ssh -T
+git@github.com</code>时可能得到下述的输出结果</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ssh: connect to host github.com port 22: Connection timed out</code></pre>
+<p>这个问题可能是由于所在设备防火墙禁用了ssh连接（我也怀疑可能是因为墙导致github.com解析失败，因为同样使用port22的我自己的gitea是可以使用ssh连接/验证的，而我使用的clash只设置了http
+/ https的代理）。</p>
+<p>这个问题可以参考stackoverflow或者官方的解决方案：</p>
+<p><a
+href="https://stackoverflow.com/questions/15589682/ssh-connect-to-host-github-com-port-22-connection-timed-out">ssh:
+connect to host github.com port 22: Connection timed out</a></p>
+<p><a
+href="https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port">Using
+SSH over the HTTPS port - GitHub Docs</a></p>
+<div class="note info"><p>💡 443是https使用的端口，顺带一提，http使用的端口是80。</p>
+<p>核心思路是github也部署了<code>ssh.github.com</code>这个域名，并借用443端口来建立ssh连接，因为大多数设备环境是不会禁用443端口的。</p>
+</div>
+<p>在命令行执行以下命令来测试是否可以使用此解决方案：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T -p 443 git@ssh.github.com
+&gt; Hi USERNAME! You&#39;ve successfully authenticated, but GitHub does not
+&gt; provide shell access.</code></pre>
+<p>如果得到了上述输出，现在你可以通过以下命令来clone你的仓库了：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ git clone ssh:&#x2F;&#x2F;git@ssh.github.com:443&#x2F;YOUR-USERNAME&#x2F;YOUR-REPOSITORY.git
+&gt; ...</code></pre>
+<h3 id="通过ssh-config建立基于https的ssh连接">通过ssh
+config建立基于https的ssh连接</h3>
+<p>想要更便利地使用443端口来建立与github的ssh连接，可以使用编辑<code>~/.ssh/config</code>的方式，在配置文件中加入/调整下述内容</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">Host github.com
+ Hostname ssh.github.com # 注意这里是另一个github域名
+ Port 443 # 使用443端口
+ User git</code></pre>
+<p>现在，你可以像之前一样使用ssh连接GitHub.com了</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T git@github.com
+&gt; Hi USERNAME! You&#39;ve successfully authenticated, but GitHub does not
+&gt; provide shell access.</code></pre>
+<p>P.S. gitlab也有类似的解决方案，可以参考：<a
+href="https://about.gitlab.com/blog/2016/02/18/gitlab-dot-com-now-supports-an-alternate-git-plus-ssh-port/">gitlab使用https建立ssh连接</a></p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>工具使用指南</category>
+        <category>git</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+        <tag>github</tag>
+        <tag>ssh</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>通关后简单地评价一下P5R</title>
     <url>/p/a31f36d806f9/</url>
     <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h2 id="写在前面">写在前面</h2>
@@ -873,6 +973,166 @@ Lock的现象。</p>
         <tag>复数</tag>
         <tag>四元数</tag>
         <tag>万向节死锁</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>向搜索引擎提交hexo站点sitemap</title>
+    <url>/p/e620710b2f05/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1
+id="向搜索引擎提交hexo站点sitemap">向搜索引擎提交hexo站点sitemap</h1>
+<h2 id="简介">简介</h2>
+<p>为自己的站点创建sitemap，并通过搜索引擎提供的后台工具进行提交，可以增强个人网站的曝光率。这里简单记录一下hexo要如何生成sitemap，并提交到各大搜索引擎上。</p>
+<h2 id="生成sitemap">生成sitemap</h2>
+<ol type="1">
+<li><p>进入到个人hexo博客<code>_config.yml</code>同级目录下，使用npm安装<code>hexo-generator-sitemap</code>以及<code>hexo-generator-baidu-sitemap</code>，命令如下</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">npm install hexo-generator-sitemap --save
+npm install hexo-generator-baidu-sitemap --save</code></pre></li>
+<li><p>安装完成后，编辑博客的配置文件<code>_config.yml</code>，加入以下内容</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"># For generating google &#x2F; bing &#x2F; baidu sitemap↓
+Plugins:
+- hexo-generator-sitemap
+- hexo-generator-baidu-sitemap
+
+baidusitemap:
+  path: baidusitemap.xml # 百度用的sitemap生成在public根目录的此文件内
+sitemap:
+  path: sitemap.xml # 其他sitemap生成在public根目录的此文件内</code></pre></li>
+</ol>
+<span id="more"></span>
+<ol start="3" type="1">
+<li><p>回到个人博客根目录，执行<code>hexo g -d</code>
+生成并部署（threegates是部署在github-pages上的），观察到以下输出则为生成成功</p>
+<a href="/p/e620710b2f05/image-20221211173054833.png" class="gallery-item"><img src="/p/e620710b2f05/image-20221211173054833.png" class="" title="命令数据结果"></a></li>
+<li><p>等待github部署完成后，访问个人博客站点<code>url/sitemap.xml</code>能访问到对应xml内容即生成成功</p></li>
+</ol>
+<h2 id="提交sitemap">提交sitemap</h2>
+<p>几大常用搜索引擎对应的站点管理员后台，提交sitemap位置如下：</p>
+<ol type="1">
+<li><p>Google：<a href="https://search.google.com/search-console">Google
+Search Console</a> 需要先注册自己的站点资源，提交位置如下</p>
+<a href="/p/e620710b2f05/image-20221211173607448.png" class="gallery-item"><img src="/p/e620710b2f05/image-20221211173607448.png" class="" title="image-20221211173607448"></a></li>
+<li><p>Bing：<a href="https://www.bing.com/webmasters/">Webmaster
+Tools</a> 同上，提交位置在</p>
+<a href="/p/e620710b2f05/image-20221211173724782.png" class="gallery-item"><img src="/p/e620710b2f05/image-20221211173724782.png" class="" title="image-20221211173724782"></a></li>
+<li><p>百度：<a
+href="https://ziyuan.baidu.com/linksubmit/index">搜索资源平台</a>
+使用的是<strong>普通收录</strong>下的sitemap方法，也类似上面两种，填写xml文件地址即可</p>
+<a href="/p/e620710b2f05/image-20221211173911628.png" class="gallery-item"><img src="/p/e620710b2f05/image-20221211173911628.png" class="" title="image-20221211173911628"></a></li>
+</ol>
+<h2 id="结语">结语</h2>
+<p>threegates的sitemap已经上传到上述几个搜索平台上了，未来几天会关注一下搜索得到的结果如何，如果有不错的结果再到这篇博客里同步一下。</p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>博客搭建</category>
+        <category>hexo</category>
+      </categories>
+      <tags>
+        <tag>博客搭建</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《The Way to Go》Chapter13 错误处理与测试</title>
+    <url>/p/e22df32995f4/</url>
+    <content><![CDATA[<h1 id="chapter-13-错误处理与测试">Chapter 13 错误处理与测试</h1>
+<h2 id="错误处理与测试">错误处理与测试</h2>
+<ol type="1">
+<li><p>Go通常在函数和方法中返回错误对象作为返回值，如果返回nil则没有错误发生</p></li>
+<li><p>永远不要忽略错误，否则可能会导致程序崩溃！调用函数后必须检查错误</p></li>
+<li><p>为了让代码更清晰，应该使用包含错误值变量的if 符合语句</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">if value, err :&#x3D; pack1.Func1(param1); err !&#x3D; nil &#123;
+	fmt.Printf(&quot;Error %s in pack1.Func1 with parameter %v&quot;, err.Error(), param1)
+	return    &#x2F;&#x2F; or: return err
+&#125; else &#123;
+	&#x2F;&#x2F; Process(value)
+&#125;</code></pre></p></li>
+</ol>
+<span id="more"></span>
+<h2 id="错误处理">错误处理</h2>
+<ol type="1">
+<li><p>使用errors包来创建一个错误类型对象，附带上错误信息</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">err :&#x3D; errors.New(&quot;math - square root of negative number&quot;)</code></pre></p></li>
+<li><p>自定义一个错误结构，除了低层级错误信息还附带一些额外信息；在不同错误可能发生的场景下，对错误使用类型断言/类型判断(type-switch)</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; PathError records an error and the operation and file path that caused it.
+type PathError struct &#123;
+	Op string    &#x2F;&#x2F; &quot;open&quot;, &quot;unlink&quot;, etc.
+	Path string  &#x2F;&#x2F; The associated file.
+	Err error  &#x2F;&#x2F; Returned by the system call. 低层级错误信息
+&#125;
+
+&#x2F;&#x2F;  err !&#x3D; nil
+if e, ok :&#x3D; err.(*os.PathError); ok &#123;
+	&#x2F;&#x2F; remedy situation
+&#125;</code></pre></p></li>
+</ol>
+<h2 id="运行时异常和panic">运行时异常和panic</h2>
+<ol type="1">
+<li>当发生了需要将程序停止的错误时，使用<code>panic()</code>产生一个中止程序的运行时错误。</li>
+<li>传递任意类型的参数给<code>panic()</code>，会在程序终止的信息中被打印出来。</li>
+<li><code>panic()</code>所在函数的后一行代码不会执行，但panic会把执行控制权交还给上层，并执行每层的defer，这个过程叫做<code>panicking</code></li>
+</ol>
+<h2 id="从panic中恢复recover">从panic中恢复（recover）</h2>
+<p><code>recover</code>只能在<code>defer</code>修饰的函数中使用，如果发生了panic，那么<code>defer</code>修饰的函数会执行，且<code>recover</code>将得到对应的错误值，否者将返回nil并且没有其他效果</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">func protect(g func()) &#123;
+	defer func() &#123;
+		log.Println(&quot;done&quot;)
+		&#x2F;&#x2F; Println executes normally even if there is a panic
+		if err :&#x3D; recover(); err !&#x3D; nil &#123;
+			log.Printf(&quot;run time panic: %v&quot;, err)
+		&#125; &#x2F;&#x2F; 这里之后执行protect()之后的指令
+	&#125;()
+	log.Println(&quot;start&quot;)
+	g() &#x2F;&#x2F;   possible runtime-error
+&#125;</code></pre>
+<h2
+id="自定义包中的错误处理和panicking">自定义包中的错误处理和panicking</h2>
+<p>应该遵守的最佳实践：</p>
+<ol type="1">
+<li>在包内部，总是应该从panic中recover，不允许显式的超出包范围的panic()</li>
+<li>向包的调用者返回错误值（而不是panic）</li>
+</ol>
+<h2 id="go中的单元测试和基准测试">Go中的单元测试和基准测试</h2>
+<p>测试使用的工具是gotest，使用名为<code>testing</code>的包，测试代码和包中的业务代码是分开的，<code>_test</code>代码与程序不会被普通的Go编译器编译，只有gotest会编译所有的程序。</p>
+<p>使用<code>go
+test</code>来编译测试程序，对于通过的测试会打印PASS，对于<code>go test
+-test.bench=.*</code>会运行基准测试，调用N次并展示N次的值和执行的平均时间。</p>
+<h2 id="性能调试分析并优化go程序">性能调试：分析并优化Go程序</h2>
+<ol type="1">
+<li><p>unix命令行中可以使用<code>time</code>命令，输出程序的执行时间和内存占用等</p></li>
+<li><p>使用Go中的<code>testing</code>包进行基准测试，使用-cpuprofile /
+-memprofile 标志向指定文件写入CPU或内存使用情况报告</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">go test -x -v -cpuprofile&#x3D;prof.out -file x_test.go</code></pre></p></li>
+<li><p>可以在程序中引入 <code>runtime/pprof</code>
+包，这个包以pprof可视化工具需要的格式写入运行时报告数据。gopprof是Google
+pprofC++
+分析器的一个轻微变种，如果开启此性能分析，Go程序会以大约每秒100次的频率阻塞。为实现性能分析，你可以像下面这样添加代码：</p></li>
+</ol>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">var cpuprofile &#x3D; flag.String(&quot;cpuprofile&quot;, &quot;&quot;, &quot;write cpu profile to file&quot;)
+
+func main() &#123;
+	flag.Parse()
+	if *cpuprofile !&#x3D; &quot;&quot; &#123;
+		f, err :&#x3D; os.Create(*cpuprofile)
+		if err !&#x3D; nil &#123;
+			log.Fatal(err)
+		&#125;
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	&#125;
+...</code></pre>
+]]></content>
+      <categories>
+        <category>计算机科学</category>
+        <category>编程语言</category>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>编程语言</tag>
+        <tag>Go</tag>
       </tags>
   </entry>
   <entry>
@@ -2154,266 +2414,6 @@ AssetBundle中的应用以及实现原理，而没有太多涉及游戏运行时
       <tags>
         <tag>游戏开发</tag>
         <tag>Unity</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《The Way to Go》Chapter13 错误处理与测试</title>
-    <url>/p/e22df32995f4/</url>
-    <content><![CDATA[<h1 id="chapter-13-错误处理与测试">Chapter 13 错误处理与测试</h1>
-<h2 id="错误处理与测试">错误处理与测试</h2>
-<ol type="1">
-<li><p>Go通常在函数和方法中返回错误对象作为返回值，如果返回nil则没有错误发生</p></li>
-<li><p>永远不要忽略错误，否则可能会导致程序崩溃！调用函数后必须检查错误</p></li>
-<li><p>为了让代码更清晰，应该使用包含错误值变量的if 符合语句</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">if value, err :&#x3D; pack1.Func1(param1); err !&#x3D; nil &#123;
-	fmt.Printf(&quot;Error %s in pack1.Func1 with parameter %v&quot;, err.Error(), param1)
-	return    &#x2F;&#x2F; or: return err
-&#125; else &#123;
-	&#x2F;&#x2F; Process(value)
-&#125;</code></pre></p></li>
-</ol>
-<span id="more"></span>
-<h2 id="错误处理">错误处理</h2>
-<ol type="1">
-<li><p>使用errors包来创建一个错误类型对象，附带上错误信息</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">err :&#x3D; errors.New(&quot;math - square root of negative number&quot;)</code></pre></p></li>
-<li><p>自定义一个错误结构，除了低层级错误信息还附带一些额外信息；在不同错误可能发生的场景下，对错误使用类型断言/类型判断(type-switch)</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; PathError records an error and the operation and file path that caused it.
-type PathError struct &#123;
-	Op string    &#x2F;&#x2F; &quot;open&quot;, &quot;unlink&quot;, etc.
-	Path string  &#x2F;&#x2F; The associated file.
-	Err error  &#x2F;&#x2F; Returned by the system call. 低层级错误信息
-&#125;
-
-&#x2F;&#x2F;  err !&#x3D; nil
-if e, ok :&#x3D; err.(*os.PathError); ok &#123;
-	&#x2F;&#x2F; remedy situation
-&#125;</code></pre></p></li>
-</ol>
-<h2 id="运行时异常和panic">运行时异常和panic</h2>
-<ol type="1">
-<li>当发生了需要将程序停止的错误时，使用<code>panic()</code>产生一个中止程序的运行时错误。</li>
-<li>传递任意类型的参数给<code>panic()</code>，会在程序终止的信息中被打印出来。</li>
-<li><code>panic()</code>所在函数的后一行代码不会执行，但panic会把执行控制权交还给上层，并执行每层的defer，这个过程叫做<code>panicking</code></li>
-</ol>
-<h2 id="从panic中恢复recover">从panic中恢复（recover）</h2>
-<p><code>recover</code>只能在<code>defer</code>修饰的函数中使用，如果发生了panic，那么<code>defer</code>修饰的函数会执行，且<code>recover</code>将得到对应的错误值，否者将返回nil并且没有其他效果</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">func protect(g func()) &#123;
-	defer func() &#123;
-		log.Println(&quot;done&quot;)
-		&#x2F;&#x2F; Println executes normally even if there is a panic
-		if err :&#x3D; recover(); err !&#x3D; nil &#123;
-			log.Printf(&quot;run time panic: %v&quot;, err)
-		&#125; &#x2F;&#x2F; 这里之后执行protect()之后的指令
-	&#125;()
-	log.Println(&quot;start&quot;)
-	g() &#x2F;&#x2F;   possible runtime-error
-&#125;</code></pre>
-<h2
-id="自定义包中的错误处理和panicking">自定义包中的错误处理和panicking</h2>
-<p>应该遵守的最佳实践：</p>
-<ol type="1">
-<li>在包内部，总是应该从panic中recover，不允许显式的超出包范围的panic()</li>
-<li>向包的调用者返回错误值（而不是panic）</li>
-</ol>
-<h2 id="go中的单元测试和基准测试">Go中的单元测试和基准测试</h2>
-<p>测试使用的工具是gotest，使用名为<code>testing</code>的包，测试代码和包中的业务代码是分开的，<code>_test</code>代码与程序不会被普通的Go编译器编译，只有gotest会编译所有的程序。</p>
-<p>使用<code>go
-test</code>来编译测试程序，对于通过的测试会打印PASS，对于<code>go test
--test.bench=.*</code>会运行基准测试，调用N次并展示N次的值和执行的平均时间。</p>
-<h2 id="性能调试分析并优化go程序">性能调试：分析并优化Go程序</h2>
-<ol type="1">
-<li><p>unix命令行中可以使用<code>time</code>命令，输出程序的执行时间和内存占用等</p></li>
-<li><p>使用Go中的<code>testing</code>包进行基准测试，使用-cpuprofile /
--memprofile 标志向指定文件写入CPU或内存使用情况报告</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">go test -x -v -cpuprofile&#x3D;prof.out -file x_test.go</code></pre></p></li>
-<li><p>可以在程序中引入 <code>runtime/pprof</code>
-包，这个包以pprof可视化工具需要的格式写入运行时报告数据。gopprof是Google
-pprofC++
-分析器的一个轻微变种，如果开启此性能分析，Go程序会以大约每秒100次的频率阻塞。为实现性能分析，你可以像下面这样添加代码：</p></li>
-</ol>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">var cpuprofile &#x3D; flag.String(&quot;cpuprofile&quot;, &quot;&quot;, &quot;write cpu profile to file&quot;)
-
-func main() &#123;
-	flag.Parse()
-	if *cpuprofile !&#x3D; &quot;&quot; &#123;
-		f, err :&#x3D; os.Create(*cpuprofile)
-		if err !&#x3D; nil &#123;
-			log.Fatal(err)
-		&#125;
-		pprof.StartCPUProfile(f)
-		defer pprof.StopCPUProfile()
-	&#125;
-...</code></pre>
-]]></content>
-      <categories>
-        <category>计算机科学</category>
-        <category>编程语言</category>
-        <category>Go</category>
-      </categories>
-      <tags>
-        <tag>编程语言</tag>
-        <tag>Go</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>向搜索引擎提交hexo站点sitemap</title>
-    <url>/p/e620710b2f05/</url>
-    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1
-id="向搜索引擎提交hexo站点sitemap">向搜索引擎提交hexo站点sitemap</h1>
-<h2 id="简介">简介</h2>
-<p>为自己的站点创建sitemap，并通过搜索引擎提供的后台工具进行提交，可以增强个人网站的曝光率。这里简单记录一下hexo要如何生成sitemap，并提交到各大搜索引擎上。</p>
-<h2 id="生成sitemap">生成sitemap</h2>
-<ol type="1">
-<li><p>进入到个人hexo博客<code>_config.yml</code>同级目录下，使用npm安装<code>hexo-generator-sitemap</code>以及<code>hexo-generator-baidu-sitemap</code>，命令如下</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">npm install hexo-generator-sitemap --save
-npm install hexo-generator-baidu-sitemap --save</code></pre></li>
-<li><p>安装完成后，编辑博客的配置文件<code>_config.yml</code>，加入以下内容</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"># For generating google &#x2F; bing &#x2F; baidu sitemap↓
-Plugins:
-- hexo-generator-sitemap
-- hexo-generator-baidu-sitemap
-
-baidusitemap:
-  path: baidusitemap.xml # 百度用的sitemap生成在public根目录的此文件内
-sitemap:
-  path: sitemap.xml # 其他sitemap生成在public根目录的此文件内</code></pre></li>
-</ol>
-<span id="more"></span>
-<ol start="3" type="1">
-<li><p>回到个人博客根目录，执行<code>hexo g -d</code>
-生成并部署（threegates是部署在github-pages上的），观察到以下输出则为生成成功</p>
-<a href="/p/e620710b2f05/image-20221211173054833.png" class="gallery-item"><img src="/p/e620710b2f05/image-20221211173054833.png" class="" title="命令数据结果"></a></li>
-<li><p>等待github部署完成后，访问个人博客站点<code>url/sitemap.xml</code>能访问到对应xml内容即生成成功</p></li>
-</ol>
-<h2 id="提交sitemap">提交sitemap</h2>
-<p>几大常用搜索引擎对应的站点管理员后台，提交sitemap位置如下：</p>
-<ol type="1">
-<li><p>Google：<a href="https://search.google.com/search-console">Google
-Search Console</a> 需要先注册自己的站点资源，提交位置如下</p>
-<a href="/p/e620710b2f05/image-20221211173607448.png" class="gallery-item"><img src="/p/e620710b2f05/image-20221211173607448.png" class="" title="image-20221211173607448"></a></li>
-<li><p>Bing：<a href="https://www.bing.com/webmasters/">Webmaster
-Tools</a> 同上，提交位置在</p>
-<a href="/p/e620710b2f05/image-20221211173724782.png" class="gallery-item"><img src="/p/e620710b2f05/image-20221211173724782.png" class="" title="image-20221211173724782"></a></li>
-<li><p>百度：<a
-href="https://ziyuan.baidu.com/linksubmit/index">搜索资源平台</a>
-使用的是<strong>普通收录</strong>下的sitemap方法，也类似上面两种，填写xml文件地址即可</p>
-<a href="/p/e620710b2f05/image-20221211173911628.png" class="gallery-item"><img src="/p/e620710b2f05/image-20221211173911628.png" class="" title="image-20221211173911628"></a></li>
-</ol>
-<h2 id="结语">结语</h2>
-<p>threegates的sitemap已经上传到上述几个搜索平台上了，未来几天会关注一下搜索得到的结果如何，如果有不错的结果再到这篇博客里同步一下。</p>
-</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
-        var options = {
-            selector: '.gallery-item'
-        };
-        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
-        }</script>]]></content>
-      <categories>
-        <category>博客搭建</category>
-        <category>hexo</category>
-      </categories>
-      <tags>
-        <tag>博客搭建</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用SSH进行远端仓库身份验证</title>
-    <url>/p/6f279d447649/</url>
-    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h2 id="使用ssh进行github身份验证">使用ssh进行GitHub身份验证</h2>
-<h3 id="生成ssh-key">生成ssh key</h3>
-<p>使用ssh
-key进行连接/身份校验，需要先生成公私密钥，将公钥放到对应代码托管平台上，并在连接时使用相应的私钥。github目前推荐的keygen签名算法，以及<a
-href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">密钥对生成方式</a>：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh-keygen -t ed25519 -C &quot;your_email@example.com&quot;
-&gt; ...</code></pre>
-<p>生成公私密钥对后，将公钥放到对应代码托管平台上看起来像是下面这样。在进行ssh连接时，默认会使用唯一的私钥进行校验</p>
-<a href="/p/6f279d447649/github-ssh-example.png" class="gallery-item"><img src="/p/6f279d447649/github-ssh-example.png" class="" title="github用户信息页的Authentication Keys"></a>
-<p>同时，可以将github的public
-key存放到自己设备的<code>~/.ssh/known_hosts</code>下，就不会在初次使用ssh连接github时需要手动校验</p>
-<p><a
-href="https://docs.github.com/cn/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints">GitHub
-的 SSH 密钥指纹 - GitHub Docs</a></p>
-<div class="note info"><p>😅 手动校验时会输出下述类似内容，你可能已经见过了…</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&gt; The authenticity of host &#39;[ssh.github.com]:443 ([140.82.112.36]:443)&#39; can&#39;t be established.&gt; ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF&#x2F;zLDA0zPMSvHdkr4UvCOqU...</code></pre>
-</div>
-<span id="more"></span>
-<h3 id="ssh-config-配置">ssh config 配置</h3>
-<p>在一台设备上使用ssh-keygen生成多个公私密钥，将公钥放到对应代码托管平台上，再通过编辑<code>~/.ssh/config</code>来决定什么情况下使用哪一个私钥进行校验。</p>
-<p>在一些情况下，还需要编辑.git目录下的config文件，来指定fetch /
-push时使用的url。</p>
-<p>生成多个公私钥对之后，使用config如此配置</p>
-<pre class="line-numbers language-text" data-language="text"><code class="language-text"># Default GitHub
-Host github.com # 使用&#96;ssh -T username@host&#96;中匹配的&#96;host&#96;会被解析为下面的HostName
- HostName github.com
- User git
- PreferredAuthentications publickey
- IdentityFile ~&#x2F;.ssh&#x2F;id_ed25519 # 对应的私钥
-
-# Work GitHub 第二个账号
-Host work.github.com # 同理，这里用&#96;work.github.com&#96;匹配此规则，会被解析为github.com
- HostName github.com
- User git
- PreferredAuthentications publickey
- IdentityFile ~&#x2F;.ssh&#x2F;id_rsa_work # 指定对应的私钥</code></pre>
-<p>测试配置是否成功</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh -T git@github.com
-Hi stefano! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
-
-$ ssh -T git@work.github.com
-Hi stefano! You&#39;ve successfully authenticated, but GitHub does not provide shell access.</code></pre>
-<p>参考：</p>
-<p><a
-href="https://stackoverflow.com/questions/3225862/multiple-github-accounts-ssh-config">https://stackoverflow.com/questions/3225862/multiple-github-accounts-ssh-config</a></p>
-<h2 id="问题解决通过https的ssh连接">问题解决：通过HTTPS的SSH连接</h2>
-<p>在命令行执行<code>ssh -T
-git@github.com</code>时可能得到下述的输出结果</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ssh: connect to host github.com port 22: Connection timed out</code></pre>
-<p>这个问题可能是由于所在设备防火墙禁用了ssh连接（我也怀疑可能是因为墙导致github.com解析失败，因为同样使用port22的我自己的gitea是可以使用ssh连接/验证的，而我使用的clash只设置了http
-/ https的代理）。</p>
-<p>这个问题可以参考stackoverflow或者官方的解决方案：</p>
-<p><a
-href="https://stackoverflow.com/questions/15589682/ssh-connect-to-host-github-com-port-22-connection-timed-out">ssh:
-connect to host github.com port 22: Connection timed out</a></p>
-<p><a
-href="https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port">Using
-SSH over the HTTPS port - GitHub Docs</a></p>
-<div class="note info"><p>💡 443是https使用的端口，顺带一提，http使用的端口是80。</p>
-<p>核心思路是github也部署了<code>ssh.github.com</code>这个域名，并借用443端口来建立ssh连接，因为大多数设备环境是不会禁用443端口的。</p>
-</div>
-<p>在命令行执行以下命令来测试是否可以使用此解决方案：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T -p 443 git@ssh.github.com
-&gt; Hi USERNAME! You&#39;ve successfully authenticated, but GitHub does not
-&gt; provide shell access.</code></pre>
-<p>如果得到了上述输出，现在你可以通过以下命令来clone你的仓库了：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ git clone ssh:&#x2F;&#x2F;git@ssh.github.com:443&#x2F;YOUR-USERNAME&#x2F;YOUR-REPOSITORY.git
-&gt; ...</code></pre>
-<h3 id="通过ssh-config建立基于https的ssh连接">通过ssh
-config建立基于https的ssh连接</h3>
-<p>想要更便利地使用443端口来建立与github的ssh连接，可以使用编辑<code>~/.ssh/config</code>的方式，在配置文件中加入/调整下述内容</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">Host github.com
- Hostname ssh.github.com # 注意这里是另一个github域名
- Port 443 # 使用443端口
- User git</code></pre>
-<p>现在，你可以像之前一样使用ssh连接GitHub.com了</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T git@github.com
-&gt; Hi USERNAME! You&#39;ve successfully authenticated, but GitHub does not
-&gt; provide shell access.</code></pre>
-<p>P.S. gitlab也有类似的解决方案，可以参考：<a
-href="https://about.gitlab.com/blog/2016/02/18/gitlab-dot-com-now-supports-an-alternate-git-plus-ssh-port/">gitlab使用https建立ssh连接</a></p>
-</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
-        var options = {
-            selector: '.gallery-item'
-        };
-        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
-        }</script>]]></content>
-      <categories>
-        <category>工具使用指南</category>
-        <category>git</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
-        <tag>github</tag>
-        <tag>ssh</tag>
       </tags>
   </entry>
 </search>
