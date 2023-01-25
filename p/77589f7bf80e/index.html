@@ -21,14 +21,14 @@
 
 
 
-<link rel="canonical" href="https://www.threegates.net/p/6f279d447649/">
+<link rel="canonical" href="https://www.threegates.net/p/77589f7bf80e/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.threegates.net/p/6f279d447649/","path":"p/6f279d447649/","title":"使用SSH进行远端仓库身份验证"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.threegates.net/p/77589f7bf80e/","path":"p/77589f7bf80e/","title":"《CLR via C#》Chapter4 类型基础"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>使用SSH进行远端仓库身份验证 | ThreeGates</title>
+<title>《CLR via C#》Chapter4 类型基础 | ThreeGates</title>
   
 
 
@@ -128,8 +128,8 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8ssh%E8%BF%9B%E8%A1%8Cgithub%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81"><span class="nav-number">1.</span> <span class="nav-text">使用ssh进行GitHub身份验证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90ssh-key"><span class="nav-number">1.1.</span> <span class="nav-text">生成ssh key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ssh-config-%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">ssh config 配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E9%80%9A%E8%BF%87https%E7%9A%84ssh%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.</span> <span class="nav-text">问题解决：通过HTTPS的SSH连接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87ssh-config%E5%BB%BA%E7%AB%8B%E5%9F%BA%E4%BA%8Ehttps%E7%9A%84ssh%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.1.</span> <span class="nav-text">通过ssh
-config建立基于https的ssh连接</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E7%B1%BB%E5%9E%8B%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">第四章 类型基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%80%E6%9C%89%E7%B1%BB%E5%9E%8B%E9%83%BD%E4%BB%8Esystem.object%E6%B4%BE%E7%94%9F"><span class="nav-number">1.1.</span> <span class="nav-text">4.1
+所有类型都从System.Object派生</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#gethashcode-%E4%B8%8E-equals"><span class="nav-number">1.1.1.</span> <span class="nav-text">GetHashCode() 与 Equals()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#new%E6%93%8D%E4%BD%9C%E7%AC%A6%E4%BC%9A%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.2.</span> <span class="nav-text">new操作符会做什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.2.</span> <span class="nav-text">4.2 类型转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E7%9B%B8%E4%BA%92%E5%85%B3%E7%B3%BB"><span class="nav-number">1.3.</span> <span class="nav-text">4.4 运行时的相互关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.3.1.</span> <span class="nav-text">类型对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%AE%9E%E4%BE%8B%E7%9A%84%E5%88%9B%E5%BB%BA%E4%B8%8E%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="nav-number">1.3.2.</span> <span class="nav-text">类型实例的创建与方法调用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E7%9A%84%E8%B0%83%E7%94%A8"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">静态方法的调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%9E%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E7%9A%84%E8%B0%83%E7%94%A8"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">非静态方法的调用</span></a></li></ol></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -196,7 +196,7 @@ config建立基于https的ssh连接</span></a></li></ol></li></ol></div>
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.threegates.net/p/6f279d447649/">
+    <link itemprop="mainEntityOfPage" href="https://www.threegates.net/p/77589f7bf80e/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/disney-burger.jpg">
@@ -209,12 +209,12 @@ config建立基于https的ssh连接</span></a></li></ol></li></ol></div>
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="使用SSH进行远端仓库身份验证 | ThreeGates">
+      <meta itemprop="name" content="《CLR via C#》Chapter4 类型基础 | ThreeGates">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          使用SSH进行远端仓库身份验证
+          《CLR via C#》Chapter4 类型基础
         </h1>
 
         <div class="post-meta-container">
@@ -226,7 +226,7 @@ config建立基于https的ssh连接</span></a></li></ol></li></ol></div>
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2022-12-20 20:15:56 / 修改时间：20:53:17" itemprop="dateCreated datePublished" datetime="2022-12-20T20:15:56+08:00">2022-12-20</time>
+      <time title="创建时间：2023-01-25 17:05:02 / 修改时间：17:41:13" itemprop="dateCreated datePublished" datetime="2023-01-25T17:05:02+08:00">2023-01-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -234,11 +234,15 @@ config建立基于https的ssh连接</span></a></li></ol></li></ol></div>
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" itemprop="url" rel="index"><span itemprop="name">工具使用指南</span></a>
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">计算机科学</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/git/" itemprop="url" rel="index"><span itemprop="name">git</span></a>
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">编程语言</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/C/" itemprop="url" rel="index"><span itemprop="name">C#</span></a>
         </span>
     </span>
 
@@ -256,14 +260,14 @@ config建立基于https的ssh连接</span></a></li></ol></li></ol></div>
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.5k</span>
+      <span>3.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -274,87 +278,124 @@ config建立基于https的ssh连接</span></a></li></ol></li></ol></div>
     
     
     <div class="post-body" itemprop="articleBody">
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h2 id="使用ssh进行github身份验证">使用ssh进行GitHub身份验证</h2>
-<h3 id="生成ssh-key">生成ssh key</h3>
-<p>使用ssh
-key进行连接/身份校验，需要先生成公私密钥，将公钥放到对应代码托管平台上，并在连接时使用相应的私钥。github目前推荐的keygen签名算法，以及<a
-target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">密钥对生成方式</a>：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh-keygen -t ed25519 -C &quot;your_email@example.com&quot;
-&gt; ...</code></pre>
-<p>生成公私密钥对后，将公钥放到对应代码托管平台上看起来像是下面这样。在进行ssh连接时，默认会使用唯一的私钥进行校验</p>
-<a href="/p/6f279d447649/github-ssh-example.png" class="gallery-item"><img src="/p/6f279d447649/github-ssh-example.png" class="" title="github用户信息页的Authentication Keys"></a>
-<p>同时，可以将github的public
-key存放到自己设备的<code>~/.ssh/known_hosts</code>下，就不会在初次使用ssh连接github时需要手动校验</p>
-<p><a
-target="_blank" rel="noopener" href="https://docs.github.com/cn/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints">GitHub
-的 SSH 密钥指纹 - GitHub Docs</a></p>
-<div class="note info"><p>😅 手动校验时会输出下述类似内容，你可能已经见过了…</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">&gt; The authenticity of host &#39;[ssh.github.com]:443 ([140.82.112.36]:443)&#39; can&#39;t be established.&gt; ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF&#x2F;zLDA0zPMSvHdkr4UvCOqU...</code></pre>
-</div>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="第四章-类型基础">第四章 类型基础</h1>
+<h2 id="所有类型都从system.object派生">4.1
+所有类型都从System.Object派生</h2>
+<h3 id="gethashcode-与-equals">GetHashCode() 与 Equals()</h3>
+<p>如果对象要在哈希表集合中用作键使用，那么应该重写GetHashCode方法；如果两个对象具有相同的值，那么Equals应该返回true。</p>
+<p>Object类的Equals和GetHashCode具体实现都是internalcall，由CLR实现，Equals源码实现可参考以下：</p>
 <span id="more"></span>
-<h3 id="ssh-config-配置">ssh config 配置</h3>
-<p>在一台设备上使用ssh-keygen生成多个公私密钥，将公钥放到对应代码托管平台上，再通过编辑<code>~/.ssh/config</code>来决定什么情况下使用哪一个私钥进行校验。</p>
-<p>在一些情况下，还需要编辑.git目录下的config文件，来指定fetch /
-push时使用的url。</p>
-<p>生成多个公私钥对之后，使用config如此配置</p>
-<pre class="line-numbers language-text" data-language="text"><code class="language-text"># Default GitHub
-Host github.com # 使用&#96;ssh -T username@host&#96;中匹配的&#96;host&#96;会被解析为下面的HostName
- HostName github.com
- User git
- PreferredAuthentications publickey
- IdentityFile ~&#x2F;.ssh&#x2F;id_ed25519 # 对应的私钥
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">&#x2F;&#x2F; https:&#x2F;&#x2F;stackoverflow.com&#x2F;questions&#x2F;384294&#x2F;where-is-the-implementation-of-internalequalsobject-obja-object-objb
+&#x2F;&#x2F; sscli20&#x2F;clr&#x2F;src&#x2F;vm&#x2F;comobject.cpp
+&#x2F;&#x2F; 不过这份实现很老了，简单参考即可
 
-# Work GitHub 第二个账号
-Host work.github.com # 同理，这里用&#96;work.github.com&#96;匹配此规则，会被解析为github.com
- HostName github.com
- User git
- PreferredAuthentications publickey
- IdentityFile ~&#x2F;.ssh&#x2F;id_rsa_work # 指定对应的私钥</code></pre>
-<p>测试配置是否成功</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T git@github.com
-Hi stefano! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
+FCIMPL2(FC_BOOL_RET, ObjectNative::Equals, Object *pThisRef, Object *pCompareRef)
+&#123;
+    CONTRACTL
+    &#123;
+        THROWS;
+        DISABLED(GC_NOTRIGGER);
+        INJECT_FAULT(FCThrow(kOutOfMemoryException););
+        MODE_COOPERATIVE;
+        SO_TOLERANT;          
+    &#125;
+    CONTRACTL_END;
 
-$ ssh -T git@work.github.com
-Hi stefano! You&#39;ve successfully authenticated, but GitHub does not provide shell access.</code></pre>
-<p>参考：</p>
-<p><a
-target="_blank" rel="noopener" href="https://stackoverflow.com/questions/3225862/multiple-github-accounts-ssh-config">https://stackoverflow.com/questions/3225862/multiple-github-accounts-ssh-config</a></p>
-<h2 id="问题解决通过https的ssh连接">问题解决：通过HTTPS的SSH连接</h2>
-<p>在命令行执行<code>ssh -T
-git@github.com</code>时可能得到下述的输出结果</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ssh: connect to host github.com port 22: Connection timed out</code></pre>
-<p>这个问题可能是由于所在设备防火墙禁用了ssh连接（我也怀疑可能是因为墙导致github.com解析失败，因为同样使用port22的我自己的gitea是可以使用ssh连接/验证的，而我使用的clash只设置了http
-/ https的代理）。</p>
-<p>这个问题可以参考stackoverflow或者官方的解决方案：</p>
-<p><a
-target="_blank" rel="noopener" href="https://stackoverflow.com/questions/15589682/ssh-connect-to-host-github-com-port-22-connection-timed-out">ssh:
-connect to host github.com port 22: Connection timed out</a></p>
-<p><a
-target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port">Using
-SSH over the HTTPS port - GitHub Docs</a></p>
-<div class="note info"><p>💡 443是https使用的端口，顺带一提，http使用的端口是80。</p>
-<p>核心思路是github也部署了<code>ssh.github.com</code>这个域名，并借用443端口来建立ssh连接，因为大多数设备环境是不会禁用443端口的。</p>
+    if (pThisRef &#x3D;&#x3D; pCompareRef) &#x2F;&#x2F; 同一个引用类型对象实例
+        FC_RETURN_BOOL(TRUE);
+
+    &#x2F;&#x2F; Since we are in FCALL, we must handle NULL specially.
+    if (pThisRef &#x3D;&#x3D; NULL || pCompareRef &#x3D;&#x3D; NULL)
+         FC_RETURN_BOOL(FALSE);
+
+    MethodTable *pThisMT &#x3D; pThisRef-&gt;GetMethodTable();
+
+    &#x2F;&#x2F; If it&#39;s not a value class, don&#39;t compare by value, &lt;- 只有值类型的对象才进行值比较
+    if (!pThisMT-&gt;IsValueClass()) &#x2F;&#x2F; 不同的引用类型对象，在这里结束，返回False
+         FC_RETURN_BOOL(FALSE);
+
+    &#x2F;&#x2F; Make sure they are the same type.
+    if (pThisMT !&#x3D; pCompareRef-&gt;GetMethodTable())
+        FC_RETURN_BOOL(FALSE);
+
+    &#x2F;&#x2F; Compare the contents (size - vtable - sink block index).
+    BOOL ret &#x3D; memcmp(
+        (void *) (pThisRef+1), 
+        (void *) (pCompareRef+1), 
+        pThisRef-&gt;GetMethodTable()-&gt;GetBaseSize() - sizeof(Object) - sizeof(int)) &#x3D;&#x3D; 0;
+
+    FC_GC_POLL_RET();
+
+    FC_RETURN_BOOL(ret);
+&#125;
+FCIMPLEND</code></pre>
+<h3 id="new操作符会做什么">new操作符会做什么</h3>
+<p>所有对象都用new操作符创建，new操作会做的事情有：</p>
+<ol type="1">
+<li>计算类型及其所有基类型定义的所有实例字段（即非静态字段）需要的字节数。堆上的每个对象需要一些额外的成员，包括<strong>类型对象指针（type
+object pointer）</strong>和<strong>同步块索引（sync block
+index）</strong>，CLR利用这些成员管理对象，额外成员的字节数也计入兑现大小</li>
+<li>从托管堆中分配需求的字节数，分配的所有字节设为0</li>
+<li>初始化对象的<strong>类型对象指针</strong>和<strong>同步块索引</strong>成员</li>
+<li>调用类型的实例构造器，调用<strong>System.Object</strong>的构造器（此构造器什么都不做，简单返回）</li>
+</ol>
+<h2 id="类型转换">4.2 类型转换</h2>
+<p>类型安全是CLR最重要的特性之一，运行时CLR总是知道对象的类型是什么</p>
+<div class="note warning"><p>类型伪装是许多安全漏洞的根源，它还会破坏应用程序的稳定性和健壮性。因此，类型安全是CLR极其重要的一个特点。</p>
 </div>
-<p>在命令行执行以下命令来测试是否可以使用此解决方案：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T -p 443 git@ssh.github.com
-&gt; Hi USERNAME! You&#39;ve successfully authenticated, but GitHub does not
-&gt; provide shell access.</code></pre>
-<p>如果得到了上述输出，现在你可以通过以下命令来clone你的仓库了：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ git clone ssh:&#x2F;&#x2F;git@ssh.github.com:443&#x2F;YOUR-USERNAME&#x2F;YOUR-REPOSITORY.git
-&gt; ...</code></pre>
-<h3 id="通过ssh-config建立基于https的ssh连接">通过ssh
-config建立基于https的ssh连接</h3>
-<p>想要更便利地使用443端口来建立与github的ssh连接，可以使用编辑<code>~/.ssh/config</code>的方式，在配置文件中加入/调整下述内容</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">Host github.com
- Hostname ssh.github.com # 注意这里是另一个github域名
- Port 443 # 使用443端口
- User git</code></pre>
-<p>现在，你可以像之前一样使用ssh连接GitHub.com了</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T git@github.com
-&gt; Hi USERNAME! You&#39;ve successfully authenticated, but GitHub does not
-&gt; provide shell access.</code></pre>
-<p>P.S. gitlab也有类似的解决方案，可以参考：<a
-target="_blank" rel="noopener" href="https://about.gitlab.com/blog/2016/02/18/gitlab-dot-com-now-supports-an-alternate-git-plus-ssh-port/">gitlab使用https建立ssh连接</a></p>
+<p>C#不要求特殊语法
+即可将对象转换为它的基类型，因为向基类型的转换被认为是安全隐式转换。然而转换为它的派生类型时，C#要求开发人员只能进行显示转换，因为转换可能在运行时失败。</p>
+<div class="note info"><p>注意，命名空间和程序集不一定相关。同一个命名空间中的类型可能在不同程序集中实现，同一个程序集也可能包含不同命名空间中的类型。</p>
+</div>
+<h2 id="运行时的相互关系">4.4 运行时的相互关系</h2>
+<div class="note info"><p>[复习][计算机组成原理]
+当每个线程创建完成后都被分配一定大小的栈空间，用于存放局部变量，方法间传递参数，栈空间从高地址向低地址增长。方法调用时，<strong>参数</strong>，以及<strong>被调用方法结束时的返回地址</strong>会被压入栈中</p>
+</div>
+<h3 id="类型对象">类型对象</h3>
+<p>前面提到每个堆上的对象都包括了<strong>类型对象指针（Type object
+ptr）</strong>和<strong>同步块索引（sync block
+index）</strong>，类型对象（type
+object，即每个类型唯一的对象/实例）也是一样的</p>
+<p>定义类型的<strong>静态成员</strong>时，用于存放这些静态内容的所有字节就存放在类型对象中</p>
+<p>每个类型对象中还存放了方法表，方法表里记录了类型每一个方法的入口，需要补充的是这里并不区分静态方法和非静态方法。可以看到对于子类，方法表中仅有重写（override）了的方法。</p>
+<figure>
+<a target="_blank" rel="noopener" href="https://s2.loli.net/2023/01/25/3tmkIhuFzGON7bn.png" title="Employee与Manager类的声明" class="gallery-item"><img src="https://s2.loli.net/2023/01/25/3tmkIhuFzGON7bn.png"
+alt="Employee与Manager类的声明" /></a>
+<figcaption aria-hidden="true">Employee与Manager类的声明</figcaption>
+</figure>
+<figure>
+<a target="_blank" rel="noopener" href="https://s2.loli.net/2023/01/25/cLj8t4deqmRYQW6.png" title="类型对象创建后的内存分配情况" class="gallery-item"><img src="https://s2.loli.net/2023/01/25/cLj8t4deqmRYQW6.png"
+alt="类型对象创建后的内存分配情况" /></a>
+<figcaption aria-hidden="true">类型对象创建后的内存分配情况</figcaption>
+</figure>
+<p>CLR会在方法执行前保证该方法依赖的所有类对象均已创建完毕（但是对于非JIT是否也是方法执行前创建，这个需要确认下）</p>
+<h3 id="类型实例的创建与方法调用">类型实例的创建与方法调用</h3>
+<p>[解惑]
+CLR会自动将局部变量赋值为null或0，但编译器会将“对未赋值局部变量的使用”进行报错处理</p>
+<p>举例示例中的Manager对象，分配在堆上，同样拥有<strong>类型对象指针（Type
+object ptr）</strong>和<strong>同步块索引（sync block
+index）</strong>，除此之外还有用于存放所有非静态字段/实例字段（instance
+data fields）的许多字节，这些字段当然包含了基类定义的字段</p>
+<p>最后new操作符会返回Manager对象在堆上的内存地址，存放在局部变量e中（e分配在栈上）</p>
+<h4 id="静态方法的调用">静态方法的调用</h4>
+<p>当调用一个类型的静态方法时，CLR先根据类型找到类型对象，再从类型对象的方法表中找到对应的方法进行调用。</p>
+<h4 id="非静态方法的调用">非静态方法的调用</h4>
+<p>当调用一个非虚方法（nonvirtual）时，CLR（原文为JIT
+Compiler）将会直接根据变量的类型定位到对应类型的<strong>类型对象</strong>；如果在方法表中没有找到这个方法，CLR将会查看类型继承结构直到Object来寻找这个方法。每个类型对象都有一个字段指向它的基类，此内容并没有绘制到图中。</p>
+<p>当调用一个虚方法时（virtual），会多执行一些代码：根据变量的类型对象指针找到对象的准确类型，并在此类型对象的方法表中查找方法入口。</p>
+<figure>
+<a target="_blank" rel="noopener" href="https://s2.loli.net/2023/01/25/GgP6z4J1MQ5ZEnX.png" title="调用非虚方法GetYearsEmployed" class="gallery-item"><img src="https://s2.loli.net/2023/01/25/GgP6z4J1MQ5ZEnX.png"
+alt="调用非虚方法GetYearsEmployed" /></a>
+<figcaption aria-hidden="true">调用非虚方法GetYearsEmployed</figcaption>
+</figure>
+<p>值得一提的是，对于上述<code>Manager</code>和<code>Employee</code>两个类型对象，它们的类型对象指针也是在初始化时赋值的，它们的类型是<code>System.Type</code>，所以它们的类型对象指针指向的就是<code>System.Type</code>这个类型的类型对象。</p>
+<p>而<code>System.Type</code>类型对象的类型对象指针指向它自己，毕竟这个对象也是一个<code>System.Type</code>类型的实例，结构如下图。</p>
+<figure>
+<a target="_blank" rel="noopener" href="https://s2.loli.net/2023/01/25/nh5dGIwtLCyrSkE.png" title="System.Type类型的类型对象" class="gallery-item"><img src="https://s2.loli.net/2023/01/25/nh5dGIwtLCyrSkE.png"
+alt="System.Type类型的类型对象" /></a>
+<figcaption aria-hidden="true">System.Type类型的类型对象</figcaption>
+</figure>
+<p>最后回顾并复习一下，使用<code>System.Object</code>的<code>GetType()</code>方法可以返回存储在类型对象指针成员中的内容，从而确定任意对象的确切类型。</p>
 </div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
@@ -369,23 +410,21 @@ target="_blank" rel="noopener" href="https://about.gitlab.com/blog/2016/02/18/gi
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/git/" rel="tag"># git</a>
-              <a href="/tags/github/" rel="tag"># github</a>
-              <a href="/tags/ssh/" rel="tag"># ssh</a>
+              <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" rel="tag"># 编程语言</a>
+              <a href="/tags/C/" rel="tag"># C#</a>
+              <a href="/tags/NET/" rel="tag"># .NET</a>
+              <a href="/tags/CLR/" rel="tag"># CLR</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/p/e620710b2f05/" rel="prev" title="向搜索引擎提交hexo站点sitemap">
-                  <i class="fa fa-chevron-left"></i> 向搜索引擎提交hexo站点sitemap
+                <a href="/p/6f279d447649/" rel="prev" title="使用SSH进行远端仓库身份验证">
+                  <i class="fa fa-chevron-left"></i> 使用SSH进行远端仓库身份验证
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/77589f7bf80e/" rel="next" title="《CLR via C#》Chapter4 类型基础">
-                  《CLR via C#》Chapter4 类型基础 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>

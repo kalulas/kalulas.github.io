@@ -2491,4 +2491,143 @@ AssetBundle中的应用以及实现原理，而没有太多涉及游戏运行时
         <tag>Unity</tag>
       </tags>
   </entry>
+  <entry>
+    <title>《CLR via C#》Chapter4 类型基础</title>
+    <url>/p/77589f7bf80e/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="第四章-类型基础">第四章 类型基础</h1>
+<h2 id="所有类型都从system.object派生">4.1
+所有类型都从System.Object派生</h2>
+<h3 id="gethashcode-与-equals">GetHashCode() 与 Equals()</h3>
+<p>如果对象要在哈希表集合中用作键使用，那么应该重写GetHashCode方法；如果两个对象具有相同的值，那么Equals应该返回true。</p>
+<p>Object类的Equals和GetHashCode具体实现都是internalcall，由CLR实现，Equals源码实现可参考以下：</p>
+<span id="more"></span>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">&#x2F;&#x2F; https:&#x2F;&#x2F;stackoverflow.com&#x2F;questions&#x2F;384294&#x2F;where-is-the-implementation-of-internalequalsobject-obja-object-objb
+&#x2F;&#x2F; sscli20&#x2F;clr&#x2F;src&#x2F;vm&#x2F;comobject.cpp
+&#x2F;&#x2F; 不过这份实现很老了，简单参考即可
+
+FCIMPL2(FC_BOOL_RET, ObjectNative::Equals, Object *pThisRef, Object *pCompareRef)
+&#123;
+    CONTRACTL
+    &#123;
+        THROWS;
+        DISABLED(GC_NOTRIGGER);
+        INJECT_FAULT(FCThrow(kOutOfMemoryException););
+        MODE_COOPERATIVE;
+        SO_TOLERANT;          
+    &#125;
+    CONTRACTL_END;
+
+    if (pThisRef &#x3D;&#x3D; pCompareRef) &#x2F;&#x2F; 同一个引用类型对象实例
+        FC_RETURN_BOOL(TRUE);
+
+    &#x2F;&#x2F; Since we are in FCALL, we must handle NULL specially.
+    if (pThisRef &#x3D;&#x3D; NULL || pCompareRef &#x3D;&#x3D; NULL)
+         FC_RETURN_BOOL(FALSE);
+
+    MethodTable *pThisMT &#x3D; pThisRef-&gt;GetMethodTable();
+
+    &#x2F;&#x2F; If it&#39;s not a value class, don&#39;t compare by value, &lt;- 只有值类型的对象才进行值比较
+    if (!pThisMT-&gt;IsValueClass()) &#x2F;&#x2F; 不同的引用类型对象，在这里结束，返回False
+         FC_RETURN_BOOL(FALSE);
+
+    &#x2F;&#x2F; Make sure they are the same type.
+    if (pThisMT !&#x3D; pCompareRef-&gt;GetMethodTable())
+        FC_RETURN_BOOL(FALSE);
+
+    &#x2F;&#x2F; Compare the contents (size - vtable - sink block index).
+    BOOL ret &#x3D; memcmp(
+        (void *) (pThisRef+1), 
+        (void *) (pCompareRef+1), 
+        pThisRef-&gt;GetMethodTable()-&gt;GetBaseSize() - sizeof(Object) - sizeof(int)) &#x3D;&#x3D; 0;
+
+    FC_GC_POLL_RET();
+
+    FC_RETURN_BOOL(ret);
+&#125;
+FCIMPLEND</code></pre>
+<h3 id="new操作符会做什么">new操作符会做什么</h3>
+<p>所有对象都用new操作符创建，new操作会做的事情有：</p>
+<ol type="1">
+<li>计算类型及其所有基类型定义的所有实例字段（即非静态字段）需要的字节数。堆上的每个对象需要一些额外的成员，包括<strong>类型对象指针（type
+object pointer）</strong>和<strong>同步块索引（sync block
+index）</strong>，CLR利用这些成员管理对象，额外成员的字节数也计入兑现大小</li>
+<li>从托管堆中分配需求的字节数，分配的所有字节设为0</li>
+<li>初始化对象的<strong>类型对象指针</strong>和<strong>同步块索引</strong>成员</li>
+<li>调用类型的实例构造器，调用<strong>System.Object</strong>的构造器（此构造器什么都不做，简单返回）</li>
+</ol>
+<h2 id="类型转换">4.2 类型转换</h2>
+<p>类型安全是CLR最重要的特性之一，运行时CLR总是知道对象的类型是什么</p>
+<div class="note warning"><p>类型伪装是许多安全漏洞的根源，它还会破坏应用程序的稳定性和健壮性。因此，类型安全是CLR极其重要的一个特点。</p>
+</div>
+<p>C#不要求特殊语法
+即可将对象转换为它的基类型，因为向基类型的转换被认为是安全隐式转换。然而转换为它的派生类型时，C#要求开发人员只能进行显示转换，因为转换可能在运行时失败。</p>
+<div class="note info"><p>注意，命名空间和程序集不一定相关。同一个命名空间中的类型可能在不同程序集中实现，同一个程序集也可能包含不同命名空间中的类型。</p>
+</div>
+<h2 id="运行时的相互关系">4.4 运行时的相互关系</h2>
+<div class="note info"><p>[复习][计算机组成原理]
+当每个线程创建完成后都被分配一定大小的栈空间，用于存放局部变量，方法间传递参数，栈空间从高地址向低地址增长。方法调用时，<strong>参数</strong>，以及<strong>被调用方法结束时的返回地址</strong>会被压入栈中</p>
+</div>
+<h3 id="类型对象">类型对象</h3>
+<p>前面提到每个堆上的对象都包括了<strong>类型对象指针（Type object
+ptr）</strong>和<strong>同步块索引（sync block
+index）</strong>，类型对象（type
+object，即每个类型唯一的对象/实例）也是一样的</p>
+<p>定义类型的<strong>静态成员</strong>时，用于存放这些静态内容的所有字节就存放在类型对象中</p>
+<p>每个类型对象中还存放了方法表，方法表里记录了类型每一个方法的入口，需要补充的是这里并不区分静态方法和非静态方法。可以看到对于子类，方法表中仅有重写（override）了的方法。</p>
+<figure>
+<a href="https://s2.loli.net/2023/01/25/3tmkIhuFzGON7bn.png" title="Employee与Manager类的声明" class="gallery-item"><img src="https://s2.loli.net/2023/01/25/3tmkIhuFzGON7bn.png"
+alt="Employee与Manager类的声明" /></a>
+<figcaption aria-hidden="true">Employee与Manager类的声明</figcaption>
+</figure>
+<figure>
+<a href="https://s2.loli.net/2023/01/25/cLj8t4deqmRYQW6.png" title="类型对象创建后的内存分配情况" class="gallery-item"><img src="https://s2.loli.net/2023/01/25/cLj8t4deqmRYQW6.png"
+alt="类型对象创建后的内存分配情况" /></a>
+<figcaption aria-hidden="true">类型对象创建后的内存分配情况</figcaption>
+</figure>
+<p>CLR会在方法执行前保证该方法依赖的所有类对象均已创建完毕（但是对于非JIT是否也是方法执行前创建，这个需要确认下）</p>
+<h3 id="类型实例的创建与方法调用">类型实例的创建与方法调用</h3>
+<p>[解惑]
+CLR会自动将局部变量赋值为null或0，但编译器会将“对未赋值局部变量的使用”进行报错处理</p>
+<p>举例示例中的Manager对象，分配在堆上，同样拥有<strong>类型对象指针（Type
+object ptr）</strong>和<strong>同步块索引（sync block
+index）</strong>，除此之外还有用于存放所有非静态字段/实例字段（instance
+data fields）的许多字节，这些字段当然包含了基类定义的字段</p>
+<p>最后new操作符会返回Manager对象在堆上的内存地址，存放在局部变量e中（e分配在栈上）</p>
+<h4 id="静态方法的调用">静态方法的调用</h4>
+<p>当调用一个类型的静态方法时，CLR先根据类型找到类型对象，再从类型对象的方法表中找到对应的方法进行调用。</p>
+<h4 id="非静态方法的调用">非静态方法的调用</h4>
+<p>当调用一个非虚方法（nonvirtual）时，CLR（原文为JIT
+Compiler）将会直接根据变量的类型定位到对应类型的<strong>类型对象</strong>；如果在方法表中没有找到这个方法，CLR将会查看类型继承结构直到Object来寻找这个方法。每个类型对象都有一个字段指向它的基类，此内容并没有绘制到图中。</p>
+<p>当调用一个虚方法时（virtual），会多执行一些代码：根据变量的类型对象指针找到对象的准确类型，并在此类型对象的方法表中查找方法入口。</p>
+<figure>
+<a href="https://s2.loli.net/2023/01/25/GgP6z4J1MQ5ZEnX.png" title="调用非虚方法GetYearsEmployed" class="gallery-item"><img src="https://s2.loli.net/2023/01/25/GgP6z4J1MQ5ZEnX.png"
+alt="调用非虚方法GetYearsEmployed" /></a>
+<figcaption aria-hidden="true">调用非虚方法GetYearsEmployed</figcaption>
+</figure>
+<p>值得一提的是，对于上述<code>Manager</code>和<code>Employee</code>两个类型对象，它们的类型对象指针也是在初始化时赋值的，它们的类型是<code>System.Type</code>，所以它们的类型对象指针指向的就是<code>System.Type</code>这个类型的类型对象。</p>
+<p>而<code>System.Type</code>类型对象的类型对象指针指向它自己，毕竟这个对象也是一个<code>System.Type</code>类型的实例，结构如下图。</p>
+<figure>
+<a href="https://s2.loli.net/2023/01/25/nh5dGIwtLCyrSkE.png" title="System.Type类型的类型对象" class="gallery-item"><img src="https://s2.loli.net/2023/01/25/nh5dGIwtLCyrSkE.png"
+alt="System.Type类型的类型对象" /></a>
+<figcaption aria-hidden="true">System.Type类型的类型对象</figcaption>
+</figure>
+<p>最后回顾并复习一下，使用<code>System.Object</code>的<code>GetType()</code>方法可以返回存储在类型对象指针成员中的内容，从而确定任意对象的确切类型。</p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>计算机科学</category>
+        <category>编程语言</category>
+        <category>C#</category>
+      </categories>
+      <tags>
+        <tag>编程语言</tag>
+        <tag>C#</tag>
+        <tag>.NET</tag>
+        <tag>CLR</tag>
+      </tags>
+  </entry>
 </search>
