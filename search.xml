@@ -533,10 +533,10 @@ lightgallery:
 41 &#125;);
 </code></pre>
 <ol start="3" type="1">
-<li>所以如果想加一个js文件资源引用，可以考虑作为一个静态资源加入项目，并在<strong>index.njk</strong>就利用<code>next_js()</code>加载；也可以考虑在<strong>next-vendors.js</strong>代码中将这个js文件的标识符push到<code>vendors</code>里面，然后再到theme（也就是我这里使用的NexT）的**_vendors.yml**文件里面去注册这个标识符对应的文件路径，版本等，这样想要通过cdn加载js文件也方便。</li>
-<li>实际上针对上述方法二，这个**_vendors.yml<strong>是可以使用这个package
-<a href="https://github.com/next-theme/plugins" title="" target="">next-theme-plugins</a>
-生成的，我自己试过也成功了。不过对于一些小改动（比如为prism添加一个prism-download-button.js），自己做下</strong>_vendors.yml**的修改，加入一个条目也是很简单的，不需要安装那么多依赖项。</li>
+<li>所以如果想加一个js文件资源引用，可以考虑作为一个静态资源加入项目，并在<strong>index.njk</strong>就利用<code>next_js()</code>加载；也可以考虑在<strong>next-vendors.js</strong>代码中将这个js文件的标识符push到<code>vendors</code>里面，然后再到theme（也就是我这里使用的NexT）的<strong>_vendors.yml</strong>文件里面去注册这个标识符对应的文件路径，版本等，这样想要通过cdn加载js文件也方便。</li>
+<li>实际上针对上述方法二，这个<strong>_vendors.yml</strong>是可以使用这个项目
+<a href="%3Chttps://github.com/next-theme/plugins%3E" title="" target="">next-theme-plugins</a>
+生成的，我自己试过也成功了。不过对于一些小改动（比如为prism添加一个prism-download-button.js），自己做下<strong>_vendors.yml</strong>的修改，加入一个条目也是很简单的，不需要安装那么多依赖项。</li>
 </ol>
 <h2 id="资源文件夹">资源文件夹</h2>
 <p>网站需要显示一些像网站图标和用户画像，还有文章中的截图这样的资源，参考hexo文档，最后采用的方式是将配置项<code>post_asset_folder</code>设置为true，这会让hexo在新建post时为这个post新建一个同名资源文件夹。然后使用<a
