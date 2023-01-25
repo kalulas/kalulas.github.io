@@ -231,7 +231,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-01-25 19:09:03" itemprop="dateModified" datetime="2023-01-25T19:09:03+08:00">2023-01-25</time>
+      <time title="修改时间：2023-01-25 21:14:31" itemprop="dateModified" datetime="2023-01-25T21:14:31+08:00">2023-01-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -261,7 +261,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>9.9k</span>
+      <span>10k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -455,8 +455,8 @@ lightgallery:
 <a href="/p/c9e58284d744/image-20211224175532445.png" class="gallery-item"><img src="/p/c9e58284d744/image-20211224175532445.png" class="" title="html中的代码标签示例"></a>
 <p>要知道它的生成机制才方便做一些js代码上传，还有cdn上的资源放到本地这样的操作，进行了一些排查大致定位下下面这些信息：</p>
 <ol type="1">
-<li>/node_modules/hexo-theme-next/layout/_scripts/index.njk
-文件里可以利用next_js()加载了这些next提供的静态js文件</li>
+<li><code>/node_modules/hexo-theme-next/layout/_scripts/index.njk</code>
+文件里可以利用<code>next_js()</code>加载了这些next提供的静态js文件</li>
 </ol>
 <pre class="line-numbers language-none"><code class="language-none"> 1 &#123;%- include &#39;vendors.njk&#39; -%&#125;
  2
@@ -488,7 +488,7 @@ lightgallery:
 6   &#123;&#123; next_vendors(name) &#125;&#125;
 7 &#123;%- endfor %&#125;
 </code></pre>
-<p>加载的就是js_vendors下声明所有js资源</p>
+<p>加载的就是<code>js_vendors()</code>下声明所有js资源</p>
 <ol start="2" type="1">
 <li>像prism-core的这些cdn上获取的js资源，先通过配置来决定是否加载，添加cdn的逻辑如下</li>
 </ol>
@@ -524,7 +524,7 @@ lightgallery:
 29   return vendors;
 30 &#125;);
 </code></pre>
-<p>在/node_modules/hexo-theme-next/layout/_scripts/vendors.njk下面遍历js_vendors列表，遍历逻辑就是调用scripts/helpers/engine.js中注册的next_vendors，将代码资源的名字传入。而next_vendors的逻辑就是在theme配置的vendors字段中找相应的配置内容。</p>
+<p>在<code>/node_modules/hexo-theme-next/layout/_scripts/vendors.njk</code>下面遍历js_vendors列表，遍历逻辑就是调用<code>scripts/helpers/engine.js</code>中注册的<code>next_vendors</code>，将代码资源的名字传入。而<code>next_vendors</code>的逻辑就是在theme配置的vendors字段中找相应的配置内容。</p>
 <pre class="line-numbers language-none"><code class="language-none">32 hexo.extend.helper.register(&#39;next_vendors&#39;, function(name) &#123;
 33   const &#123; url, integrity &#125; &#x3D; this.theme.vendors[name];
 34   const type &#x3D; url.endsWith(&#39;css&#39;) ? &#39;css&#39; : &#39;js&#39;;
@@ -537,7 +537,10 @@ lightgallery:
 41 &#125;);
 </code></pre>
 <ol start="3" type="1">
-<li>所以如果想加一个js文件资源引用，可以考虑在index.njk就利用next_js()加上，也可以考虑放在next-vendors.js的vendors列表里面，然后再到theme的_config.yml文件里面去配置。</li>
+<li>所以如果想加一个js文件资源引用，可以考虑作为一个静态资源加入项目，并在<strong>index.njk</strong>就利用<code>next_js()</code>加载；也可以考虑在<strong>next-vendors.js</strong>代码中将这个js文件的标识符push到<code>vendors</code>里面，然后再到theme（也就是我这里使用的NexT）的**_vendors.yml**文件里面去注册这个标识符对应的文件路径，版本等，这样想要通过cdn加载js文件也方便。</li>
+<li>实际上针对上述方法二，这个**_vendors.yml<strong>是可以使用这个package
+<a href="https://github.com/next-theme/plugins" title="" target="">next-theme-plugins</a>
+生成的，我自己试过也成功了。不过对于一些小改动（比如为prism添加一个prism-download-button.js），自己做下</strong>_vendors.yml**的修改，加入一个条目也是很简单的，不需要安装那么多依赖项。</li>
 </ol>
 <h2 id="资源文件夹">资源文件夹</h2>
 <p>网站需要显示一些像网站图标和用户画像，还有文章中的截图这样的资源，参考hexo文档，最后采用的方式是将配置项<code>post_asset_folder</code>设置为true，这会让hexo在新建post时为这个post新建一个同名资源文件夹。然后使用<a
