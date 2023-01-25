@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.14.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.14.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
 
 
@@ -232,7 +232,7 @@ Objects</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a clas
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-11-22 23:11:09" itemprop="dateModified" datetime="2022-11-22T23:11:09+08:00">2022-11-22</time>
+      <time title="修改时间：2023-01-25 18:31:35" itemprop="dateModified" datetime="2023-01-25T18:31:35+08:00">2023-01-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -282,7 +282,7 @@ Objects</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a clas
     <div class="post-body" itemprop="articleBody">
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h2 id="序">序</h2>
 <p>最初在工作中接触到引擎原生层相关的问题，是项目实现的延时执行模块，模块提供接口来进行委托的延时调用：</p>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">&#x2F;&#x2F; 返回一个token用于后续的CancelDelayCall
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; 返回一个token用于后续的CancelDelayCall
 m_DelayExecuteGuidance &#x3D; GameFacade.CurrentGame.DelayCall(8.0f, OnPlayerGuideFinished);
 
 &#x2F;&#x2F; 延时执行的代码示例
@@ -318,7 +318,7 @@ comparers）。</p>
 以及它的一切子类。当一个Object被销毁时，这个对象的原生层部分已被从内存中释放，而相对小的托管层部分将会在它没有被引用时被垃圾回收。</p>
 <p>因为你在托管层对<code>UnityEngine.Object</code>的引用可能指向一个已经被销毁的原生层对象，所以<code>UnityEngine.Object</code>重写了C#的<code>operator==</code>以及<code>operator!=</code>让一个已被销毁的Object能够表现为null。所以对已在原生层被销毁的Object进行null判定会返回true，或者直接引发<code>NullRefrenceException</code>，来告诉你该对象已经被销毁。</p>
 <p>可以在C#侧看到Object实现中，若与null进行比较，会调用<code>IsNativeObjectAlive</code>进行判定。</p>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">&#x2F;&#x2F; UnityEngine.Object.CompareBaseObjects
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; UnityEngine.Object.CompareBaseObjects
 private static bool CompareBaseObjects(Object lhs, Object rhs)
 &#123;
   bool flag1 &#x3D; (object) lhs &#x3D;&#x3D; null;
@@ -331,7 +331,7 @@ private static bool CompareBaseObjects(Object lhs, Object rhs)
 &#125;</code></pre>
 <h4 id="进行一下回顾非原文内容">进行一下回顾（非原文内容）</h4>
 <p>在文章开始时我们给出了例子<code>GameFacade.CurrentGame.DelayCall</code>，现在我们在延时执行的代码中加上这些判断语句，并记录关键日志：</p>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">private void OnPlayerGuideFinished()
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void OnPlayerGuideFinished()
 &#123;
     Debugger.Log(&quot;[UINewAutoPickUpSettingController.OnPlayerGuideFinished]&quot;);
     if (this &#x3D;&#x3D; null)
@@ -361,7 +361,7 @@ private static bool CompareBaseObjects(Object lhs, Object rhs)
 <p>同时我们也要注意到null判定为true是因为<code>operator==</code>的重写，但是仍然指向一个托管层的<code>Object</code>对象，这个对象的成员（如m_View，是一个纯C#侧对象）仍然是可以被访问的，只在最终访问到原生层对象，或者试图获取原生层对象时报错。</p>
 <a href="/p/27ad02cebc90/image-20211221143715637.png" class="gallery-item"><img src="/p/27ad02cebc90/image-20211221143715637.png" class="" title="image-20211221143715637"></a>
 <p>上图为运行日志结果，报错的为<code>UnityEngine.Component</code>中的<code>getter</code>方法：</p>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">&#x2F;&#x2F;&#x2F; &lt;summary&gt;
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F;&#x2F; &lt;summary&gt;
 &#x2F;&#x2F;&#x2F;   &lt;para&gt;The game object this component is attached to. A component is always attached to a game object.&lt;&#x2F;para&gt;
 &#x2F;&#x2F;&#x2F; &lt;&#x2F;summary&gt;
 &#x2F;&#x2F;&#x2F; &lt;footer&gt;&lt;a href&#x3D;&quot;https:&#x2F;&#x2F;docs.unity3d.com&#x2F;2018.4&#x2F;Documentation&#x2F;ScriptReference&#x2F;30_search.html?q&#x3D;Component-gameObject&quot;&gt;&#96;Component.gameObject&#96; on docs.unity3d.com&lt;&#x2F;a&gt;&lt;&#x2F;footer&gt;
