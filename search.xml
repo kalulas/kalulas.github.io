@@ -329,7 +329,7 @@ pages提供的四个DNS（见下文），github
 pages会帮你重定向到网页内容，而<code>www.threegates.net</code>配置到<code>kalulas.github.io</code>之后，后面其实也是解析到github.pages的DNS</p></li>
 <li><p>配置如图：<a href="/p/c9e58284d744/aliyun-dns-config.png" class="gallery-item"><img src="/p/c9e58284d744/aliyun-dns-config.png" class="" title="aliyun dns configuration"></a></p></li>
 <li><p>dig命令解析结果如下（threegates.net的解析情况也一样）：</p>
-<pre class="line-numbers language-none"><code class="language-none">$ dig kalulas.github.io +nostats +nocomments +nocmd
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ dig kalulas.github.io +nostats +nocomments +nocmd
 ; &lt;&lt;&gt;&gt; DiG 9.11.4-P2-RedHat-9.11.4-26.P2.el7_9.8 &lt;&lt;&gt;&gt; kalulas.github.io +nostats +nocomments +nocmd
 ;; global options: +cmd
 ;kalulas.github.io.             IN      A
@@ -337,7 +337,7 @@ kalulas.github.io.      3600    IN      A       185.199.109.153
 kalulas.github.io.      3600    IN      A       185.199.111.153
 kalulas.github.io.      3600    IN      A       185.199.110.153
 kalulas.github.io.      3600    IN      A       185.199.108.153</code></pre>
-<pre class="line-numbers language-none"><code class="language-none">$ dig www.threegates.net +nostats +nocomment
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ dig www.threegates.net +nostats +nocomment
 ; &lt;&lt;&gt;&gt; DiG 9.11.4-P2-RedHat-9.11.4-26.P2.el7_9.8 &lt;&lt;&gt;&gt; www.threegates.net +nostats +nocomment
 ;; global options: +cmd
 ;www.threegates.net.            IN      A
@@ -432,7 +432,7 @@ function render(data)&#123;
 <li>lg-fullscreen: 提供图片全屏预览功能</li>
 </ol>
 <p>三个插件都通过npm下载了.min.js文件，放置于/source/js/下，现在的<strong>_config.yml</strong>如下</p>
-<pre class="line-numbers language-none"><code class="language-none"># Plugin: lightgallery https:&#x2F;&#x2F;github.com&#x2F;lzane&#x2F;hexo-light-gallery
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"># Plugin: lightgallery https:&#x2F;&#x2F;github.com&#x2F;lzane&#x2F;hexo-light-gallery
 lightgallery:
 # if you don&#39;t specify the css or js source, the default cdn will be used.
 # css: # css source url
@@ -548,8 +548,8 @@ href="https://github.com/hexojs/hexo-renderer-marked">hexo-renderer-marked</a>
 3.1.0
 的特性，在文章中直接使用markdown图片格式，图片链接直接填写图片文件名，hexo会将资源请求重定向到post的同名资源文件夹中。</p>
 <p>值得一提的是也可以在其他post中使用相对路径来索引到这些资源，为post之间共享资源提供了思路。</p>
-<p>**_config.yml**配置形式如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">post_asset_folder: true
+<p><strong>_config.yml</strong>配置形式如下：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">post_asset_folder: true
 marked:
   prependRoot: true
   postAsset: true</code></pre>
