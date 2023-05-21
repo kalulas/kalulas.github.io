@@ -2602,4 +2602,25 @@ AssetBundle中的应用以及实现原理，而没有太多涉及游戏运行时
         <tag>Unity</tag>
       </tags>
   </entry>
+  <entry>
+    <title>TableCraft is finally here!</title>
+    <url>/p/fc631eddaa53/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="tablecraft-is-finally-here">TableCraft is finally here!</h1>
+<h2 id="tablecraft-发布">TableCraft 发布！</h2>
+<p>从21年起经过两年断断续续的开发，TableCraft终于发布了<a
+href="https://github.com/kalulas/TableCraft/releases/tag/v1.0.0">v1.0.0</a>版本，并开始提供给项目组同事使用了。这边文章会介绍从最初立项到最终发布TableCraft的设计发生了怎样的变化，TableCraft现阶段存在的一些问题，以及未来的发展目标。</p>
+<span id="more"></span>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>工具</category>
+      </categories>
+      <tags>
+        <tag>游戏开发工具</tag>
+      </tags>
+  </entry>
 </search>
