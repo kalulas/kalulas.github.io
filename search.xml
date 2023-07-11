@@ -2748,4 +2748,167 @@ LGPL
         <tag>代码规范</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Unity IL2PP 编码限制</title>
+    <url>/p/24d663e5b3a4/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h2 id="参考">参考</h2>
+<ol type="1">
+<li><a
+href="https://docs.unity3d.com/2018.4/Documentation/Manual/ScriptingRestrictions.html">unity
+documentation-Scripting restrictions 2018.4</a></li>
+<li><a
+href="https://docs.unity3d.com/2022.3/Documentation/Manual/ScriptingRestrictions.html">unity
+documentations-Scripting restrictions 2022.3</a></li>
+</ol>
+<p>内容相差不大，2022.3在2018.4的基础上做了一些补充，并去除了一个关于泛型虚方法例子。</p>
+<h2 id="ahead-of-time编译aot">Ahead-of-time编译（AOT）</h2>
+<p>一些平台不允许运行时的代码生成（运行时开辟内存用于存放可执行的机器指令）。因此，一切依赖于just-in-time（JIT）的托管代码（managed
+code）在这些平台上都无法运行。为此，你需要把所有的托管代码都进行AOT编译。在一般情况下，这个限制不会带来什么影响。但在AOT编译的平台上，也存在着一些需要额外注意的要点。</p>
+<span id="more"></span>
+<h3 id="自省反射-reflection">自省/反射 Reflection</h3>
+<p>在AOT平台，反射仍然是支持的。但如果编译器不能够推断出一段代码会被反射执行，那么这段代码在运行时可能就不会存在，更多内容可以参考<a
+href="https://docs.unity3d.com/2022.3/Documentation/Manual/ManagedCodeStripping.html">Managed
+Code Stripping</a>一文。</p>
+<h3 id="system.reflection.emit">System.Reflection.Emit</h3>
+<p>在AOT的平台上无法实现任何在<code>System.Reflection.Emit</code>命名空间下的方法。其余<code>System.Reflection</code>命名空间下的内容都可以正常执行，只要如上所说，编译器能够推断出这段代码会被通过反射执行。</p>
+<h3 id="序列化">序列化</h3>
+<p>AOT平台如果在序列化或者反序列化的过程使用了反射，那么有可能会遇到问题。如果一个类型或者方法只在序列化或者反序列化的过程中通过反射被获取到，那么AOT编译器就无法推断出需要为这个类型或者方法生成相应的代码。</p>
+<h3 id="泛型类型与方法">泛型类型与方法</h3>
+<p>对于泛型类型和方法，编译器必须判断出那些泛型实例被使用了，因为不同的泛型实例可能需要不同的生成代码。举例来说，<code>List&lt;int&gt;</code>和<code>List&lt;double&gt;</code>所需要的的生成代码就是不同的。不过，由于IL2CPP会在引用类型间共用代码，所以<code>List&lt;object&gt;</code>和<code>List&lt;string&gt;</code>就会共用一份生成代码。</p>
+<p>在下列的这些情况中，IL2CPP很可能无法在编译期间生成所需的代码：</p>
+<ol type="1">
+<li><p>运行时创建泛型实例：<code>Activator.CreateInstance(typeof(SomeGenericType&lt;&gt;).MakeGenericType(someType));</code></p></li>
+<li><p>通过泛型实例调用一个静态方法：<code>typeof(SomeGenericType&lt;&gt;).MakeGenericType(someType)).GetMethod(“AMethod”).Invoke(null,
+null);</code></p></li>
+<li><p>调用一个静态的泛型方法：<code>typeof(SomeType).GetMethod(“GenericMethod”).MakeGenericMethod(someType).Invoke(null,
+null);</code></p></li>
+<li><p>一些在编译期间无法被推断出的对泛型虚方法的调用，在2018.4的文档中给出了这样一个例子</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">using UnityEngine;
+using System;
+
+public class AOTProblemExample : MonoBehaviour, IReceiver
+&#123;
+    public enum AnyEnum 
+    &#123;
+        Zero,
+        One,
+    &#125;
+
+    void Start() 
+    &#123;
+        &#x2F;&#x2F; Subtle trigger: The type of manager *must* be
+        &#x2F;&#x2F; IManager, not Manager, to trigger the AOT problem.
+        IManager manager &#x3D; new Manager();
+        manager.SendMessage(this, AnyEnum.Zero);
+    &#125;
+
+    public void OnMessage&lt;T&gt;(T value) 
+    &#123;
+        Debug.LogFormat(&quot;Message value: &#123;0&#125;&quot;, value);
+    &#125;
+&#125;
+
+public class Manager : IManager 
+&#123;
+    public void SendMessage&lt;T&gt;(IReceiver target, T value) &#123;
+        target.OnMessage(value);
+    &#125;
+&#125;
+
+public interface IReceiver
+&#123;
+    void OnMessage&lt;T&gt;(T value);
+&#125;
+
+public interface IManager 
+&#123;
+    void SendMessage&lt;T&gt;(IReceiver target, T value);
+&#125;</code></pre>
+<p>你会得到这样的报错：</p>
+<blockquote>
+<p>ExecutionEngineException: Attempting to call method
+'AOTProblemExample::OnMessage&lt;AOTProblemExample+AnyEnum&gt;' for
+which no ahead of time (AOT) code was generated. at
+Manager.SendMessage[T] (IReceiver target, .T value) [0x00000] in
+&lt;filename unknown&gt;:0 at AOTProblemExample.Start () [0x00000] in
+&lt;filename unknown&gt;:0</p>
+</blockquote></li>
+<li><p>涉及高度嵌套的泛型值类型方法调用，如
+<code>Struct&lt;Struct&lt;Struct&lt;...&lt;Struct&lt;int&gt;&gt;&gt;&gt;</code></p></li>
+</ol>
+<p>IL2CPP为了支持上述这些情况，生成了能够支持任何类型参数的泛型代码。不过这份代码执行起来会更慢，因为它不能就类型的大小或者值类型、引用类型的差异来做出假设。如果你需要一份执行效率更高的泛型生成代码，你需要这样做：</p>
+<ul>
+<li><p>如果泛型参数永远是引用类型，为它加上<code>where:class</code>的限制。这样IL2CPP就会生成一个使用引用类型的fallback方法，它不会带来额外的性能损耗。</p></li>
+<li><p>如果泛型参数永远是值类型，加上<code>where:struct</code>限制，这将启用一些优化策略，但因为值类型的大小可能不同，生成的代码执行起来仍然会更慢一些。</p></li>
+<li><p>新增一个<code>UsedOnlyForAOTCodeGeneration</code>方法，并且为你希望IL2CPP生成的泛型类型、泛型方法加上引用。这个方法不需要被调用，也不应该被调用。下述的例子保证了<code>GenericType&lt;MyStruct&gt;</code>会被生成。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public void UsedOnlyForAOTCodeGeneration()
+&#123;
+    &#x2F;&#x2F; Ensure that IL2CPP will create code for MyGenericStruct
+    &#x2F;&#x2F; using MyStruct as an argument.
+    new GenericType&lt;MyStruct&gt;();
+
+    &#x2F;&#x2F; Ensure that IL2CPP will create code for SomeType.GenericMethod
+    &#x2F;&#x2F; using MyStruct as an argument.
+    new SomeType().GenericMethod&lt;MyStruct&gt;();
+
+    public void OnMessage&lt;T&gt;(T value) 
+    &#123;
+        Debug.LogFormat(&quot;Message value: &#123;0&#125;&quot;, value);
+    &#125;
+
+    &#x2F;&#x2F; Include an exception so we can be sure to know if this
+    &#x2F;&#x2F; method is ever called.
+    throw new InvalidOperationException(
+        &quot;This method is used for AOT code generation only. &quot; +
+        &quot;Do not call it at runtime.&quot;);
+&#125;</code></pre></li>
+</ul>
+<p>需要注意的是，当“Faster(smaller)
+builds”设置项启用时，只有一份完全共用的泛型代码会被生成并编译。这回较少生成的方法数量，减少编译时长与包体大小，但会带来运行时的性能开销。</p>
+<h3 id="从原生层native-code调用托管层managed方法">从原生层（native
+code）调用托管层（managed）方法</h3>
+<p>在AOT平台上，那些需要被转译（marshaled？不确定如何翻译比较准确）为C方法指针以便于从原生层调用的托管层方法，有一些限制：</p>
+<ul>
+<li><p>托管方法必须是一个静态方法</p></li>
+<li><p>托管方法必须要有<code>[MonoPInvokeCallback]</code>
+Attribute</p></li>
+<li><p>如果这个托管方法是泛型的，那么便需要使用<code>[MonoPInvokeCallback(Type)]</code>重载来声明哪些具体的类型需要被使用。Type必须要是带有正确泛型参数数量的泛型实例。对一个方法使用复数个<code>[MonoPInvokeCallback]</code>是可能的，如下例：</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; Generates reverse P&#x2F;Invoke wrappers for NameOf&lt;long&gt; and NameOf&lt;int&gt;
+&#x2F;&#x2F; Note that the types are only used to indicate the generic arguments.
+[MonoPInvokeCallback(typeof(Action&lt;long&gt;))]
+[MonoPInvokeCallback(typeof(Action&lt;int&gt;))]
+private static string NameOfT&lt;T&gt;(T item) 
+&#123;
+    return typeof(T).Name;
+&#125;</code></pre></li>
+</ul>
+<h2 id="线程不支持">线程不支持</h2>
+<p>一些平台不支持对线程的使用，所以一切使用了<code>System.Threading</code>命名空间的托管层代码都会在运行时出错。同时，一些.NET类库隐式地依赖了线程。一个依赖线程支持的常见例子就是<code>System.Timers.Timer</code>类。</p>
+<h2 id="异常过滤器">异常过滤器</h2>
+<p>IL2CPP支持异常过滤器，不过异常过滤语句和catch块的次序可能会存在不同，因为IL2CPP使用C++的异常来实现托管层异常。一般情况下这不会被注意到，除非有过滤器阻止了对字段的写操作。</p>
+<h2 id="其他">其他</h2>
+<ul>
+<li>IL2CPP不支持运行时对<code>MarshalAs</code>以及<code>FieldOffset</code>
+Attributes 的反射</li>
+<li>IL2CPP不支持C#的<code>dynamic</code>关键字，因为它需要JIT编译</li>
+<li>IL2CPP不支持<code>Marshal.Prelink</code>或<code>Marshal.PrelinkAll</code>
+API方法</li>
+<li>IL2CPP不支持<code>System.Diagnostics.Process</code> API方法</li>
+</ul>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>游戏开发</category>
+        <category>引擎脚本后端</category>
+      </categories>
+      <tags>
+        <tag>游戏开发</tag>
+        <tag>Unity</tag>
+        <tag>IL2CPP</tag>
+      </tags>
+  </entry>
 </search>
