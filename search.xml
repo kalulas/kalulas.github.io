@@ -2911,4 +2911,242 @@ API方法</li>
         <tag>IL2CPP</tag>
       </tags>
   </entry>
+  <entry>
+    <title>games101-lecture14 笔记</title>
+    <url>/p/9f45e6ee4d77/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="today">Today</h1>
+<ul>
+<li>Acceleration 加速结构：使用AABB来加速光线追踪
+<ul>
+<li>Uniform grids</li>
+<li>Spatial partitions</li>
+</ul></li>
+<li>Basic radiometry（辐射度量学）
+<ul>
+<li>进阶：不同于Whitted-Style的光线追踪</li>
+</ul></li>
+</ul>
+<h1 id="光线追踪加速结构">光线追踪加速结构</h1>
+<h2 id="均匀网格方案uniform-grids">均匀网格方案：Uniform grids</h2>
+<p><strong>预处理：构建加速网格</strong></p>
+<p>找一个包围盒，在包围盒中构建均匀网格，记录每一个与物体相交的网格</p>
+<p><strong>光线与场景求交</strong></p>
+<p>射出一道光线，让光线与格子求交，若格子内存在物体，再让光线与物体求交：光线与格子求交是快速的，而与实际物体求交是很慢的，通过这样的理念来优化</p>
+<p><strong>经验告诉我们</strong></p>
+<p>当格子数等于C * 对象数时，结果会比较好；三维空间下常数C可以取27</p>
+<p><strong>缺陷</strong></p>
+<p>当细节物品在空间中分布不均匀时，存在大规模集中、大规模空白：”Teapot
+in a stadium” problem</p>
+<p>*在一些场景下还是好用的，仍有在使用</p>
+<h2 id="空间划分-spatial-partitions">空间划分 Spatial partitions</h2>
+<figure>
+<a href="https://s2.loli.net/2023/09/17/QPXy1Yma5cLDHVo.png" title="空间划分树结构" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/QPXy1Yma5cLDHVo.png"
+alt="空间划分树结构" /></a>
+<figcaption aria-hidden="true">空间划分树结构</figcaption>
+</figure>
+<span id="more"></span>
+<p><strong>Oct-Tree
+八叉树</strong>：三维空间划分为8份，在格子类数量足够少，或者划分次数足够多时不再划分。</p>
+<p>想让空间得到划分，但是不想随着维度不断提高子节点指数级增长，发明了KD-Tree。</p>
+<p><strong>KD-Tree（本次重点）</strong>：每次对格子只进行一次划分，划分为两个区域；每次进行划分时采取与上一次不同的轴向，可以得到尽可能均匀的划分结果。（Root:
+axis-x，layer1: axis-y，layer2: axis-z）</p>
+<p><strong>BSP-Tree</strong>：同样是空间二分方法，区别在于不是水平竖直地进行划分</p>
+<aside>
+⚠️
+同样像上文的Uniform-Grids，空间划分是在光线追踪前的预处理，先建立KD-tree
+</aside>
+<figure>
+<a href="https://s2.loli.net/2023/09/17/DXlbzgTZG3AHxYL.png" title="KD-tree划分结果" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/DXlbzgTZG3AHxYL.png"
+alt="KD-tree划分结果" /></a>
+<figcaption aria-hidden="true">KD-tree划分结果</figcaption>
+</figure>
+<h3 id="kd-trees-数据结构">KD-Trees 数据结构</h3>
+<p>中间节点存储（A，B，C）：</p>
+<ul>
+<li>划分使用的轴（x, y, z）</li>
+<li>划分的位置（在轴向上的什么地方划分）</li>
+<li>所有子节点指针</li>
+<li>注意中间节点不存储对象（objects）</li>
+</ul>
+<p>叶子节点存储（1，2，3）：</p>
+<ul>
+<li>对象的列表存储</li>
+</ul>
+<h2 id="遍历kd-tree进行求交">遍历KD-Tree进行求交</h2>
+<p>如果光线与中间节点代表的区域相交，就意味着光线也要与中间节点划分出的子节点判定相交；递归此过程，最后达到一个叶子节点，就和叶子节点中的所有对象求交。</p>
+<h3 id="进阶问题">进阶问题</h3>
+<p><strong>如何判定对象与包围盒的相交关系</strong></p>
+<p>需要考虑三角形与盒子的求交</p>
+<p>空间划分涉及的问题，如何判断对象是否在某个划分的格子内？</p>
+<p>或者，某个划分出来的各自内有哪些对象？</p>
+<p>虽然有现成的算法，但是不容易写对，在一些情境下容易犯错。</p>
+<p><strong>对象重复出现在不同的划分格子中</strong></p>
+<figure>
+<a href="https://s2.loli.net/2023/09/17/2mgejXkSHtpMG9s.png" title="重复出现在不同分区中的物体" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/2mgejXkSHtpMG9s.png"
+alt="重复出现在不同分区中的物体" /></a>
+<figcaption aria-hidden="true">重复出现在不同分区中的物体</figcaption>
+</figure>
+<p>如图中的这个圆，出现在分区3，4，5内，即这三个分区内会重复出现这个圆</p>
+<h2 id="object-partitions-bounding-volumn-hierarchybvh">Object
+Partitions &amp; Bounding Volumn Hierarchy(BVH)</h2>
+<p>解决了上述KD-Tree的两个问题，目前图形学更受欢迎的结构。</p>
+<p>划分的不是空间，而是把物体分为两个部分；如下例，把一个盒子内的三角形分成了两个部分（基于某种标准），之后再分别计算两个部分的包围盒。</p>
+<figure>
+<a href="https://s2.loli.net/2023/09/17/32mh5ERYDCQy4ZG.png" title="BVH示例" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/32mh5ERYDCQy4ZG.png"
+alt="BVH示例" /></a>
+<figcaption aria-hidden="true">BVH示例</figcaption>
+</figure>
+<p>特性：</p>
+<ul>
+<li>一个物体只可能出现在一个格子（分区）里</li>
+<li>求所有三角形包围盒算法也很简单，不用计算三角形和盒子的相交关系</li>
+<li>每个分区可能有相交：关于怎么将其划分为两个部分，很有讲究，有相关的研究</li>
+</ul>
+<p>详解做法：</p>
+<ol type="1">
+<li>找到一个包围盒</li>
+<li>递归地将其内部的对象分为两个子集</li>
+<li>重新计算子集地包围盒</li>
+<li>适当地停止（子集数量足够少，划分次数足够多）</li>
+<li>将物体存储在每一个叶子节点中</li>
+</ol>
+<p>如何划分一个节点/分区：</p>
+<ul>
+<li>选择一个划分的维度</li>
+<li>经验谈
+#1：沿着分区里最长的轴向划分，让它变短，更容易形成均匀分区</li>
+<li>经验谈
+#2：取”中间”的物体：在即将划分的轴向上，进行排序（若划分x轴，则对x坐标进行排序），取中位数序号（n/2）的物体进行划分，可以让两个子分区的数量接近，从而让树的深度更小，搜索更快
+<ul>
+<li><strong>无序数组中求第i大的数</strong>，实际上可以不需要排序<span
+class="math inline">\(O(nlgn)\)</span>：快速选择算法 <span
+class="math inline">\(O(n)\)</span> →
+快速排序算法的启发，算法中Partition做完后，只对其中一边进行操作</li>
+</ul></li>
+</ul>
+<h3 id="bvh的数据结构">BVH的数据结构</h3>
+<p>中间节点存储：</p>
+<ul>
+<li>包围盒</li>
+<li>子节点的指针</li>
+</ul>
+<p>叶子节点存储：</p>
+<ul>
+<li>包围盒</li>
+<li>包含对象的列表</li>
+</ul>
+<h2 id="两类划分的比较">两类划分的比较</h2>
+<h3 id="空间划分kd-tree">空间划分：KD-tree</h3>
+<ul>
+<li>将空间划分为不重叠的两个分区</li>
+<li>一个物体可能存在于多个分区内</li>
+</ul>
+<h3 id="物体划分bvh">物体划分：BVH</h3>
+<ul>
+<li>将对象划分为不相交的子集</li>
+<li>不同集合的包围盒可能在空间上重叠</li>
+</ul>
+<p>因为实现容易，效率也不错，BVH得到了更大的应用</p>
+<p>加速结构完成后，光线和场景的求交就能在很短的时间内完成</p>
+<h1 id="辐射度量学-radiometry">辐射度量学 Radiometry</h1>
+<h2 id="动机-motivation">动机 motivation</h2>
+<p>为什么需要辐射度量学？</p>
+<p>来自过去的疑问：</p>
+<ul>
+<li>Blinn-Phong模型中的光线强度 <span
+class="math inline">\(I=10\)</span>，单位是？</li>
+<li>Whitted style的光线追踪看起来是正确结果吗？</li>
+</ul>
+<p>Blinn-Phong模型有许多简化，人为设置的内容，而辐射度量学可以对光的行为提供精确描述</p>
+<h2 id="内容">内容</h2>
+<ul>
+<li>测度系统与光照的单位</li>
+<li>对光的空间属性的精确描述
+<ul>
+<li>光照的若干属性：Radiant flux, intensity, irradiance, radiance</li>
+</ul></li>
+<li>通过物理上正确的方式（a physically correct
+manner）来进行光照计算</li>
+</ul>
+<aside>
+ℹ️ 学习方式的分享：WHY, WHAT, then
+HOW。先是为什么学，再是学的是什么东西，最后是具体的原理，实现/应用方式
+</aside>
+<h3 id="radiant-energy-and-flux-power">Radiant Energy and Flux
+(Power)</h3>
+<p>Radiant energy：电磁辐射的能量，单位焦耳（J）</p>
+<p><span class="math display">\[
+\begin{equation}Q[\mathrm{~J}=\text { Joule }]\end{equation}
+\]</span></p>
+<p>Radiant flux(<strong>power</strong>)：单位时间的能量，energy per unit
+time，得到功率，单位瓦特（W），图形学使用的另一个单位（<strong>lumen
+流明</strong>）</p>
+<p><span class="math display">\[
+\begin{equation}\Phi =\frac{\mathrm{d} Q}{\mathrm{~d}
+t}[\mathrm{~W}=\mathrm{Watt}][\mathrm{lm}=\text { lumen
+}]^*\end{equation}
+\]</span></p>
+<p>另一种flux的理解：单位时间内通过感光平面的光子数量</p>
+<p><strong>其他的重要物理量</strong></p>
+<ul>
+<li>光源辐射出的能量：Radiant Intensity</li>
+<li>表面接收到的能量：Irradiance</li>
+<li>光线沿着射线的传输：Radiance</li>
+</ul>
+<h3 id="radiant-intensity">Radiant Intensity</h3>
+<p>定义：power per uint solid angle，每单位立体角的功率，单位
+<strong>candela</strong></p>
+<p><span class="math display">\[
+\begin{equation}\left[\frac{\mathrm{W}}{\mathrm{sr}}\right]\left[\frac{\mathrm{lm}}{\mathrm{sr}}=\mathrm{cd}=\text
+{ candela }\right]\end{equation}
+\]</span></p>
+<p><strong>什么是立体角？</strong></p>
+<figure>
+<a href="https://s2.loli.net/2023/09/17/wI8arSMgVsCc7Ll.png" title="单位立体角" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/wI8arSMgVsCc7Ll.png"
+alt="单位立体角" /></a>
+<figcaption aria-hidden="true">单位立体角</figcaption>
+</figure>
+<p>角度的定义，弧长除以半径，弧度制。</p>
+<p><strong>立体角</strong>：弧度在三维空间的延伸。在三维空间的球中找一个锥，这个锥在球上有一个球表面积，将这个面积除以球半径的平方。因为球表面积是
+<span class="math inline">\(4\pi{r}^2\)</span>，所以球有<span
+class="math inline">\(4\pi\)</span>立体角（steradians）</p>
+<p>单位立体角（Differential Solid Angles）：</p>
+<p><span class="math display">\[
+\begin{equation}\begin{aligned}\mathrm{d} A &amp; =(r \mathrm{~d}
+\theta)(r \sin \theta \mathrm{d} \phi) \\&amp; =r^2 \sin \theta
+\mathrm{d} \theta \mathrm{d} \phi\end{aligned}\end{equation}
+\]</span></p>
+<p><span class="math display">\[
+\begin{equation} \mathrm{d} \omega=\frac{\mathrm{d} A}{r^2}=\sin \theta
+\mathrm{d} \theta \mathrm{d} \phi \end{equation}
+\]</span></p>
+<p>为什么是面积微分<span class="math inline">\(\mathrm{d} A\)</span>
+的一个因数是 <span class="math inline">\(r \sin \theta \mathrm{d}
+\phi\)</span>，可以看蓝线这个圆上的弧</p>
+<figure>
+<a href="https://s2.loli.net/2023/09/17/2oKzTQVYgqm5ilL.png" title="球表面面积微分" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/2oKzTQVYgqm5ilL.png"
+alt="球表面面积微分" /></a>
+<figcaption aria-hidden="true">球表面面积微分</figcaption>
+</figure>
+<p><strong>回头看Intensity的定义</strong></p>
+<p>intensity，即为power在某一个方向的微分。所以如果对于均匀的点光源，有以下：</p>
+<p><span class="math display">\[
+\begin{equation} I = \frac{\Phi}{4\pi}\end{equation}
+\]</span></p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>计算机图形学</category>
+        <category>RayTracing</category>
+      </categories>
+      <tags>
+        <tag>计算机图形学</tag>
+        <tag>RayTracing</tag>
+        <tag>空间划分</tag>
+      </tags>
+  </entry>
 </search>
