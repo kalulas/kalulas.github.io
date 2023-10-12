@@ -3149,4 +3149,83 @@ alt="球表面面积微分" /></a>
         <tag>空间划分</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Linux内存管理（基础概念）</title>
+    <url>/p/0a6e6f8be357/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><p>翻译自：<a
+href="https://perfetto.dev/docs/case-studies/memory#heapprofd">https://perfetto.dev/docs/case-studies/memory#heapprofd</a></p>
+<p>想看一下项目在真机上的表现，所以工作之余用了Perfetto来做项目的性能测试。阅读官方文档的时候发现了这一章节介绍了Linux内存管理的一些基础概念，所以就简单翻译了一下。</p>
+<hr />
+<aside>
+ℹ️
+在开始之前提醒一下，KB和KiB实际是不同的单位，一般是用KB指1,000byte，而KiB指1,024byte
+</aside>
+<p>从内核的角度，内存被划分为等大小4KiB的块，这些块被称为页（pages）。</p>
+<p>这些页被组织于连续的虚拟空间中，此空间称为VMA（Virtual Memory
+Area）。</p>
+<p>当一个进程通过 mmap()
+系统调用请求内存时，VMA就会被创建。一般情况下，应用不会直接调用mmap()，而是通过内存分配器间接调用，像是
+C 的 <code>malloc()</code>, C++ 的 <code>operator new()</code> 或是 Java
+的 <code>new X()</code> 等等。</p>
+<p>VMA可以被分为两种类型：文件后备页（file-backed）与匿名页（anonymous）。</p>
+<span id="more"></span>
+<h2 id="文件后备页file-backed-vmas"><strong>文件后备页（File-backed
+VMAs）</strong></h2>
+<p>文件在内存中的一种视图。它们可以通过将文件描述符传入<code>mmap()</code>来获得。内核会通过传入的文件来处理VMA上发生的缺页错误，所以读VMA上的指针，就和对文件进行
+read() 操作是等价的了。当执行新的进程，加载动态链接库，安卓框架加载.dex
+库和APK中的资源文件时，文件后备页都会被访问。</p>
+<h2 id="匿名页anonymous-vmas"><strong>匿名页（Anonymous
+VMAs）</strong></h2>
+<p>不被任何文件备用的内存空间。内存分配器就是通过这种方式从内核请求动态内存的。匿名页可以通过调用
+<code>mmap(… MAP_ANONYMOUS …)</code> 来获取。</p>
+<p>当应用试图对VMA进行读写操作时，物理内存只会被以页的粒度（granularity）进行分配。设想你在页上分配了32MiB的大小，但只对其中的一个字节做了读写操作，那么你的进程实际上只会增加4KiB的内存占用。虽然你的进程确实增加了32MiB的虚拟没存，但它的常驻（resident）物理内存只会增加4KiB。</p>
+<p>当优化程序的内存使用时，我们一般着眼于减少它们在物理内存中的占用（footprint）。因为在现代的设备平台上，过高的虚拟内存占用一般不需要我们过分关注（除非过多的占用导致虚拟地址空间不足，这在64位系统上是很难发生的）。</p>
+<p>我们将一个进程驻留在物理内存上的内存称为它的<strong>RSS</strong>（Resident
+Set Size常驻集大小）。尽管如此，常驻内存也存在着不同。</p>
+<p>从内存消耗的角度来看，在VMA中独立的页可能存在以下状态：</p>
+<ul>
+<li><strong>Resident</strong>：此页被映射到物理内存页上。常驻页可能有以下两种状态：
+<ul>
+<li><strong>Clean</strong>（仅对文件后备页）：页上的内容与硬盘（外存，on-disk）上的内容一致。当内存压力大时，内核可以更轻易地移除clean状态的页。因为当需要这些页时，内核只要读取它们相应的文件，就能重建它们的内容。</li>
+<li><strong>Dirty</strong>：页上的内容与硬盘上的内容不同，或者（更常见的情况）此页没有硬盘上的备份（匿名页）。dirty状态的页不能够被移除，因为这将导致数据丢失。不过它们可以被移出到硬盘，或者ZRAM上。</li>
+</ul></li>
+<li><strong>Swapped</strong>：脏页能够被写入到硬盘上的swap文件（大多数linux桌面发布版），或者进行压缩（在安卓和CrOs上通过<strong>ZRAM</strong>进行）。此页会保持swapped状态，直到虚拟地址的缺页错误发生，这时候，此页会重新被带回主存。</li>
+<li><strong>Not
+present</strong>：此页从未发生缺页错误，且此页为clean状态，稍后将被移除。</li>
+</ul>
+<p>一般来说减少dirty内存的占用量是更重要的，因为它们不能像clean内存那样被回收重用。在安卓设备上，即时它被转移到ZRAM，它仍然会占用（吃掉）部分的系统内存。所以在
+<code>dumpsys meminfo</code> 的例子中，我们会格外关注 <em>Private
+Dirty</em>。</p>
+<p><strong>Shared</strong>
+内存能被映射到多个进程中。这意味着不同进程的VMA可能会指向同一块物理内存。一个常见的例子是通用库（举例
+libc.so，framwork.dex）的文件后备内存，或者更罕见的一个例子是，一个进程执行了
+<code>fork()</code>，而子进程继承了来自它的 dirty 内存。</p>
+<p>这就引入了<strong>PSS</strong>（Proportional Set Size
+比例分配集大小，Proportional
+等比分配的）的概念。在<strong>PSS</strong>中，多个进程占用的Resident状态内存会被等比地进行分配。如果我们将4KiB页映射到四个进程，那么每个进程的<strong>PSS</strong>仅会新增1KiB。</p>
+<h2 id="回顾">回顾</h2>
+<ul>
+<li>动态分配的内存，像是通过 C的 <code>malloc()</code>,
+C++的 <code>operator new()</code> 或者 Java的 <code>new
+X()</code> 进行分配内存总是 匿名 且 dirty 的，除非它从未被使用过。</li>
+<li>如果内存在一段时间内没有被读写，为了减轻内存压力，它会被换出到ZRAM上并且进入到swapped状态。</li>
+<li>Resident（且dirty）或是swapped状态的匿名内存总是耗费资源的，如无必要，需要尽可能避免。</li>
+<li>来自代码（java代码，原生代码）的文件映射内存，库以及资源文件几乎总是clean状态。Clean状态的内存一样会带来系统内存开销，但通常应用开发者对它没有太大控制权。</li>
+</ul>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>计算机科学</category>
+        <category>操作系统</category>
+        <category>内存管理</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>内存管理</tag>
+      </tags>
+  </entry>
 </search>
