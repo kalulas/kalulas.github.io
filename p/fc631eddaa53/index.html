@@ -128,7 +128,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#tablecraft-is-finally-here"><span class="nav-number">1.</span> <span class="nav-text">TableCraft is finally here!</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tablecraft-%E5%8F%91%E5%B8%83"><span class="nav-number">1.1.</span> <span class="nav-text">TableCraft 发布！</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#tablecraft-is-finally-here"><span class="nav-number">1.</span> <span class="nav-text">TableCraft is finally here!</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tablecraft-%E5%8F%91%E5%B8%83"><span class="nav-number">1.1.</span> <span class="nav-text">TableCraft 发布！</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%B7%E5%A7%8B"><span class="nav-number">1.2.</span> <span class="nav-text">起始</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%8F%E7%94%B1"><span class="nav-number">1.3.</span> <span class="nav-text">经由</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E9%99%B7"><span class="nav-number">1.4.</span> <span class="nav-text">缺陷</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E6%9C%9B"><span class="nav-number">1.5.</span> <span class="nav-text">展望</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -223,9 +223,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2023-05-21 23:37:56 / 修改时间：23:50:16" itemprop="dateCreated datePublished" datetime="2023-05-21T23:37:56+08:00">2023-05-21</time>
+      <time title="创建时间：2023-05-21 23:37:56" itemprop="dateCreated datePublished" datetime="2023-05-21T23:37:56+08:00">2023-05-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-12-22 00:34:27" itemprop="dateModified" datetime="2023-12-22T00:34:27+08:00">2023-12-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -251,7 +257,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>163</span>
+      <span>1.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -272,8 +278,56 @@
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="tablecraft-is-finally-here">TableCraft is finally here!</h1>
 <h2 id="tablecraft-发布">TableCraft 发布！</h2>
 <p>从21年起经过两年断断续续的开发，TableCraft终于发布了<a
-target="_blank" rel="noopener" href="https://github.com/kalulas/TableCraft/releases/tag/v1.0.0">v1.0.0</a>版本，并开始提供给项目组同事使用了。这边文章会介绍从最初立项到最终发布TableCraft的设计发生了怎样的变化，TableCraft现阶段存在的一些问题，以及未来的发展目标。</p>
+target="_blank" rel="noopener" href="https://github.com/kalulas/TableCraft/releases/tag/v1.0.0">v1.0.0</a>版本，并开始提供给项目组同事使用了。这篇文章会介绍从最初立项到最终发布TableCraft的设计发生了怎样的变化，TableCraft现阶段存在的一些问题，以及未来的发展目标。</p>
 <span id="more"></span>
+<h2 id="起始">起始</h2>
+<p>开发TableCraft的初衷是为了让自己能从手写读表代码的痛苦中解放出来：重复而机械的工作，除了徒增出错的风险没有任何意义。</p>
+<p>在这几年的项目开发过程中，程序组也出于缩短启动时间，减少解析配置表的内存分配、内存占用，推进过几次读表代码的优化，如多线程读取解析，csv格式配置转为binary格式。概括下来，手写读表代码除了累人，自行实现的读表代码提供了过高的自由度，还会带来额外的问题：</p>
+<ul>
+<li>不同配置表中相同数值类型字段的读取行为可能不一致（空字符串代表false？true？），配置负责人难以形成习惯，配置错误风险高。</li>
+<li>将csv格式转换为binary格式可能丢失部分信息，使得难以生成、甚至无法生成对应的binary读表代码。</li>
+<li>不同的配置表之间可能存在依赖，使得多线程优化工作难以展开。</li>
+<li>开发者自身水平问题导致读表代码效率差，资源占用多。</li>
+</ul>
+<p>同时正所谓由奢入俭难，在先前项目组体验过多端一致（C++，C#，Lua，应用于客户端运行时，客户端编辑器，服务器）的配置表读取库，与配置表编辑、代码生成工具后，每次手写读表代码都是一种煎熬。于是在21年末的一个稍稍有空的周末，TableCraft的开发工作开始了。</p>
+<h2 id="经由">经由</h2>
+<p>TableCraft最初的设计构想如下：</p>
+<ol type="1">
+<li>兼容常见的配置文件格式</li>
+<li>为配置文件设计元数据文件，补全生成读表代码所需的描述信息</li>
+<li>提供读表代码的文本形式模板（Template）文件，而不将读表代码内容硬编码到工具中，目的有：
+<ol type="1">
+<li>工具可跨项目组使用，减少重复开发工作量</li>
+<li>考虑到读表代码发生改变的频率较高，将代码模板化可以减少重复编译</li>
+</ol></li>
+<li>将配置文件与元数据文件、代码模板文件结合，生成各种语言的读表代码</li>
+<li>提供单独的library文件，可开发命令行脚本用于构建任务，也可开发图形化工具用于日常开发使用</li>
+</ol>
+<p>有了基本目标之后，21年末就着手以C#进行核心dll的开发（也就是这时我发布了
+<a href="https://www.threegates.net/p/ab7a58fcc8d2/" title="" target="">关于配置代码生成器的构想</a>），但卡在了两点上：</p>
+<ol type="1">
+<li>若要实现读表代码模板化，意味着需要设计自己的模板语法，以及模板文件编译器；虽说不至于无从下手，但工作量比预期的大很多。</li>
+<li>对使用什么GUI开发框架没有下定主意，当时甚至想过使用ImGUI</li>
+</ol>
+<p>由于项目组的工作也繁忙起来，TableCraft的开发工作就暂且搁置了。但现在回想起来，也庆幸当时及时停手了，才能在后来找到更为成熟的解决方案。看来有些时候闷头干活真的不可取，放下执念，沉下心学点东西才是卓越之路啊。</p>
+<p>23年在写博客的时候发现，支持markdown格式的博客框架其实都应用了类似的模板（Template）技术，使用用户提交的markdown文本，根据一些预设好的规则，来生成出最终的静态html页面。这时候我才意识到，搜索的关键字应该是模板（Template）。</p>
+<p>果不其然，.NET 中也有类似的解决方案，称作
+<a href="https://learn.microsoft.com/en-us/visualstudio/modeling/code-generation-and-t4-text-templates?view=vs-2022" title="" target="">T4 Text Template</a>，也不是什么新鲜技术了，甚至在开发时还是借用了第三方库才实现了兼容
+.net6。</p>
+<p>而GUI框架的选取上，则是采用了项目组前辈推荐的
+<a href="https://docs.avaloniaui.net/" title="" target="">Avalonia UI</a>。现在回想起来，其实应该从WPF开始体验的好，直接入手
+AvaloniaUI 可能缺失了一些比较的过程，不过不得不承认选取AvaloniaUI
+大大提高了开发速度。</p>
+<p>最终，TableCraft以这样的形式呈现了出来：</p>
+<ol type="1">
+<li>核心库 nuget: <a href="https://www.nuget.org/packages/TableCraft.Core" title="" target="">TableCraft.Core</a></li>
+<li>核心库 github page: <a href="https://github.com/kalulas/TableCraft.Core" title="" target="">TableCraft.Core</a></li>
+<li>基于Avalonia的可视化编辑器 github page: <a href="https://github.com/kalulas/TableCraft" title="" target="">TableCraft(Editor)</a></li>
+</ol>
+<h2 id="缺陷">缺陷</h2>
+<p>TODO</p>
+<h2 id="展望">展望</h2>
+<p>TODO</p>
 </div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
