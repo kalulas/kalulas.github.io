@@ -21,14 +21,14 @@
 
 
 
-<link rel="canonical" href="https://www.threegates.net/p/c629bb3de01f/">
+<link rel="canonical" href="https://www.threegates.net/p/e5c0cabb6711/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.threegates.net/p/c629bb3de01f/","path":"p/c629bb3de01f/","title":"《The Way to Go》Chapter16 常见陷阱与错误"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.threegates.net/p/e5c0cabb6711/","path":"p/e5c0cabb6711/","title":".NET source 系列：System.Collections.Generic.List"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>《The Way to Go》Chapter16 常见陷阱与错误 | ThreeGates</title>
+<title>.NET source 系列：System.Collections.Generic.List | ThreeGates</title>
   
 
 
@@ -128,7 +128,9 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter16-%E5%B8%B8%E8%A7%81%E9%99%B7%E9%98%B1%E4%B8%8E%E9%94%99%E8%AF%AF"><span class="nav-number">1.</span> <span class="nav-text">Chapter16 常见陷阱与错误</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AF%E7%94%A8%E7%9F%AD%E5%A3%B0%E6%98%8E%E5%AF%BC%E8%87%B4%E5%8F%98%E9%87%8F%E8%A6%86%E7%9B%96"><span class="nav-number">1.0.1.</span> <span class="nav-text">误用短声明导致变量覆盖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AF%E7%94%A8%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.0.2.</span> <span class="nav-text">误用字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%9C%B0%E4%BD%BF%E7%94%A8defer"><span class="nav-number">1.0.3.</span> <span class="nav-text">错误地使用defer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E4%BD%BF%E7%94%A8new%E5%92%8Cmake"><span class="nav-number">1.0.4.</span> <span class="nav-text">何时使用new()和make()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E8%A6%81%E5%AF%B9%E6%8E%A5%E5%8F%A3%E4%BD%BF%E7%94%A8%E6%8C%87%E9%92%88%E7%B1%BB%E5%9E%8B%E5%87%8F%E5%B0%91%E5%AF%B9%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%BD%BF%E7%94%A8%E6%8C%87%E9%92%88"><span class="nav-number">1.0.5.</span> <span class="nav-text">不要对接口使用指针类型，减少对值类型使用指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AD%E5%8C%85%E4%B8%8E%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.0.6.</span> <span class="nav-text">闭包与协程的使用</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#system.collections.generic.list"><span class="nav-number">1.</span> <span class="nav-text">System.Collections.Generic.List</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%91%98%E8%A6%81"><span class="nav-number">1.1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E8%A1%8C%E4%B8%BA"><span class="nav-number">1.2.</span> <span class="nav-text">主要行为</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0-ctor"><span class="nav-number">1.2.1.</span> <span class="nav-text">构造函数 ctor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#prop-capacity"><span class="nav-number">1.2.2.</span> <span class="nav-text">(prop) Capacity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#prop-count"><span class="nav-number">1.2.3.</span> <span class="nav-text">(prop) Count</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ensurecapacityint-min"><span class="nav-number">1.2.4.</span> <span class="nav-text">EnsureCapacity(int min)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#addt-item"><span class="nav-number">1.2.5.</span> <span class="nav-text">Add(T item)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clear"><span class="nav-number">1.2.6.</span> <span class="nav-text">Clear()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#containst-item"><span class="nav-number">1.2.7.</span> <span class="nav-text">Contains(T item)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#insertint-index-t-item"><span class="nav-number">1.2.8.</span> <span class="nav-text">Insert(int index, T item)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#insertrangeint-index-ienumerablet-collection"><span class="nav-number">1.2.9.</span> <span class="nav-text">InsertRange(int
+index, IEnumerable&lt;T&gt; collection)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#removet-item"><span class="nav-number">1.2.10.</span> <span class="nav-text">Remove(T item)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#removeatint-index"><span class="nav-number">1.2.11.</span> <span class="nav-text">RemoveAt(int index)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#removerangeint-index-int-count"><span class="nav-number">1.2.12.</span> <span class="nav-text">RemoveRange(int index, int
+count)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trimexcess"><span class="nav-number">1.2.13.</span> <span class="nav-text">TrimExcess()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#enumerator"><span class="nav-number">1.3.</span> <span class="nav-text">Enumerator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unitys-version"><span class="nav-number">1.4.</span> <span class="nav-text">Unity’s version</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -195,7 +197,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.threegates.net/p/c629bb3de01f/">
+    <link itemprop="mainEntityOfPage" href="https://www.threegates.net/p/e5c0cabb6711/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/disney-burger.jpg">
@@ -208,12 +210,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="《The Way to Go》Chapter16 常见陷阱与错误 | ThreeGates">
+      <meta itemprop="name" content=".NET source 系列：System.Collections.Generic.List | ThreeGates">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          《The Way to Go》Chapter16 常见陷阱与错误
+          .NET source 系列：System.Collections.Generic.List
         </h1>
 
         <div class="post-meta-container">
@@ -225,7 +227,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2022-10-30 18:30:30 / 修改时间：18:38:03" itemprop="dateCreated datePublished" datetime="2022-10-30T18:30:30+08:00">2022-10-30</time>
+      <time title="创建时间：2024-08-25 15:12:15 / 修改时间：15:45:43" itemprop="dateCreated datePublished" datetime="2024-08-25T15:12:15+08:00">2024-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -241,7 +243,7 @@
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Go/" itemprop="url" rel="index"><span itemprop="name">Go</span></a>
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/C/" itemprop="url" rel="index"><span itemprop="name">C#</span></a>
         </span>
     </span>
 
@@ -259,14 +261,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.3k</span>
+      <span>5.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -277,72 +279,201 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="chapter16-常见陷阱与错误">Chapter16 常见陷阱与错误</h1>
-<p>前15章提及了一些错误使用方式，就不再赘述，<a
-target="_blank" rel="noopener" href="https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/16.0.md">https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/16.0.md</a>
-中也都列出了，重要的是有以下最佳实践：</p>
-<ol type="1">
-<li>使用正确的方式初始化值是切片slice的一个映射map</li>
-<li>使用逗号ok模式进行类型断言</li>
-<li>使用一个工厂函数创建并实例化自己的定义的类型</li>
-<li>只有当想要改变结构体时，使用结构体指针作为方法接收者，否则都使用结构体值类型</li>
-</ol>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1
+id="system.collections.generic.list">System.Collections.Generic.List</h1>
+<p>参考版本为 .net framework 4.8</p>
+<p><a
+target="_blank" rel="noopener" href="https://referencesource.microsoft.com/#mscorlib/system/collections/generic/list.cs">https://referencesource.microsoft.com/#mscorlib/system/collections/generic/list.cs</a></p>
+<h2 id="摘要">摘要</h2>
+<ul>
+<li>泛型类型 <code>List&lt;T&gt;</code>，实现接口
+IList&lt;T&gt;，IReadOnlyList&lt;T&gt;</li>
+<li>使用数组 <code>T[] _items</code> 实现，当前已存储的元素个数为
+<code>_size</code> / <code>Count</code>，当前容量大小通过
+Capacity得到，直接返回数组 <code>_items</code> 的长度。</li>
+</ul>
 <span id="more"></span>
-<h3 id="误用短声明导致变量覆盖">误用短声明导致变量覆盖</h3>
-<p>如果在语句块内使用了短声明<code>:=</code>，那么语句块内的同名变量仅在语句块内有效，退出语句块后仍然是外部的变量生效</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">var remember bool &#x3D; false
-if something &#123;
-    remember :&#x3D; true &#x2F;&#x2F;错误
+<h2 id="主要行为">主要行为</h2>
+<h3 id="构造函数-ctor">构造函数 ctor</h3>
+<ul>
+<li>使用 List 的无参构造函数，会将List内部的静态空数组 <code>static
+readonly T[] _emptyArray = new T[0]</code> 设置到 <code>_items</code>
+上，这是一个使用静态变量避免零大小数组重复创建的技巧。</li>
+<li>使用带 <code>capacity</code>
+参数的构造函数，可以在构造时就分配出指定大小的数组，避免后续添加元素时的扩容。</li>
+<li>使用 <code>IEnumerable&lt;T&gt; collection</code>
+参数的构造函数，会在内部先检查是否能转换为
+<code>ICollection&lt;T&gt;</code>，这样直接开辟定长数组并直接
+<code>CopyTo</code> 是更高效的；否则即使用 <code>GetEnumerator</code>
+并遍历元素进行 <code>Add()</code> 的方式进行构造。</li>
+</ul>
+<h3 id="prop-capacity">(prop) Capacity</h3>
+<p>getter 获取时直接返回内部数组的长度</p>
+<p>setter
+首先保证设置的容量大于元素个数；其次设置的容量值非0，直接分配对应大小的新数组，并将原内容
+<code>Array.Copy</code> ，在容量值为0的情况下直接令 <code>_items</code>
+指向 <code>_emptyArray</code></p>
+<h3 id="prop-count">(prop) Count</h3>
+<p>仅 getter，直接返回代表当前元素个数的 <code>_size</code></p>
+<h3 id="ensurecapacityint-min">EnsureCapacity(int min)</h3>
+<p>只有在传入的min大于内部数组长度时才会工作。</p>
+<p>若内部数组长度为0，那么第一次扩容的长度会是<strong>_defaultCapacity</strong>，这个值在参考的源码中是4。</p>
+<p>若不是第一次扩容，那么预期的扩容长度是<strong>当前数组长度
+x2</strong>。</p>
+<p>Capacity存在上界，这个值为
+<code>Array_ReferenceSources.MaxArrayLength</code>，这个值为
+<code>0X7FEFFFFF</code>（2亿多一些）。扩容的大小不会超过这个数值。</p>
+<p>若预期扩容后的个数仍然没有达到传入的min，那么直接让新的容量大小等于传入的min。</p>
+<p>最后这个 <code>newCapactiy</code> 通过上述 Capacity 的 setter
+进行扩容。</p>
+<h3 id="addt-item">Add(T item)</h3>
+<p>若当前元素个数已达内部数组大小上限，通过
+<code>EnsureCapacity(_size+1)</code> 来扩容</p>
+<p>扩容后，新元素 item 会被放置到新数组的 _size++ 位置上</p>
+<p>*此方法会更新 _version</p>
+<h3 id="clear">Clear()</h3>
+<p>Clear 方法只是释放了内部数组中每个元素的引用，并且将 _size
+重置为0，即内部数组仍然存在 Capacity
+即相应的内存占用，同时也很可能不会在下一次 Add() 中发生扩容。</p>
+<p>*此方法会更新 _version</p>
+<h3 id="containst-item">Contains(T item)</h3>
+<p>若传入item为null，则进行内部数组所有元素（转换为Object）的null-check</p>
+<p>若不为null，则获取类型T的默认比较器进行遍历比较</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">EqualityComparer&lt;T&gt; c &#x3D; EqualityComparer&lt;T&gt;.Default;
+for(int i&#x3D;0; i&lt;_size; i++) &#123;
+    if (c.Equals(_items[i], item)) return true;
 &#125;
-&#x2F;&#x2F; 使用remember，得到的仍然是false
-
-&#x2F;&#x2F; ------
-&#x2F;&#x2F; 正确做法
-if something &#123;
-    remember &#x3D; true
-&#125;</code></pre>
-<h3 id="误用字符串">误用字符串</h3>
-<p>字符串是不可变的，使用 <code>a+=b</code>
-会导致大量内存开销和拷贝，考虑使用字符数组代替字符串，将字符串内容写入到缓存中，即
-<code>bytes.Buffer</code></p>
-<h3 id="错误地使用defer">错误地使用defer</h3>
-<p><code>defer</code>仅在函数返回时执行，在循环的结尾或者有限范围的代码内不会执行</p>
-<h3 id="何时使用new和make">何时使用new()和make()</h3>
-<p>重复内容：</p>
+return false;</code></pre>
+<h3 id="insertint-index-t-item">Insert(int index, T item)</h3>
+<p>若List内部元素以达到内部数组上限，触发 _size + 1 扩容。</p>
+<p>将插入位置往后的所有元素使用 <code>Array.Copy</code>
+全部右移。List内部元素数增加。</p>
+<p>*此方法会更新 _version</p>
+<h3 id="insertrangeint-index-ienumerablet-collection">InsertRange(int
+index, IEnumerable&lt;T&gt; collection)</h3>
+<p>同样会检测传入的 collection 是否是 ICollection，对于不是 ICollection
+的情况比较简单，使用 <code>GetEnumerator()</code> 遍历整个
+collection，逐一进行 <code>Insert()</code>即可。</p>
+<p>对于是 ICollection 的情况：</p>
+<ul>
+<li>使用 _size + collection.Count 大小进行扩容</li>
+<li>将插入 index 往后的内容 copy 到 index + count 位置</li>
+<li>若当前插入的 collection 是自己：
 <ol type="1">
-<li>对切片slice、映射map、通道channel使用make()</li>
-<li>对数组、结构体和值类型，使用new()</li>
-</ol>
-<h3
-id="不要对接口使用指针类型减少对值类型使用指针">不要对接口使用指针类型，减少对值类型使用指针</h3>
-<p>如使用接口的指针类型函数参数，这会导致编译错误 →
-接口本身已是一个指针</p>
-<p>尽管值类型的拷贝似乎是对内存的滥用，但值类型内存的栈上分配快速且开销小；如果传递值类型的指针会导致对象的创建，且移动到了堆上。</p>
-<h3 id="闭包与协程的使用">闭包与协程的使用</h3>
-<p>注意在循环中对索引值（index）使用闭包时，可能指向的是同一个变量，在闭包逻辑执行时，可能循环已经结束，得到的都是索引的最终值；可选的方法是创建局部变量（值复制），让闭包指向这些变量，或者用这些值启动协程</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">var values &#x3D; [5]int&#123;10, 11, 12, 13, 14&#125;
-func main() &#123;
-		&#x2F;&#x2F; ...
-    &#x2F;&#x2F; 版本 B：和 A 版本类似，但是通过调用闭包作为一个协程
-    for ix :&#x3D; range values &#123;
-        go func() &#123;
-            fmt.Print(ix, &quot; &quot;)
-        &#125;()
+<li>将插入 index 前的内容复制到 index 位置</li>
+<li>将前面保存在 index + count 位置的尾部内容重新复制为 index * 2 的位置
+[ part1 | (index) part1 | (index*2) part2 | (index+count) part2 ]</li>
+</ol></li>
+<li>若当前插入的 collection 不是自己：新开辟指定 Count 大小的数组，直接
+Copy 到 index 位置</li>
+</ul>
+<p>*此方法会更新 _version</p>
+<h3 id="removet-item">Remove(T item)</h3>
+<p>实现为 IndexOf(T item) 和 RemoveAt(int index) 的组合</p>
+<h3 id="removeatint-index">RemoveAt(int index)</h3>
+<p>若指定小标大于等于 _size 将抛出越界异常</p>
+<p>减小List的元素数量 _size，当 index &lt; _size 时进行 Array.Copy</p>
+<p>因为若需要移除的位置是当前元素的末尾，直接执行后续的
+<code>_items[_size] = default(T)</code> 即可，不需要移动数组元素</p>
+<p>*此方法会更新 _version</p>
+<h3 id="removerangeint-index-int-count">RemoveRange(int index, int
+count)</h3>
+<p>RemoveRange会在方法起始做一系列越界检测。</p>
+<p>剩下的内容与 RemoveAt 差别不大，_size
+会减去指定的Count，同时进行数组的Copy。</p>
+<p>差别较大的是这里并不将数组元素逐一设置为 default(T)，而是直接使用
+<code>Array.Clear</code> 抹掉指定位上的内容。</p>
+<p>个人而言 <code>Array.Clear</code>
+并不特别常用，后续可以多关注这一类数组提供的方法。</p>
+<p>*此方法会更新 _version</p>
+<h3 id="trimexcess">TrimExcess()</h3>
+<p>将List的内部数组大小，即容量大小，设置为严格与 _size
+一致。只有用这个方法（或者手动设置Capacity）能够真正缩小List的内部数组内存占用，这在已知List不会再有新元素时相当有用。</p>
+<p>想要完全清空一个List并且释放所有内存，正确的做法是：</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">list.Clear();
+list.TrimExcess();</code></pre>
+<h2 id="enumerator">Enumerator</h2>
+<p>构造 Enumerator 时，内部会存有原 List
+对象引用，新增表示遍历下标的index，表示当前元素的Current（构造时设置为
+default(T)），并且记录构造时list的版本
+list._version，防止遍历过程中list内容发生改变。</p>
+<p>如果在MoveNext过程中，version发生了改变，那么将会立即抛出
+<code>InvalidOperation_EnumFailedVersion</code> 异常。</p>
+<p>第一次调用 <code>MoveNext()</code>
+后，index和Current便会是List内部的第一个元素位置。最后一次调用
+<code>MoveNext()</code> 后，将会进入方法
+<code>MoveNextRare()</code>，此时index等于_size，Current恢复为default(T)，<code>MoveNextRare()</code>
+将会返回 False 保证遍历过程停止。</p>
+<h2 id="unitys-version">Unity’s version</h2>
+<p>好奇观察了下 System.Collections.Generic.List 在 il2cpp
+下的生成内容（unity 2018.4.11f1），想确认 il2cpp
+基于IL生成C++代码的策略是否一视同仁，还是会对常见的泛用类型进行一些特殊处理。</p>
+<p>粗看之下类型成员，以及静态类型成员看上去没有什么不同。</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">&#x2F;&#x2F; System.Collections.Generic.List&#96;1&lt;System.Int32&gt;
+struct  List_1_t4A961510635950236678F1B3B2436ECCAF28713A  : public RuntimeObject
+&#123;
+public:
+    &#x2F;&#x2F; T[] System.Collections.Generic.List&#96;1::_items
+    Int32U5BU5D_t20AF77B812DFA3168922AE8F35FB9FD20D7EA074* ____items_1;
+    &#x2F;&#x2F; System.Int32 System.Collections.Generic.List&#96;1::_size
+    int32_t ____size_2;
+    &#x2F;&#x2F; System.Int32 System.Collections.Generic.List&#96;1::_version
+    int32_t ____version_3;
+&#125;;
+
+struct List_1_t4A961510635950236678F1B3B2436ECCAF28713A_StaticFields
+&#123;
+public:
+    &#x2F;&#x2F; T[] System.Collections.Generic.List&#96;1::EmptyArray
+    Int32U5BU5D_t20AF77B812DFA3168922AE8F35FB9FD20D7EA074* ___EmptyArray_4;
+&#125;;</code></pre>
+<p>但是没有发现 <code>EnsureCapacity</code>，取而代之的是
+<code>GrowIfNeeded</code>，有相同的初始容量4。这也是合理的，说明 unity
+在最早 fork mono 之后可能几乎没有更新过这一部分实现。</p>
+<p>根据 unity fork mono 的时机，跳转到相应的 <a
+target="_blank" rel="noopener" href="https://github.com/mono/mono/blob/mono-2-0/mcs/class/corlib/System.Collections.Generic/List.cs">mono-2.0
+源码</a>，可以发现：</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">
+&#x2F;&#x2F; https:&#x2F;&#x2F;github.com&#x2F;mono&#x2F;mono&#x2F;blob&#x2F;a1f3cf39287ceaca189ae1b4c06ad1677c8988cf&#x2F;mcs&#x2F;class&#x2F;corlib&#x2F;System.Collections.Generic&#x2F;List.cs#L38
+namespace System.Collections.Generic &#123;
+    [Serializable]
+    public class List &lt;T&gt; : IList &lt;T&gt;, IList, ICollection &#123;
+        T [] _items;
+        int _size;
+        int _version;
+        
+        static readonly T [] EmptyArray &#x3D; new T [0]; 
+        const int DefaultCapacity &#x3D; 4;
+        
+        public List ()
+        &#123;
+            _items &#x3D; EmptyArray;
+        &#125;
+        &#x2F;&#x2F; ...
     &#125;
-    fmt.Println()
-    time.Sleep(5e9)
-		&#x2F;&#x2F; 4 4 4 4 4
-    &#x2F;&#x2F; 版本 C：正确的处理方式
-    for ix :&#x3D; range values &#123;
-        go func(ix interface&#123;&#125;) &#123;
-            fmt.Print(ix, &quot; &quot;)
-        &#125;(ix)
-    &#125;
-    fmt.Println()
-    time.Sleep(5e9)
-		&#x2F;&#x2F; 1 0 3 4 2
-&#125;
-</code></pre>
+&#125;</code></pre>
+<p>以及 <code>GrowIfNeeded</code>。可以发现在实现上与
+<code>EnsureCapacity</code>
+不同的是传入的数值为此次操作的元素个数增量，而不是元素个数的目标大小。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; https:&#x2F;&#x2F;github.com&#x2F;mono&#x2F;mono&#x2F;blob&#x2F;a1f3cf39287ceaca189ae1b4c06ad1677c8988cf&#x2F;mcs&#x2F;class&#x2F;corlib&#x2F;System.Collections.Generic&#x2F;List.cs#L83
+
+        public void Add (T item)
+        &#123;
+            &#x2F;&#x2F; If we check to see if we need to grow before trying to grow
+            &#x2F;&#x2F; we can speed things up by 25%
+            if (_size &#x3D;&#x3D; _items.Length)
+                GrowIfNeeded (1);
+            _items [_size ++] &#x3D; item;
+            _version++;
+        &#125;
+        
+        void GrowIfNeeded (int newCount)
+        &#123;
+            int minimumSize &#x3D; _size + newCount;
+            if (minimumSize &gt; _items.Length)
+                Capacity &#x3D; Math.Max (Math.Max (Capacity * 2, DefaultCapacity), minimumSize);
+        &#125;</code></pre>
+<p>再一次说明了在做Unity性能调优，或者在预测Unity上的业务代码性能表现情况时，有一份版本正确的源码很重要。</p>
 </div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
@@ -357,22 +488,20 @@ func main() &#123;
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" rel="tag"># 编程语言</a>
-              <a href="/tags/Go/" rel="tag"># Go</a>
+              <a href="/tags/C/" rel="tag"># C#</a>
+              <a href="/tags/NET/" rel="tag"># .NET</a>
+              <a href="/tags/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/" rel="tag"># 源码阅读</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/p/4aa7a9cb350b/" rel="prev" title="《The Way to Go》Chapter14 协程">
-                  <i class="fa fa-chevron-left"></i> 《The Way to Go》Chapter14 协程
+                <a href="/p/783e3028351b/" rel="prev" title="Protocol Buffers 编码">
+                  <i class="fa fa-chevron-left"></i> Protocol Buffers 编码
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/8d386e7b10e2/" rel="next" title="如何在2DUI上生成3D模型的包围盒">
-                  如何在2DUI上生成3D模型的包围盒 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
