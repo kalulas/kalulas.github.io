@@ -3798,10 +3798,17 @@ list._version，防止遍历过程中list内容发生改变。</p>
 <code>MoveNext()</code> 后，将会进入方法
 <code>MoveNextRare()</code>，此时index等于_size，Current恢复为default(T)，<code>MoveNextRare()</code>
 将会返回 False 保证遍历过程停止。</p>
-<h2 id="unitys-version">Unity’s version</h2>
-<p>好奇观察了下 System.Collections.Generic.List 在 il2cpp
-下的生成内容（unity 2018.4.11f1），想确认 il2cpp
-基于IL生成C++代码的策略是否一视同仁，还是会对常见的泛用类型进行一些特殊处理。</p>
+<h2 id="what-about-unity">What about Unity?</h2>
+<h3 id="working-with-2018.4.11f1">working with 2018.4.11f1</h3>
+<p>测试环境信息：</p>
+<ul>
+<li>API Compatibiliy Level: .NET 2.0 Subset</li>
+<li>Scripting Runtime: 3.5 equivalent</li>
+<li>Unity version: 2018.4.11f1</li>
+</ul>
+<p>写到这里时，正好在一个使用较低版本Unity的项目组中参与开发工作，因此虽然已有耳闻高版本的Unity在泛型共享方面有做优化，阅读il2cpp输出可能意义不大，但还是出于好奇观察了下
+<code>System.Collections.Generic.List</code> 在低版本 unity / il2cpp
+下的生成内容。</p>
 <p>粗看之下类型成员，以及静态类型成员看上去没有什么不同。</p>
 <pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">&#x2F;&#x2F; System.Collections.Generic.List&#96;1&lt;System.Int32&gt;
 struct  List_1_t4A961510635950236678F1B3B2436ECCAF28713A  : public RuntimeObject
@@ -3822,31 +3829,61 @@ public:
     Int32U5BU5D_t20AF77B812DFA3168922AE8F35FB9FD20D7EA074* ___EmptyArray_4;
 &#125;;</code></pre>
 <p>但是没有发现 <code>EnsureCapacity</code>，取而代之的是
-<code>GrowIfNeeded</code>，有相同的初始容量4。这也是合理的，说明 unity
-在最早 fork mono 之后可能几乎没有更新过这一部分实现。</p>
-<p>根据 unity fork mono 的时机，跳转到相应的 <a
-href="https://github.com/mono/mono/blob/mono-2-0/mcs/class/corlib/System.Collections.Generic/List.cs">mono-2.0
-源码</a>，可以发现：</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">
-&#x2F;&#x2F; https:&#x2F;&#x2F;github.com&#x2F;mono&#x2F;mono&#x2F;blob&#x2F;a1f3cf39287ceaca189ae1b4c06ad1677c8988cf&#x2F;mcs&#x2F;class&#x2F;corlib&#x2F;System.Collections.Generic&#x2F;List.cs#L38
-namespace System.Collections.Generic &#123;
-    [Serializable]
-    public class List &lt;T&gt; : IList &lt;T&gt;, IList, ICollection &#123;
-        T [] _items;
-        int _size;
-        int _version;
-        
-        static readonly T [] EmptyArray &#x3D; new T [0]; 
-        const int DefaultCapacity &#x3D; 4;
-        
-        public List ()
+<code>GrowIfNeeded</code> 方法。</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">&#x2F;&#x2F; System.Void System.Collections.Generic.List&#96;1&lt;System.Object&gt;::GrowIfNeeded(System.Int32)
+extern &quot;C&quot; IL2CPP_METHOD_ATTR void List_1_GrowIfNeeded_m3C3B2872122BDF013830789D49EE77F7880CDEC5_gshared (List_1_tE72A517BD14F52539FF78EA90F58D1387FEED660 * __this, int32_t ___newCount0, const RuntimeMethod* method)
+&#123;
+    int32_t V_0 &#x3D; 0;
+    &#123;
+        int32_t L_0 &#x3D; (int32_t)__this-&gt;get__size_2();
+        int32_t L_1 &#x3D; ___newCount0;
+        V_0 &#x3D; (int32_t)((int32_t)il2cpp_codegen_add((int32_t)L_0, (int32_t)L_1));
+        int32_t L_2 &#x3D; V_0;
+        ObjectU5BU5D_t8D571697F3A1B33B696E2F80500C21F1A1748C5D* L_3 &#x3D; (ObjectU5BU5D_t8D571697F3A1B33B696E2F80500C21F1A1748C5D*)__this-&gt;get__items_1();
+        NullCheck(L_3);
+        if ((((int32_t)L_2) &lt;&#x3D; ((int32_t)(((int32_t)((int32_t)(((RuntimeArray *)L_3)-&gt;max_length)))))))
         &#123;
-            _items &#x3D; EmptyArray;
+            goto IL_0031;
         &#125;
-        &#x2F;&#x2F; ...
+    &#125;
+    &#123;
+        NullCheck((List_1_tE72A517BD14F52539FF78EA90F58D1387FEED660 *)__this);
+        int32_t L_4 &#x3D; ((  int32_t (*) (List_1_tE72A517BD14F52539FF78EA90F58D1387FEED660 *, const RuntimeMethod*))IL2CPP_RGCTX_METHOD_INFO(method-&gt;klass-&gt;rgctx_data, 18)-&gt;methodPointer)((List_1_tE72A517BD14F52539FF78EA90F58D1387FEED660 *)__this, &#x2F;*hidden argument*&#x2F;IL2CPP_RGCTX_METHOD_INFO(method-&gt;klass-&gt;rgctx_data, 18));
+        int32_t L_5 &#x3D; Math_Max_m8B815B13982D8738EF051EA87C1CCB722CDF29B2((int32_t)((int32_t)il2cpp_codegen_multiply((int32_t)L_4, (int32_t)2)), (int32_t)4, &#x2F;*hidden argument*&#x2F;NULL);
+        int32_t L_6 &#x3D; V_0;
+        int32_t L_7 &#x3D; Math_Max_m8B815B13982D8738EF051EA87C1CCB722CDF29B2((int32_t)L_5, (int32_t)L_6, &#x2F;*hidden argument*&#x2F;NULL);
+        NullCheck((List_1_tE72A517BD14F52539FF78EA90F58D1387FEED660 *)__this);
+        ((  void (*) (List_1_tE72A517BD14F52539FF78EA90F58D1387FEED660 *, int32_t, const RuntimeMethod*))IL2CPP_RGCTX_METHOD_INFO(method-&gt;klass-&gt;rgctx_data, 19)-&gt;methodPointer)((List_1_tE72A517BD14F52539FF78EA90F58D1387FEED660 *)__this, (int32_t)L_7, &#x2F;*hidden argument*&#x2F;IL2CPP_RGCTX_METHOD_INFO(method-&gt;klass-&gt;rgctx_data, 19));
+    &#125;
+
+IL_0031:
+    &#123;
+        return;
     &#125;
 &#125;</code></pre>
-<p>以及 <code>GrowIfNeeded</code>。可以发现在实现上与
+<p>这就需要我们按照上述测试环境找到准确的Mono版本了，已知当前的
+Scripting runtime 对齐（equivalent） .NET framework
+3.5，根据以下表格可以对应到 C# 3.0 版本。</p>
+<figure>
+<a href="https://s2.loli.net/2024/08/29/7LYwAR2mQ9XNdZ4.png" title="csharp-with-dotnet-framework-version" class="gallery-item"><img src="https://s2.loli.net/2024/08/29/7LYwAR2mQ9XNdZ4.png"
+alt="csharp-with-dotnet-framework-version" /></a>
+<figcaption
+aria-hidden="true">csharp-with-dotnet-framework-version</figcaption>
+</figure>
+<p>再根据这张表格可以得到 Mono 实现 C# 3.0 的相应版本为 mono
+2.0，这样就找到我们的源码目标了。需要额外注意的是，这里的表格中的 .net
+2.0 是与现代 .net 6/7/8 的同一套标准的不同版本，而不是指 .NET Standard
+2.0，不要把（很容易搞混的）概念搞混了。</p>
+<figure>
+<a href="https://s2.loli.net/2024/08/29/Fe2TCPKOb5QZqcB.png" title="mono-with-dotnet-version" class="gallery-item"><img src="https://s2.loli.net/2024/08/29/Fe2TCPKOb5QZqcB.png"
+alt="mono-with-dotnet-version" /></a>
+<figcaption aria-hidden="true">mono-with-dotnet-version</figcaption>
+</figure>
+<p>from: <a
+href="https://www.cnblogs.com/zhaoqingqing/p/5762867.html">https://www.cnblogs.com/zhaoqingqing/p/5762867.html</a></p>
+<p>最后跳转到相应的 <a
+href="https://github.com/mono/mono/blob/mono-2-0/mcs/class/corlib/System.Collections.Generic/List.cs">mono-2.0
+源码</a>，就能看到方法 <code>GrowIfNeeded</code> 了。可以发现在实现上与
 <code>EnsureCapacity</code>
 不同的是传入的数值为此次操作的元素个数增量，而不是元素个数的目标大小。</p>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; https:&#x2F;&#x2F;github.com&#x2F;mono&#x2F;mono&#x2F;blob&#x2F;a1f3cf39287ceaca189ae1b4c06ad1677c8988cf&#x2F;mcs&#x2F;class&#x2F;corlib&#x2F;System.Collections.Generic&#x2F;List.cs#L83
@@ -3867,7 +3904,7 @@ namespace System.Collections.Generic &#123;
             if (minimumSize &gt; _items.Length)
                 Capacity &#x3D; Math.Max (Math.Max (Capacity * 2, DefaultCapacity), minimumSize);
         &#125;</code></pre>
-<p>再一次说明了在做Unity性能调优，或者在预测Unity上的业务代码性能表现情况时，有一份版本正确的源码很重要。</p>
+<p>再一次说明了在做Unity性能调优，或者在预测Unity上的业务代码性能表现情况时，有一份版本正确的源码很重要。如果觉得在诸多版本之间定位C#源码过于麻烦，直接阅读il2cpp输出的cpp源码，或许也是一种办法。</p>
 </div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
@@ -3882,6 +3919,7 @@ namespace System.Collections.Generic &#123;
       <tags>
         <tag>C#</tag>
         <tag>.NET</tag>
+        <tag>IL2CPP</tag>
         <tag>源码阅读</tag>
       </tags>
   </entry>
