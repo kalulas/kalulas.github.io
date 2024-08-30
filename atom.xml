@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ThreeGates</title>
+  <icon>https://www.threegates.net/images/gate-for-feed.png</icon>
+  <subtitle>edwardchen&#39;s gamedev blog</subtitle>
+  <link href="https://www.threegates.net/atom.xml" rel="self"/>
+  
+  <link href="https://www.threegates.net/"/>
+  <updated>2024-08-29T15:06:25.331Z</updated>
+  <id>https://www.threegates.net/</id>
+  
+  <author>
+    <name>Edward Chen 陈柏铭</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>.NET source 系列：System.Collections.Generic.List</title>
+    <link href="https://www.threegates.net/p/e5c0cabb6711/"/>
+    <id>https://www.threegates.net/p/e5c0cabb6711/</id>
+    <published>2024-08-25T07:12:15.000Z</published>
+    <updated>2024-08-29T15:06:25.331Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1
+id=&quot;system.collections.generic.list&quot;&gt;System.Collections.Generic.List&lt;/h1&gt;
+&lt;p&gt;参考版本为 .net framework 4.8&lt;/p&gt;
+&lt;p&gt;&lt;a
+href=&quot;https://referencesource.microsoft.com/#mscorlib/system/collections/generic/list.cs&quot;&gt;https://referencesource.microsoft.com/#mscorlib/system/collections/generic/list.cs&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;摘要&quot;&gt;摘要&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;泛型类型 &lt;code&gt;List&amp;lt;T&amp;gt;&lt;/code&gt;，实现接口
+IList&amp;lt;T&amp;gt;，IReadOnlyList&amp;lt;T&amp;gt;&lt;/li&gt;
+&lt;li&gt;使用数组 &lt;code&gt;T[] _items&lt;/code&gt; 实现，当前已存储的元素个数为
+&lt;code&gt;_size&lt;/code&gt; / &lt;code&gt;Count&lt;/code&gt;，当前容量大小通过
+Capacity得到，直接返回数组 &lt;code&gt;_items&lt;/code&gt; 的长度。&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    <category term="计算机科学" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/"/>
+    
+    <category term="编程语言" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="C#" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/C/"/>
+    
+    
+    <category term="C#" scheme="https://www.threegates.net/tags/C/"/>
+    
+    <category term=".NET" scheme="https://www.threegates.net/tags/NET/"/>
+    
+    <category term="IL2CPP" scheme="https://www.threegates.net/tags/IL2CPP/"/>
+    
+    <category term="源码阅读" scheme="https://www.threegates.net/tags/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Protocol Buffers 编码</title>
+    <link href="https://www.threegates.net/p/783e3028351b/"/>
+    <id>https://www.threegates.net/p/783e3028351b/</id>
+    <published>2024-03-06T05:04:15.000Z</published>
+    <updated>2024-03-06T05:17:34.559Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;protocol-buffers-编码&quot;&gt;Protocol Buffers 编码&lt;/h1&gt;
+&lt;p&gt;reference:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a
+href=&quot;https://www.zhihu.com/question/585411183&quot;&gt;https://www.zhihu.com/question/585411183&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a
+href=&quot;https://protobuf.dev/programming-guides/encoding/&quot;&gt;https://protobuf.dev/programming-guides/encoding/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;本文翻译自&lt;a
+href=&quot;https://protobuf.dev/programming-guides/encoding/&quot;&gt;官方文档&lt;/a&gt;，补充了部分前置知识与帮助理解的示例。&lt;/p&gt;
+&lt;h2 id=&quot;简介&quot;&gt;简介&lt;/h2&gt;
+&lt;p&gt;Protocol Buffers (a.k.a., &lt;em&gt;protobuf&lt;/em&gt;) are Google&#39;s
+language-neutral, platform-neutral, extensible mechanism for serializing
+structured data.&lt;/p&gt;
+&lt;p&gt;Protocol Buffers
+是Google由推出的，跨语言、跨平台的用于序列化数据结构的可拓展机制 /
+协议。&lt;/p&gt;
+&lt;h2 id=&quot;序列化格式&quot;&gt;序列化格式&lt;/h2&gt;
+&lt;p&gt;Protobuf的编码基于变种的Base128，下面先简单介绍Base64，Base128以及ZigZag编码。&lt;/p&gt;
+&lt;h3 id=&quot;base64编码&quot;&gt;Base64编码&lt;/h3&gt;
+&lt;p&gt;reference: &lt;a
+href=&quot;https://www.zhihu.com/question/585411183&quot;&gt;https://www.zhihu.com/question/585411183&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Base64编码的设计初衷是为了让数据在设备间传输时，目标机器能够正确地“理解”字节流中的内容：字节流中的内容均可以通过ascii字符正常显示。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="计算机科学" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/"/>
+    
+    <category term="信息论" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E4%BF%A1%E6%81%AF%E8%AE%BA/"/>
+    
+    
+    <category term="编码方案" scheme="https://www.threegates.net/tags/%E7%BC%96%E7%A0%81%E6%96%B9%E6%A1%88/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Linux内存管理（基础概念）</title>
+    <link href="https://www.threegates.net/p/0a6e6f8be357/"/>
+    <id>https://www.threegates.net/p/0a6e6f8be357/</id>
+    <published>2023-10-12T07:16:14.000Z</published>
+    <updated>2023-10-12T07:32:59.206Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;p&gt;翻译自：&lt;a
+href=&quot;https://perfetto.dev/docs/case-studies/memory#heapprofd&quot;&gt;https://perfetto.dev/docs/case-studies/memory#heapprofd&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;想看一下项目在真机上的表现，所以工作之余用了Perfetto来做项目的性能测试。阅读官方文档的时候发现了这一章节介绍了Linux内存管理的一些基础概念，所以就简单翻译了一下。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;aside&gt;
+ℹ️
+在开始之前提醒一下，KB和KiB实际是不同的单位，一般是用KB指1,000byte，而KiB指1,024byte
+&lt;/aside&gt;
+&lt;p&gt;从内核的角度，内存被划分为等大小4KiB的块，这些块被称为页（pages）。&lt;/p&gt;
+&lt;p&gt;这些页被组织于连续的虚拟空间中，此空间称为VMA（Virtual Memory
+Area）。&lt;/p&gt;
+&lt;p&gt;当一个进程通过 mmap()
+系统调用请求内存时，VMA就会被创建。一般情况下，应用不会直接调用mmap()，而是通过内存分配器间接调用，像是
+C 的 &lt;code&gt;malloc()&lt;/code&gt;, C++ 的 &lt;code&gt;operator new()&lt;/code&gt; 或是 Java
+的 &lt;code&gt;new X()&lt;/code&gt; 等等。&lt;/p&gt;
+&lt;p&gt;VMA可以被分为两种类型：文件后备页（file-backed）与匿名页（anonymous）。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="计算机科学" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/"/>
+    
+    <category term="操作系统" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    
+    <category term="内存管理" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/"/>
+    
+    
+    <category term="Linux" scheme="https://www.threegates.net/tags/Linux/"/>
+    
+    <category term="内存管理" scheme="https://www.threegates.net/tags/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>games101-lecture14 笔记</title>
+    <link href="https://www.threegates.net/p/9f45e6ee4d77/"/>
+    <id>https://www.threegates.net/p/9f45e6ee4d77/</id>
+    <published>2023-09-17T12:04:49.000Z</published>
+    <updated>2023-09-17T12:26:06.060Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;today&quot;&gt;Today&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Acceleration 加速结构：使用AABB来加速光线追踪
+&lt;ul&gt;
+&lt;li&gt;Uniform grids&lt;/li&gt;
+&lt;li&gt;Spatial partitions&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Basic radiometry（辐射度量学）
+&lt;ul&gt;
+&lt;li&gt;进阶：不同于Whitted-Style的光线追踪&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;光线追踪加速结构&quot;&gt;光线追踪加速结构&lt;/h1&gt;
+&lt;h2 id=&quot;均匀网格方案uniform-grids&quot;&gt;均匀网格方案：Uniform grids&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;预处理：构建加速网格&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;找一个包围盒，在包围盒中构建均匀网格，记录每一个与物体相交的网格&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;光线与场景求交&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;射出一道光线，让光线与格子求交，若格子内存在物体，再让光线与物体求交：光线与格子求交是快速的，而与实际物体求交是很慢的，通过这样的理念来优化&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;经验告诉我们&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;当格子数等于C * 对象数时，结果会比较好；三维空间下常数C可以取27&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;缺陷&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;当细节物品在空间中分布不均匀时，存在大规模集中、大规模空白：”Teapot
+in a stadium” problem&lt;/p&gt;
+&lt;p&gt;*在一些场景下还是好用的，仍有在使用&lt;/p&gt;
+&lt;h2 id=&quot;空间划分-spatial-partitions&quot;&gt;空间划分 Spatial partitions&lt;/h2&gt;
+&lt;figure&gt;
+&lt;a href=&quot;https://s2.loli.net/2023/09/17/QPXy1Yma5cLDHVo.png&quot; title=&quot;空间划分树结构&quot; class=&quot;gallery-item&quot;&gt;&lt;img src=&quot;https://s2.loli.net/2023/09/17/QPXy1Yma5cLDHVo.png&quot;
+alt=&quot;空间划分树结构&quot; /&gt;&lt;/a&gt;
+&lt;figcaption aria-hidden=&quot;true&quot;&gt;空间划分树结构&lt;/figcaption&gt;
+&lt;/figure&gt;</summary>
+    
+    
+    
+    <category term="计算机图形学" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/"/>
+    
+    <category term="RayTracing" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/RayTracing/"/>
+    
+    
+    <category term="计算机图形学" scheme="https://www.threegates.net/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/"/>
+    
+    <category term="RayTracing" scheme="https://www.threegates.net/tags/RayTracing/"/>
+    
+    <category term="空间划分" scheme="https://www.threegates.net/tags/%E7%A9%BA%E9%97%B4%E5%88%92%E5%88%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Unity IL2PP 编码限制</title>
+    <link href="https://www.threegates.net/p/24d663e5b3a4/"/>
+    <id>https://www.threegates.net/p/24d663e5b3a4/</id>
+    <published>2023-07-10T15:20:30.000Z</published>
+    <updated>2023-07-11T14:49:10.423Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h2 id=&quot;参考&quot;&gt;参考&lt;/h2&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;&lt;a
+href=&quot;https://docs.unity3d.com/2018.4/Documentation/Manual/ScriptingRestrictions.html&quot;&gt;unity
+documentation-Scripting restrictions 2018.4&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a
+href=&quot;https://docs.unity3d.com/2022.3/Documentation/Manual/ScriptingRestrictions.html&quot;&gt;unity
+documentations-Scripting restrictions 2022.3&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;内容相差不大，2022.3在2018.4的基础上做了一些补充，并去除了一个关于泛型虚方法例子。&lt;/p&gt;
+&lt;h2 id=&quot;ahead-of-time编译aot&quot;&gt;Ahead-of-time编译（AOT）&lt;/h2&gt;
+&lt;p&gt;一些平台不允许运行时的代码生成（运行时开辟内存用于存放可执行的机器指令）。因此，一切依赖于just-in-time（JIT）的托管代码（managed
+code）在这些平台上都无法运行。为此，你需要把所有的托管代码都进行AOT编译。在一般情况下，这个限制不会带来什么影响。但在AOT编译的平台上，也存在着一些需要额外注意的要点。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="游戏开发" scheme="https://www.threegates.net/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/"/>
+    
+    <category term="引擎脚本后端" scheme="https://www.threegates.net/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/%E5%BC%95%E6%93%8E%E8%84%9A%E6%9C%AC%E5%90%8E%E7%AB%AF/"/>
+    
+    
+    <category term="游戏开发" scheme="https://www.threegates.net/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/"/>
+    
+    <category term="Unity" scheme="https://www.threegates.net/tags/Unity/"/>
+    
+    <category term="IL2CPP" scheme="https://www.threegates.net/tags/IL2CPP/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Godot引擎贡献最佳实践</title>
+    <link href="https://www.threegates.net/p/13902132f155/"/>
+    <id>https://www.threegates.net/p/13902132f155/</id>
+    <published>2023-07-08T09:15:26.000Z</published>
+    <updated>2023-07-08T09:34:51.523Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;p&gt;翻译自Godot引擎贡献指南，原文：&lt;a
+href=&quot;https://docs.godotengine.org/en/latest/contributing/development/best_practices_for_engine_contributors.html&quot;&gt;best_practices_for_engine_contributors&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;问题总要放在第一位&quot;&gt;#1 问题总要放在第一位&lt;/h2&gt;
+&lt;p&gt;许多代码贡献者非常的有创造力，他们享受设计抽象数据结构，搭建优秀的交互界面的过程，又或许他们只是单纯地热爱编程。代码贡献者们总是有一些很酷的想法，但这些想法或许能、或许不能解决真实的问题。&lt;/p&gt;
+&lt;figure&gt;
+&lt;a href=&quot;https://s2.loli.net/2023/06/29/w19dxybmLja7ZMB.png&quot; title=&quot;best_practices1&quot; class=&quot;gallery-item&quot;&gt;&lt;img src=&quot;https://s2.loli.net/2023/06/29/w19dxybmLja7ZMB.png&quot;
+alt=&quot;best_practices1&quot; /&gt;&lt;/a&gt;
+&lt;figcaption aria-hidden=&quot;true&quot;&gt;best_practices1&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;p&gt;这就被称为&lt;em&gt;寻找问题的解决方案&lt;/em&gt;。在理想的世界，它们也许并不有害，但在现实世界中，代码是需要时间去完成的，它们占用空间，而且一经存在就需要时间去维护。避免一切不必要的事物，在软件开发中一直被视作一种好的实践方式。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="软件工程" scheme="https://www.threegates.net/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/"/>
+    
+    <category term="软件设计原则" scheme="https://www.threegates.net/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/"/>
+    
+    
+    <category term="Godot" scheme="https://www.threegates.net/tags/Godot/"/>
+    
+    <category term="软件设计原则" scheme="https://www.threegates.net/tags/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/"/>
+    
+    <category term="代码规范" scheme="https://www.threegates.net/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>TableCraft is finally here!</title>
+    <link href="https://www.threegates.net/p/fc631eddaa53/"/>
+    <id>https://www.threegates.net/p/fc631eddaa53/</id>
+    <published>2023-05-21T15:37:56.000Z</published>
+    <updated>2024-01-07T16:22:06.150Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;tablecraft-is-finally-here&quot;&gt;TableCraft is finally here!&lt;/h1&gt;
+&lt;h2 id=&quot;tablecraft-发布&quot;&gt;TableCraft 发布！&lt;/h2&gt;
+&lt;p&gt;从21年起经过两年断断续续的开发，TableCraft终于发布了&lt;a
+href=&quot;https://github.com/kalulas/TableCraft/releases/tag/v1.0.0&quot;&gt;v1.0.0&lt;/a&gt;版本，并开始提供给项目组同事使用了。这篇文章会介绍从最初立项到最终发布TableCraft的设计发生了怎样的变化，TableCraft现阶段存在的一些问题，以及未来的发展目标。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="工具" scheme="https://www.threegates.net/categories/%E5%B7%A5%E5%85%B7/"/>
+    
+    
+    <category term="游戏开发工具" scheme="https://www.threegates.net/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>《CLR via C#》Chapter4 类型基础</title>
+    <link href="https://www.threegates.net/p/77589f7bf80e/"/>
+    <id>https://www.threegates.net/p/77589f7bf80e/</id>
+    <published>2023-01-25T09:05:02.000Z</published>
+    <updated>2023-01-25T10:31:03.222Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;第四章-类型基础&quot;&gt;第四章 类型基础&lt;/h1&gt;
+&lt;h2 id=&quot;所有类型都从system.object派生&quot;&gt;4.1
+所有类型都从System.Object派生&lt;/h2&gt;
+&lt;h3 id=&quot;gethashcode-与-equals&quot;&gt;GetHashCode() 与 Equals()&lt;/h3&gt;
+&lt;p&gt;如果对象要在哈希表集合中用作键使用，那么应该重写GetHashCode方法；如果两个对象具有相同的值，那么Equals应该返回true。&lt;/p&gt;
+&lt;p&gt;Object类的Equals和GetHashCode具体实现都是internalcall，由CLR实现，Equals源码实现可参考以下：&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="计算机科学" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/"/>
+    
+    <category term="编程语言" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="C#" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/C/"/>
+    
+    
+    <category term="编程语言" scheme="https://www.threegates.net/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="C#" scheme="https://www.threegates.net/tags/C/"/>
+    
+    <category term=".NET" scheme="https://www.threegates.net/tags/NET/"/>
+    
+    <category term="CLR" scheme="https://www.threegates.net/tags/CLR/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用SSH进行远端仓库身份验证</title>
+    <link href="https://www.threegates.net/p/6f279d447649/"/>
+    <id>https://www.threegates.net/p/6f279d447649/</id>
+    <published>2022-12-20T12:15:56.000Z</published>
+    <updated>2022-12-20T12:53:17.385Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h2 id=&quot;使用ssh进行github身份验证&quot;&gt;使用ssh进行GitHub身份验证&lt;/h2&gt;
+&lt;h3 id=&quot;生成ssh-key&quot;&gt;生成ssh key&lt;/h3&gt;
+&lt;p&gt;使用ssh
+key进行连接/身份校验，需要先生成公私密钥，将公钥放到对应代码托管平台上，并在连接时使用相应的私钥。github目前推荐的keygen签名算法，以及&lt;a
+href=&quot;https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent&quot;&gt;密钥对生成方式&lt;/a&gt;：&lt;/p&gt;
+&lt;pre class=&quot;line-numbers language-bash&quot; data-language=&quot;bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;$ ssh-keygen -t ed25519 -C &amp;quot;your_email@example.com&amp;quot;
+&amp;gt; ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;生成公私密钥对后，将公钥放到对应代码托管平台上看起来像是下面这样。在进行ssh连接时，默认会使用唯一的私钥进行校验&lt;/p&gt;
+&lt;a href=&quot;/p/6f279d447649/github-ssh-example.png&quot; class=&quot;gallery-item&quot;&gt;&lt;img src=&quot;/p/6f279d447649/github-ssh-example.png&quot; class=&quot;&quot; title=&quot;github用户信息页的Authentication Keys&quot;&gt;&lt;/a&gt;
+&lt;p&gt;同时，可以将github的public
+key存放到自己设备的&lt;code&gt;~/.ssh/known_hosts&lt;/code&gt;下，就不会在初次使用ssh连接github时需要手动校验&lt;/p&gt;
+&lt;p&gt;&lt;a
+href=&quot;https://docs.github.com/cn/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints&quot;&gt;GitHub
+的 SSH 密钥指纹 - GitHub Docs&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&quot;note info&quot;&gt;&lt;p&gt;😅 手动校验时会输出下述类似内容，你可能已经见过了…&lt;/p&gt;
+&lt;pre class=&quot;line-numbers language-bash&quot; data-language=&quot;bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&amp;gt; The authenticity of host &amp;#39;[ssh.github.com]:443 ([140.82.112.36]:443)&amp;#39; can&amp;#39;t be established.&amp;gt; ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF&amp;#x2F;zLDA0zPMSvHdkr4UvCOqU...&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="工具使用指南" scheme="https://www.threegates.net/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/"/>
+    
+    <category term="git" scheme="https://www.threegates.net/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/git/"/>
+    
+    
+    <category term="git" scheme="https://www.threegates.net/tags/git/"/>
+    
+    <category term="github" scheme="https://www.threegates.net/tags/github/"/>
+    
+    <category term="ssh" scheme="https://www.threegates.net/tags/ssh/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>向搜索引擎提交hexo站点sitemap</title>
+    <link href="https://www.threegates.net/p/e620710b2f05/"/>
+    <id>https://www.threegates.net/p/e620710b2f05/</id>
+    <published>2022-12-11T09:58:00.000Z</published>
+    <updated>2022-12-11T10:10:27.389Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1
+id=&quot;向搜索引擎提交hexo站点sitemap&quot;&gt;向搜索引擎提交hexo站点sitemap&lt;/h1&gt;
+&lt;h2 id=&quot;简介&quot;&gt;简介&lt;/h2&gt;
+&lt;p&gt;为自己的站点创建sitemap，并通过搜索引擎提供的后台工具进行提交，可以增强个人网站的曝光率。这里简单记录一下hexo要如何生成sitemap，并提交到各大搜索引擎上。&lt;/p&gt;
+&lt;h2 id=&quot;生成sitemap&quot;&gt;生成sitemap&lt;/h2&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;&lt;p&gt;进入到个人hexo博客&lt;code&gt;_config.yml&lt;/code&gt;同级目录下，使用npm安装&lt;code&gt;hexo-generator-sitemap&lt;/code&gt;以及&lt;code&gt;hexo-generator-baidu-sitemap&lt;/code&gt;，命令如下&lt;/p&gt;
+&lt;pre class=&quot;line-numbers language-bash&quot; data-language=&quot;bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;npm install hexo-generator-sitemap --save
+npm install hexo-generator-baidu-sitemap --save&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;安装完成后，编辑博客的配置文件&lt;code&gt;_config.yml&lt;/code&gt;，加入以下内容&lt;/p&gt;
+&lt;pre class=&quot;line-numbers language-yaml&quot; data-language=&quot;yaml&quot;&gt;&lt;code class=&quot;language-yaml&quot;&gt;# For generating google &amp;#x2F; bing &amp;#x2F; baidu sitemap↓
+Plugins:
+- hexo-generator-sitemap
+- hexo-generator-baidu-sitemap
+
+baidusitemap:
+  path: baidusitemap.xml # 百度用的sitemap生成在public根目录的此文件内
+sitemap:
+  path: sitemap.xml # 其他sitemap生成在public根目录的此文件内&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="博客搭建" scheme="https://www.threegates.net/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/"/>
+    
+    <category term="hexo" scheme="https://www.threegates.net/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/hexo/"/>
+    
+    
+    <category term="博客搭建" scheme="https://www.threegates.net/tags/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>如何在2DUI上生成3D模型的包围盒</title>
+    <link href="https://www.threegates.net/p/8d386e7b10e2/"/>
+    <id>https://www.threegates.net/p/8d386e7b10e2/</id>
+    <published>2022-11-22T14:16:54.000Z</published>
+    <updated>2022-11-22T15:22:20.964Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;前言&quot;&gt;前言&lt;/h1&gt;
+&lt;p&gt;在实际开发中遇到了这个问题，需要判断一个3D模型在专用相机下的显示范围，将其展示在UI上。在这里记录一下实现步骤和代码。&lt;/p&gt;
+&lt;h1 id=&quot;实现方法&quot;&gt;实现方法&lt;/h1&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;从需要渲染的对象上获取Renderer组件（对于复杂的3D模型，一般得到的是&lt;code&gt;MeshRenderer&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;根据Renderer组件的bounds.center，bounds.extents计算出世界坐标的八个点&lt;/li&gt;
+&lt;li&gt;使用拍摄渲染对象的Camera调用接口&lt;code&gt;UnityEngine.Camera.WorldToScreenPoint&lt;/code&gt;，获取八个点的屏幕坐标&lt;/li&gt;
+&lt;li&gt;遍历八个点，取出x方向与y方向的最大最小值，返回一个&lt;code&gt;Vector4(minX,
+minY, maxX,
+maxY)&lt;/code&gt;，这个坐标即是3D模型在2DUI上的显示包围盒（bounds）&lt;/li&gt;
+&lt;li&gt;最后在UI层调整包围矩形的位置和大小即可&lt;/li&gt;
+&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="游戏开发" scheme="https://www.threegates.net/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/"/>
+    
+    <category term="解决方案" scheme="https://www.threegates.net/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/"/>
+    
+    
+    <category term="游戏开发" scheme="https://www.threegates.net/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/"/>
+    
+    <category term="计算机图形学" scheme="https://www.threegates.net/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/"/>
+    
+    <category term="Unity" scheme="https://www.threegates.net/tags/Unity/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>《The Way to Go》Chapter16 常见陷阱与错误</title>
+    <link href="https://www.threegates.net/p/c629bb3de01f/"/>
+    <id>https://www.threegates.net/p/c629bb3de01f/</id>
+    <published>2022-10-30T10:30:30.000Z</published>
+    <updated>2022-10-30T10:38:03.590Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;chapter16-常见陷阱与错误&quot;&gt;Chapter16 常见陷阱与错误&lt;/h1&gt;
+&lt;p&gt;前15章提及了一些错误使用方式，就不再赘述，&lt;a
+href=&quot;https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/16.0.md&quot;&gt;https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/16.0.md&lt;/a&gt;
+中也都列出了，重要的是有以下最佳实践：&lt;/p&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;使用正确的方式初始化值是切片slice的一个映射map&lt;/li&gt;
+&lt;li&gt;使用逗号ok模式进行类型断言&lt;/li&gt;
+&lt;li&gt;使用一个工厂函数创建并实例化自己的定义的类型&lt;/li&gt;
+&lt;li&gt;只有当想要改变结构体时，使用结构体指针作为方法接收者，否则都使用结构体值类型&lt;/li&gt;
+&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="计算机科学" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/"/>
+    
+    <category term="编程语言" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="Go" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Go/"/>
+    
+    
+    <category term="编程语言" scheme="https://www.threegates.net/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="Go" scheme="https://www.threegates.net/tags/Go/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>《The Way to Go》Chapter14 协程</title>
+    <link href="https://www.threegates.net/p/4aa7a9cb350b/"/>
+    <id>https://www.threegates.net/p/4aa7a9cb350b/</id>
+    <published>2022-10-23T14:48:59.000Z</published>
+    <updated>2022-10-23T14:57:55.377Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;chapter-14&quot;&gt;Chapter 14&lt;/h1&gt;
+&lt;h2
+id=&quot;协程goroutine与通道channel&quot;&gt;协程（goroutine）与通道（channel）&lt;/h2&gt;
+&lt;p&gt;Go为构建并发程序的基本代码块是协程与通道，需要语言、编译器和runtime支持。Go语言提供的垃圾回收器对并发编程至关重要（？）。&lt;/p&gt;
+&lt;p&gt;原则：&lt;strong&gt;不要通过共享内存来通信，而通过通信来共享内存。&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="计算机科学" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/"/>
+    
+    <category term="编程语言" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="Go" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Go/"/>
+    
+    
+    <category term="编程语言" scheme="https://www.threegates.net/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="Go" scheme="https://www.threegates.net/tags/Go/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>《The Way to Go》Chapter13 错误处理与测试</title>
+    <link href="https://www.threegates.net/p/e22df32995f4/"/>
+    <id>https://www.threegates.net/p/e22df32995f4/</id>
+    <published>2022-10-23T14:48:36.000Z</published>
+    <updated>2022-10-23T14:57:55.376Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;chapter-13-错误处理与测试&quot;&gt;Chapter 13 错误处理与测试&lt;/h1&gt;
+&lt;h2 id=&quot;错误处理与测试&quot;&gt;错误处理与测试&lt;/h2&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;&lt;p&gt;Go通常在函数和方法中返回错误对象作为返回值，如果返回nil则没有错误发生&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;永远不要忽略错误，否则可能会导致程序崩溃！调用函数后必须检查错误&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;为了让代码更清晰，应该使用包含错误值变量的if 符合语句&lt;/p&gt;
+&lt;p&gt;&lt;pre class=&quot;line-numbers language-go&quot; data-language=&quot;go&quot;&gt;&lt;code class=&quot;language-go&quot;&gt;if value, err :&amp;#x3D; pack1.Func1(param1); err !&amp;#x3D; nil &amp;#123;
+	fmt.Printf(&amp;quot;Error %s in pack1.Func1 with parameter %v&amp;quot;, err.Error(), param1)
+	return    &amp;#x2F;&amp;#x2F; or: return err
+&amp;#125; else &amp;#123;
+	&amp;#x2F;&amp;#x2F; Process(value)
+&amp;#125;&lt;/code&gt;&lt;/pre&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="计算机科学" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/"/>
+    
+    <category term="编程语言" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="Go" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Go/"/>
+    
+    
+    <category term="编程语言" scheme="https://www.threegates.net/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="Go" scheme="https://www.threegates.net/tags/Go/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>《The Way to Go》阅读笔记</title>
+    <link href="https://www.threegates.net/p/e842888b11eb/"/>
+    <id>https://www.threegates.net/p/e842888b11eb/</id>
+    <published>2022-07-31T14:24:57.000Z</published>
+    <updated>2022-10-23T15:22:52.174Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;chapter1&quot;&gt;Chapter1&lt;/h1&gt;
+&lt;h3 id=&quot;go语言的发展目标&quot;&gt;go语言的发展目标&lt;/h3&gt;
+&lt;p&gt;结合静态语言的安全性和高效性，动态语言的易开发性。&lt;/p&gt;
+&lt;p&gt;注意，go是&lt;strong&gt;静态语言（静态类型语言）&lt;/strong&gt;。是类型安全和内存安全的编程语言。通过goroutine来实现并发并行编程，通过channel来实现gorountine之间通信。&lt;/p&gt;
+&lt;p&gt;像其他静态语言一样执行本地代码，但依旧运行某种意义上的虚拟机进行垃圾回收，不需要开发人员考虑内存管理的问题。&lt;/p&gt;
+&lt;h3 id=&quot;语言的特性&quot;&gt;语言的特性&lt;/h3&gt;
+&lt;p&gt;没有类和继承概念，使用接口（interface）来实现多态性，函数是基本构件&lt;/p&gt;
+&lt;p&gt;使用静态类型，强类型语言，隐式的类型转换不被允许&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="计算机科学" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/"/>
+    
+    <category term="编程语言" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="Go" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Go/"/>
+    
+    
+    <category term="编程语言" scheme="https://www.threegates.net/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="Go" scheme="https://www.threegates.net/tags/Go/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>通关后简单地评价一下P5R</title>
+    <link href="https://www.threegates.net/p/a31f36d806f9/"/>
+    <id>https://www.threegates.net/p/a31f36d806f9/</id>
+    <published>2022-01-31T08:43:48.000Z</published>
+    <updated>2023-01-22T07:48:27.297Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h2 id=&quot;写在前面&quot;&gt;写在前面&lt;/h2&gt;
+&lt;p&gt;从最早17年看&lt;a
+href=&quot;https://www.bilibili.com/video/BV1ux411k7Pk?spm_id_from=333.999.0.0&quot;&gt;狗头人玩女神异闻录5&lt;/a&gt;，到17下半年自己攒钱买了显示器和缩水版的ps4slim在寝室里自己玩，再到19年皇家版游戏发售找代购入了收藏版，我终于在22年年初换了工作之后忙里偷闲地把它作为psn平台上的第一个白金游戏通关了。&lt;/p&gt;
+&lt;a href=&quot;/p/a31f36d806f9/platinum-award.jpg&quot; class=&quot;gallery-item&quot;&gt;&lt;img src=&quot;/p/a31f36d806f9/platinum-award.jpg&quot; class=&quot;&quot; title=&quot;其实也得谢谢皇家版是一款相对容易白金的游戏&quot;&gt;&lt;/a&gt;
+&lt;p&gt;前前后后五年间跟这个系列之间的故事自然也不少了，虽然至今为止也不能说自己是一个很合格的系列粉丝——并不是那种真的和系列一起长大的玩家，除了通关了第五代游戏和在系列上花了不少钱其实也没有什么拿的出手的粉丝证明，但是还是想在这里简单地记录一下皇家版与我之间的故事，并以不成熟的测评人身份说说我对皇家版的看法。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;注意：本文可能含有大量剧透，请尚未以任何形式通关《女神异闻录》《女神异闻录5皇家版》的读者自行选择是否继续阅读。&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="电玩咖" scheme="https://www.threegates.net/categories/%E7%94%B5%E7%8E%A9%E5%92%96/"/>
+    
+    <category term="女神异闻录" scheme="https://www.threegates.net/categories/%E7%94%B5%E7%8E%A9%E5%92%96/%E5%A5%B3%E7%A5%9E%E5%BC%82%E9%97%BB%E5%BD%95/"/>
+    
+    
+    <category term="通关纪念" scheme="https://www.threegates.net/tags/%E9%80%9A%E5%85%B3%E7%BA%AA%E5%BF%B5/"/>
+    
+    <category term="游戏测评" scheme="https://www.threegates.net/tags/%E6%B8%B8%E6%88%8F%E6%B5%8B%E8%AF%84/"/>
+    
+    <category term="女神异闻录" scheme="https://www.threegates.net/tags/%E5%A5%B3%E7%A5%9E%E5%BC%82%E9%97%BB%E5%BD%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机图形学中的四元数</title>
+    <link href="https://www.threegates.net/p/d376051877fb/"/>
+    <id>https://www.threegates.net/p/d376051877fb/</id>
+    <published>2022-01-15T10:21:14.000Z</published>
+    <updated>2022-11-22T15:11:09.850Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;四元数与欧拉角&quot;&gt;四元数与欧拉角&lt;/h1&gt;
+&lt;p&gt;以下内容主要是参考了&lt;a
+href=&quot;https://github.com/Krasjet/quaternion&quot;&gt;Krasjet&lt;/a&gt;关于四元数的介绍《四元数与三维旋转》：&lt;a href=&quot;/p/d376051877fb/quaternion.pdf&quot; title=&quot;“点这里阅读《四元数与三维旋转》”&quot;&gt;“点这里阅读《四元数与三维旋转》”&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;会记录一些阅读过程中遇到的结论性内容，系统学习主要还是参考原文档为主&lt;/p&gt;
+&lt;h2 id=&quot;复数&quot;&gt;复数&lt;/h2&gt;
+&lt;h3 id=&quot;复数相乘与2d旋转&quot;&gt;1.3 复数相乘与2D旋转&lt;/h3&gt;
+&lt;p&gt;与复数 &lt;span class=&quot;math inline&quot;&gt;\(z=a+bi\)&lt;/span&gt; 相乘代表着&lt;span
+class=&quot;math inline&quot;&gt;\(\begin{bmatrix}a &amp;amp; -b \\b &amp;amp; a
+\end{bmatrix}\)&lt;/span&gt;
+矩阵所作出的变换，将矩阵中的每一个元素都除以模长，可以得到以下变换：&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;math display&quot;&gt;\[
+\begin{bmatrix}a &amp;amp; -b \\b &amp;amp; a \end{bmatrix} =
+\sqrt{a^2+b^2}*\begin{bmatrix}\frac{a}{\sqrt{a^2+b^2}}&amp;amp;\frac{-b}{\sqrt{a^2+b^2}}\\\frac{b}{\sqrt{a^2+b^2}}&amp;amp;\frac{a}{\sqrt{a^2+b^2}}\end{bmatrix}
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;a href=&quot;/p/d376051877fb/complex-plane.png&quot; class=&quot;gallery-item&quot;&gt;&lt;img src=&quot;/p/d376051877fb/complex-plane.png&quot; class=&quot;&quot; title=&quot;复平面上的复数z&quot;&gt;&lt;/a&gt;
+&lt;p&gt;从复平面观察可以得到，&lt;span
+class=&quot;math inline&quot;&gt;\(\|z\|=\sqrt{a^2+b^2}\)&lt;/span&gt; 且有 &lt;span
+class=&quot;math inline&quot;&gt;\(\theta=\arctan(\frac{b}{a})\)&lt;/span&gt;
+，原本的矩阵转换为了两个变换矩阵的复合，其中左边的&lt;span
+class=&quot;math inline&quot;&gt;\(\begin{bmatrix}\|z\|&amp;amp;0\\0&amp;amp;\|z\|\end{bmatrix}\)&lt;/span&gt;是缩放矩阵，而右边的&lt;span
+class=&quot;math inline&quot;&gt;\(\begin{bmatrix}\cos(
+\theta)&amp;amp;-\sin(\theta)\\\sin(\theta)&amp;amp;\cos(\theta)\end{bmatrix}\)&lt;/span&gt;则是2D旋转矩阵。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="计算机图形学" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/"/>
+    
+    
+    <category term="计算机图形学" scheme="https://www.threegates.net/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/"/>
+    
+    <category term="复数" scheme="https://www.threegates.net/tags/%E5%A4%8D%E6%95%B0/"/>
+    
+    <category term="四元数" scheme="https://www.threegates.net/tags/%E5%9B%9B%E5%85%83%E6%95%B0/"/>
+    
+    <category term="万向节死锁" scheme="https://www.threegates.net/tags/%E4%B8%87%E5%90%91%E8%8A%82%E6%AD%BB%E9%94%81/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>unity中的原生对象与托管对象</title>
+    <link href="https://www.threegates.net/p/27ad02cebc90/"/>
+    <id>https://www.threegates.net/p/27ad02cebc90/</id>
+    <published>2021-12-21T03:31:37.000Z</published>
+    <updated>2023-01-25T10:31:35.424Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h2 id=&quot;序&quot;&gt;序&lt;/h2&gt;
+&lt;p&gt;最初在工作中接触到引擎原生层相关的问题，是项目实现的延时执行模块，模块提供接口来进行委托的延时调用：&lt;/p&gt;
+&lt;pre class=&quot;line-numbers language-csharp&quot; data-language=&quot;csharp&quot;&gt;&lt;code class=&quot;language-csharp&quot;&gt;&amp;#x2F;&amp;#x2F; 返回一个token用于后续的CancelDelayCall
+m_DelayExecuteGuidance &amp;#x3D; GameFacade.CurrentGame.DelayCall(8.0f, OnPlayerGuideFinished);
+
+&amp;#x2F;&amp;#x2F; 延时执行的代码示例
+private void OnPlayerGuideFinished()
+&amp;#123;
+    &amp;#x2F;&amp;#x2F; 作为MonoBehaviour的成员方法，访问gameObject
+    Debug.Log(gameObject.name);
+    &amp;#x2F;&amp;#x2F; something else...
+&amp;#125;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;延时执行模块与协程不同，不会因为gameObject的销毁而取消执行，假设在指定的8s后，组件绑定的gameObject已经销毁，那么试图在访问时就会产生这样的报错：&lt;/p&gt;
+&lt;a href=&quot;/p/27ad02cebc90/image-20211221124140635.png&quot; class=&quot;gallery-item&quot;&gt;&lt;img src=&quot;/p/27ad02cebc90/image-20211221124140635.png&quot; class=&quot;&quot; title=&quot;Unity console窗口内报错日志&quot;&gt;&lt;/a&gt;
+&lt;p&gt;可以看到延时模块仍然保留了对MonoBehaviour的引用，但在试图通过property访问gameObejct的时候发生了报错，且提示代码位置为“managed-to-native”，体现了本文的主体：引擎的托管（managed）代码对原生（native）代码的访问，下面我们就集中介绍Unity引擎中的原生对象与托管对象。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="游戏开发" scheme="https://www.threegates.net/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/"/>
+    
+    <category term="引擎实现原理" scheme="https://www.threegates.net/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/%E5%BC%95%E6%93%8E%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/"/>
+    
+    
+    <category term="游戏开发" scheme="https://www.threegates.net/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/"/>
+    
+    <category term="Unity" scheme="https://www.threegates.net/tags/Unity/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>关于配置代码生成器的构想</title>
+    <link href="https://www.threegates.net/p/ab7a58fcc8d2/"/>
+    <id>https://www.threegates.net/p/ab7a58fcc8d2/</id>
+    <published>2021-12-11T06:15:36.000Z</published>
+    <updated>2023-02-21T04:52:02.928Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h3 id=&quot;需求&quot;&gt;需求&lt;/h3&gt;
+&lt;p&gt;目前项目组的开发工作流中，读取表格配置需要重复较多机械性的工作：首先是字段的名称和类型规定上有一定的心智负担，在多种使用渠道（如client，server）下可能要认为进行多次同步，其次是完成读表代码也比较模式化，理论上这些工作都可以由工具提供辅助并最终由工具生成代码。&lt;/p&gt;
+&lt;h3 id=&quot;功能概览&quot;&gt;功能概览&lt;/h3&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;将表格的所有字段在工具中显示，由用户来自定义表格属性：字段的类型，用途和默认值&lt;/li&gt;
+&lt;li&gt;工具能够将表格属性以json形式序列化，以json文件形式进行持久化存储&lt;/li&gt;
+&lt;li&gt;工具能够依据表格属性以及用户自定义的代码模板来生成读表代码&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;定义&quot;&gt;定义&lt;/h3&gt;
+&lt;p&gt;表名：即配置文件的文件名&lt;/p&gt;
+&lt;p&gt;字段：即配置表中有实际用途的一列&lt;/p&gt;
+&lt;p&gt;读表代码：并不提供从资源文件中读取配置数据的功能，仅提供从配置数据解析出对应类型字段的功能&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="开发设计稿" scheme="https://www.threegates.net/categories/%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E7%A8%BF/"/>
+    
+    <category term="工具" scheme="https://www.threegates.net/categories/%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E7%A8%BF/%E5%B7%A5%E5%85%B7/"/>
+    
+    
+    <category term="记录" scheme="https://www.threegates.net/tags/%E8%AE%B0%E5%BD%95/"/>
+    
+    <category term="游戏开发工具" scheme="https://www.threegates.net/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用hexo快速进行博客搭建</title>
+    <link href="https://www.threegates.net/p/c9e58284d744/"/>
+    <id>https://www.threegates.net/p/c9e58284d744/</id>
+    <published>2021-12-05T10:38:45.000Z</published>
+    <updated>2023-01-26T12:33:23.538Z</updated>
+    
+    
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;使用hexo快速进行博客搭建&quot;&gt;使用hexo快速进行博客搭建&lt;/h1&gt;
+&lt;p&gt;之前用wordpress搭建的博客需要折腾的东西太多，编辑器支持也不太好，没有Notion里记笔记来的方便（该说写个笔记两头传本来就麻烦），所以这次用hexo来搭建看看。&lt;/p&gt;
+&lt;p&gt;部署选择了一键同步生成的网站内容到github
+repo上，使用pages来进行网站部署，markdown源文件再自己使用github来同步。&lt;/p&gt;
+&lt;p&gt;这篇文章主要记录一下搭建网站的过程，还有给搭建的时候看的几个文档链接留个档。&lt;/p&gt;
+&lt;h2 id=&quot;hexo官方文档&quot;&gt;hexo官方文档&lt;/h2&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;https://hexo.io/docs/&lt;/li&gt;
+&lt;li&gt;https://hexo.io/zh-cn/docs/ 中文&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;hexo-常用命令&quot;&gt;hexo 常用命令&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;hexo new [layout] &amp;lt;title&amp;gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;创建新文章，使用默认的layout：post&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;hexo generate&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;一般会使用缩写&lt;code&gt;hexo
+g&lt;/code&gt;，并且加上&lt;code&gt;-d&lt;/code&gt;参数来一键部署到远端（我目前是部署到了github上），也可以加上&lt;code&gt;-w&lt;/code&gt;来观察文件变化，或是加上&lt;code&gt;-f&lt;/code&gt;来重新生成&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;hexo server&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;虽然是部署到远端上，但是也可以在真正提交前先在本地简单地生成部署一下，看下文章显示是否有问题，或者用这个命令来协助debug（带上&lt;code&gt;--log&lt;/code&gt;，以及&lt;code&gt;--debug&lt;/code&gt;参数）&lt;/p&gt;
+&lt;p&gt;加上&lt;code&gt;-p&lt;/code&gt;来指定部署的端口，以防在特定环境下收到安全组影响&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;hexo deploy&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;部署到远端，这个命令也可以加上&lt;code&gt;-g&lt;/code&gt;从而在部署之前生成&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;hexo clean&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;清除本地生成文件，遇到奇怪显示问题可以考虑先执行一下，再重新generate&lt;/p&gt;
+&lt;h2 id=&quot;部署相关github-pages&quot;&gt;部署相关（github-pages）&lt;/h2&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;https://segmentfault.com/a/1190000017986794 一键部署&lt;/li&gt;
+&lt;li&gt;https://zhuanlan.zhihu.com/p/26625249
+自定义域名步骤参考，免去之前使用wordpress自己部署网站时解析的麻烦&lt;/li&gt;
+&lt;li&gt;https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/about-custom-domains-and-github-pages&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;自定义域名在参考了上述链接后做了一点尝试：&lt;/p&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;&lt;p&gt;首先域名还是使用的之前搭建wordpress用的threegates.net&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;这里开始需要做的是将域名重定向到github-pages，所以实际上&lt;strong&gt;需要参考的比较权威的文档是上面的链接3&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="博客搭建" scheme="https://www.threegates.net/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/"/>
+    
+    <category term="hexo" scheme="https://www.threegates.net/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/hexo/"/>
+    
+    
+    <category term="记录" scheme="https://www.threegates.net/tags/%E8%AE%B0%E5%BD%95/"/>
+    
+    <category term="博客搭建" scheme="https://www.threegates.net/tags/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/"/>
+    
+  </entry>
+  
+</feed>
