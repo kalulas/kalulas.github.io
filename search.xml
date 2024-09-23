@@ -3881,6 +3881,18 @@ alt="mono-with-dotnet-version" /></a>
 </figure>
 <p>from: <a
 href="https://www.cnblogs.com/zhaoqingqing/p/5762867.html">https://www.cnblogs.com/zhaoqingqing/p/5762867.html</a></p>
+<p>所以Project Setting里面的<strong>API Compatibility
+Level</strong>其实也是很重要的信息，之前一直下意识忽略掉了这个选项。在我们的老项目里，这里就直接告诉你
+API 的兼容性版本是 <strong>.NET 2.0 Subset</strong>
+了。如果能早一点意识到这个选项起到决定性作用，就不用兜兜转转一大圈了。</p>
+<figure>
+<a href="https://s2.loli.net/2024/09/23/ucRdJb64KE8TPrz.png" title="api-compatibility-level-in-project-setting" class="gallery-item"><img src="https://s2.loli.net/2024/09/23/ucRdJb64KE8TPrz.png"
+alt="api-compatibility-level-in-project-setting" /></a>
+<figcaption
+aria-hidden="true">api-compatibility-level-in-project-setting</figcaption>
+</figure>
+<p>（在自家电脑上截的图，选用的API Compatibility
+Level也（相对）新一点）</p>
 <p>最后跳转到相应的 <a
 href="https://github.com/mono/mono/blob/mono-2-0/mcs/class/corlib/System.Collections.Generic/List.cs">mono-2.0
 源码</a>，就能看到方法 <code>GrowIfNeeded</code> 了。可以发现在实现上与
