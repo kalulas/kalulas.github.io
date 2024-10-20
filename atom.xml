@@ -6,7 +6,7 @@
   <link href="https://www.threegates.net/atom.xml" rel="self"/>
   
   <link href="https://www.threegates.net/"/>
-  <updated>2024-09-23T11:40:42.923Z</updated>
+  <updated>2024-10-20T10:13:38.921Z</updated>
   <id>https://www.threegates.net/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>.NET source 系列：System.Collections.Generic.Dictionary</title>
+    <link href="https://www.threegates.net/p/b1b59cb05264/"/>
+    <id>https://www.threegates.net/p/b1b59cb05264/</id>
+    <published>2024-10-20T09:36:24.000Z</published>
+    <updated>2024-10-20T10:13:38.921Z</updated>
+    
+    
+    <summary type="html">探究了 .net framework 4.8 下的dictionary及其常见操作实现</summary>
+    
+    
+    
+    <category term="计算机科学" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/"/>
+    
+    <category term="编程语言" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="C#" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/C/"/>
+    
+    
+    <category term="C#" scheme="https://www.threegates.net/tags/C/"/>
+    
+    <category term=".NET" scheme="https://www.threegates.net/tags/NET/"/>
+    
+    <category term="源码阅读" scheme="https://www.threegates.net/tags/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/"/>
+    
+  </entry>
   
   <entry>
     <title>.NET source 系列：System.Collections.Generic.List</title>

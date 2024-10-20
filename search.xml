@@ -3935,4 +3935,525 @@ href="https://github.com/mono/mono/blob/mono-2-0/mcs/class/corlib/System.Collect
         <tag>源码阅读</tag>
       </tags>
   </entry>
+  <entry>
+    <title>.NET source 系列：System.Collections.Generic.Dictionary</title>
+    <url>/p/b1b59cb05264/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1
+id="system.collections.generic.dictionary">System.Collections.Generic.Dictionary</h1>
+<p>参考版本为 .net framework 4.8</p>
+<p><a
+href="https://referencesource.microsoft.com/#mscorlib/system/collections/generic/dictionary.cs">https://referencesource.microsoft.com/#mscorlib/system/collections/generic/dictionary.cs</a></p>
+<h2 id="前言">前言</h2>
+<p>避免犯先入为主的错，先简单 diff 一下和 mono 2.0 有什么不同</p>
+<p>附件1：<a href="/p/b1b59cb05264/Dictionary_mono2.cs" title="Dictionary from mono-2-0">Dictionary from mono-2-0</a></p>
+<p>附件2：<a href="/p/b1b59cb05264/Dictionary_dotnet48.cs" title="Dictionary from .net framework 4.8">Dictionary from .net framework 4.8</a></p>
+<p>diff 结果：</p>
+<a href="/p/b1b59cb05264/diff-mono2-with-dotnet48.png" class="gallery-item"><img src="/p/b1b59cb05264/diff-mono2-with-dotnet48.png" class="" title="mono2与dotnet48的实现差异"></a>
+<p>只能说是完全不一样了。哈哈。</p>
+<h2 id="net-framework-4.8">.net framework 4.8</h2>
+<p>reference:</p>
+<ul>
+<li><a
+href="https://blog.markvincze.com/back-to-basics-dictionary-part-1/">https://blog.markvincze.com/back-to-basics-dictionary-part-1/</a>
+（longer: 4 parts）</li>
+<li><a
+href="https://www.yycoding.xyz/post/2023/7/2/details-of-dictionary-source-code-in-dotnet-core">https://www.yycoding.xyz/post/2023/7/2/details-of-dictionary-source-code-in-dotnet-core</a></li>
+<li><a
+href="https://dotnetos.org/blog/2022-03-28-dictionary-implementation/">https://dotnetos.org/blog/2022-03-28-dictionary-implementation/</a>（just
+pics）</li>
+</ul>
+<h2 id="摘要">摘要</h2>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class Dictionary&lt;TKey,TValue&gt;: IDictionary&lt;TKey,TValue&gt;, IDictionary, IReadOnlyDictionary&lt;TKey, TValue&gt;, ISerializable, IDeserializationCallback  &#123;
+
+    private struct Entry &#123;
+        public int hashCode;    &#x2F;&#x2F; Lower 31 bits of hash code, -1 if unused
+        public int next;        &#x2F;&#x2F; Index of next entry, -1 if last
+        public TKey key;           &#x2F;&#x2F; Key of entry
+        public TValue value;         &#x2F;&#x2F; Value of entry
+    &#125;
+
+    private int[] buckets;
+    private Entry[] entries;
+    private int count;
+    private int version;
+    private int freeList;
+    private int freeCount;
+    private IEqualityComparer&lt;TKey&gt; comparer;
+    private KeyCollection keys;
+    private ValueCollection values;
+    private Object _syncRoot;
+    &#x2F;&#x2F; ...       
+&#125;</code></pre>
+<p>.NET中的Dictionary实现，是哈希表<strong>HashTable</strong>和<strong>LinkedList</strong>的组合，<strong>LinkedList</strong>被用于处理哈希冲突（拉链法
+separate chaining）</p>
+<ul>
+<li>HashTable是一个用于存储Pair的数据结构，每个Pair都包含Key和Value。</li>
+<li>HashTable的重要功能就是提供Key之后，要能很快地找到与Key值对应的Value。</li>
+<li>HashTable会使用hash function来基于Key计算出下标。</li>
+</ul>
+<span id="more"></span>
+<p>Dictionary中最重要的几个组成部分（字段）：</p>
+<ul>
+<li><strong>buckets(int[])</strong>：有相同hashcode的条目归属于同一个bucket。哈希结果取余之后得到这个
+<code>buckets</code> 的下标，下标对应位置存储的是元素集合在
+<code>entries</code> 中的第一个元素位置</li>
+<li><strong>entries(Entry[])</strong>：Dicionary&lt;TKey, TValue&gt;
+的元素集合</li>
+<li><strong>freeList(int)</strong>：第一个空闲位置的下标</li>
+<li><strong>freeCount(int)</strong>：Entry[] 中共有多少个空闲位置</li>
+<li><strong>count(int)</strong>：Dictionary中的内部数组大小，注意并非有效元素个数。有效元素个数通过属性<strong>Count</strong>返回。</li>
+<li><strong>version(int)</strong>：Dictionary的修改次数，容器的标记</li>
+</ul>
+<p>同时Entry也是Dictionary的一个重要结构，包含：</p>
+<ul>
+<li>Key与Value对象</li>
+<li>哈希结果 <strong>hashCode</strong></li>
+<li><strong>next</strong>：entries
+中相同hashcode的下一个元素下标。如果next值为-1，即表示此元素为相同bucket集合中的最后一个元素</li>
+</ul>
+<a href="/p/b1b59cb05264/dictionary-layout.png" class="gallery-item"><img src="/p/b1b59cb05264/dictionary-layout.png" class="" title="Dictionary实现图示"></a>
+<h2 id="主要行为">主要行为</h2>
+<h3 id="构造函数-ctor">构造函数 ctor</h3>
+<p>若不传入任何参数会以0为默认capacity调用 <code>Initialize()</code>
+开辟空间，同时会使用 <code>EqualityComparer&lt;TKey&gt;.Default</code>
+作为默认比较器，用于获取HashCode，以及判断Key之间是否相等。</p>
+<p><strong>IEqualityComparer<TKey></strong> 只需要实现两个方法：</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; The generic IEqualityComparer interface implements methods to if check two objects are equal
+&#x2F;&#x2F; and generate Hashcode for an object.
+&#x2F;&#x2F; It is use in Dictionary class.  
+public interface IEqualityComparer&lt;in T&gt;
+&#123;
+    bool Equals(T x, T y);
+    int GetHashCode(T obj);                
+&#125;</code></pre>
+<h3 id="initializeint-capacity">Initialize(int capacity)</h3>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void Initialize(int capacity) &#123;
+    int size &#x3D; HashHelpers.GetPrime(capacity);
+    buckets &#x3D; new int[size];
+    for (int i &#x3D; 0; i &lt; buckets.Length; i++) buckets[i] &#x3D; -1;
+    entries &#x3D; new Entry[size];
+    freeList &#x3D; -1;
+&#125;</code></pre>
+<p>此方法依赖 <code>HashHelpers.GetPrime(int min)</code>
+来获取第一个大于<strong>capacity</strong>的质数。</p>
+<p>类型 <strong>HashHelpers</strong> 中存在静态整型数组
+<strong>primes，</strong>这是一个特别挑出的质数组成的质数表（为什么选了这些质数？值得研究下），以<strong>3</strong>开始，以<strong>7199369</strong>结束。若提供的min数字小于
+primes 数组中最大值，那么简单地查表就能得到大于它的目标质数。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; system\Collections\hashtable.cs:1711
+        public static readonly int[] primes &#x3D; &#123;
+            3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 293, 353, 431, 521, 631, 761, 919,
+            1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 5839, 7013, 8419, 10103, 12143, 14591,
+            17519, 21023, 25229, 30293, 36353, 43627, 52361, 62851, 75431, 90523, 108631, 130363, 156437,
+            187751, 225307, 270371, 324449, 389357, 467237, 560689, 672827, 807403, 968897, 1162687, 1395263,
+            1674319, 2009191, 2411033, 2893249, 3471899, 4166287, 4999559, 5999471, 7199369&#125;;
+
+&#x2F;&#x2F; System.Collections.HashHelpers.GetPrime
+&#x2F;&#x2F; system\Collections\hashtable.cs:1754
+        public static int GetPrime(int min) 
+        &#123;
+            if (min &lt; 0)
+                throw new ArgumentException(Environment.GetResourceString(&quot;Arg_HTCapacityOverflow&quot;));
+            Contract.EndContractBlock();
+
+            for (int i &#x3D; 0; i &lt; primes.Length; i++) 
+            &#123;
+                int prime &#x3D; primes[i];
+                if (prime &gt;&#x3D; min) return prime;
+            &#125;
+
+            &#x2F;&#x2F;outside of our predefined table. 
+            &#x2F;&#x2F;compute the hard way. 
+            for (int i &#x3D; (min | 1); i &lt; Int32.MaxValue;i+&#x3D;2) 
+            &#123;
+                if (IsPrime(i) &amp;&amp; ((i - 1) % Hashtable.HashPrime !&#x3D; 0))
+                    return i;
+            &#125;
+            return min;
+        &#125;</code></pre>
+<p>否则，<code>GetPrime()</code> 方法将回退到朴素的质数查找：从
+<code>min | 1</code> 开始直到
+<code>Int32.MaxValue</code>，进行步长为2的遍历，判断每个数字是否是质数
+<code>HashHelpers.IsPrime(int
+candidate)</code>。注意，这个判断方法涉及平方根操作，与一个时间复杂度为<span
+class="math inline">\(\bf{O}(\sqrt{\bf{n}})\)</span>的循环。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; System.Collections.HashHelpers.IsPrime
+&#x2F;&#x2F; system\Collections\hashtable.cs:1738
+        public static bool IsPrime(int candidate) 
+        &#123;
+            if ((candidate &amp; 1) !&#x3D; 0) 
+            &#123;
+                int limit &#x3D; (int)Math.Sqrt (candidate);
+                for (int divisor &#x3D; 3; divisor &lt;&#x3D; limit; divisor+&#x3D;2)
+                &#123;
+                    if ((candidate % divisor) &#x3D;&#x3D; 0)
+                        return false;
+                &#125;
+                return true;
+            &#125;
+            return (candidate &#x3D;&#x3D; 2);
+        &#125;</code></pre>
+<h3 id="插入元素-addtkey-key-tvalue-value-索引器">插入元素 Add(TKey key,
+TValue value) / 索引器</h3>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public TValue this[TKey key] &#123;
+    get &#123;
+        int i &#x3D; FindEntry(key);
+        if (i &gt;&#x3D; 0) return entries[i].value;
+        ThrowHelper.ThrowKeyNotFoundException();
+        return default(TValue);
+    &#125;
+    set &#123;
+        Insert(key, value, false);
+    &#125;
+&#125;
+
+public void Add(TKey key, TValue value) &#123;
+    Insert(key, value, true);
+&#125;</code></pre>
+<p>因为Dictionary实现了非泛型版本的IDictionary，所以也有<code>Add(object
+key, object value)</code>这样的方法，但也只是在<code>Add(TKey key,
+TValue value)</code>的基础上新增了类型转换和一些错误检查而已。</p>
+<p>方法<code>Add(TKey key, TValue value)</code>依赖方法<code>Insert(TKey
+key, TValue value, bool
+add)</code>的实现，参数<strong>add</strong>就是用来区分调用是否来自于<code>Add()</code>方法。在.net源码中看到这样的标识方法还挺意外的…</p>
+<p>另外一个依赖方法<code>Insert()</code>的插入元素方法就是使用索引器
+<code>this[TKey
+key]</code>，这时传入的参数add就会是false。一直以来的使用经验也告诉我们传不同参数会带来什么不同了：当调用Add()方法时，若key已存在会<strong>抛出异常</strong>，而使用索引器能够直接覆盖此key对应的内容。</p>
+<h3 id="插入元素-inserttkey-key-tvalue-value-bool-add">插入元素
+Insert(TKey key, TValue value, bool add)</h3>
+<p><code>Insert()</code>
+方法将新元素插入到<strong>entries</strong>中，选择性地使用freeList，相应地更新<strong>buckets</strong>，并且可能造成扩容行为。</p>
+<p>若当前的<strong>buckets</strong>在Dictionary构造后还没有进行过初始化，那么会使用0作为初始容量进行初始化，按照上面的信息，我们应该能得到一个大小为3的buckets。</p>
+<p><strong>获取buckets中下标</strong></p>
+<p>插入的元素通过<strong>comparer</strong>以及自己的key得到hashcode后，通过对<code>buckets.Length</code>取余得到目标bucket在数组中的下标<strong>targetBucket</strong>。</p>
+<p><strong>查找entries中下标</strong></p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">for (int i &#x3D; buckets[targetBucket]; i &gt;&#x3D; 0; i &#x3D; entries[i].next) &#123;
+    if (entries[i].hashCode &#x3D;&#x3D; hashCode &amp;&amp; comparer.Equals(entries[i].key, key)) &#123;
+        if (add) &#123; 
+            ThrowHelper.ThrowArgumentException(ExceptionResource.Argument_AddingDuplicate);
+        &#125;
+        entries[i].value &#x3D; value;
+        version++;
+        return;
+    &#125; 
+    
+    &#x2F;&#x2F; 记录发生冲突的次数，这实际上是用于 FEATURE_RANDOMIZED_STRING_HASHING
+    collistionCount++;
+&#125;</code></pre>
+<p>接下来会通过一个在Dictionary实现中很常见的循环，来查找是否存在一个hashcode与key均相等的元素，如果存在则说明添加了key重复的value，便根据此次<code>Insert</code>是否来源于<code>Add</code>来决定是要抛出异常，还是覆盖原值并更新version。</p>
+<p>若不存在这样的元素，那么便可以考虑将新元素加入到Dictionary中：</p>
+<ul>
+<li>如果freeCount尚有剩余，那么使用freeList的队首元素下标，freeList队首后移，更新freeCount，而不更新<strong>count</strong></li>
+<li>否则直接使用当前元素count为下标索引entries，更新<strong>count</strong>
+<ul>
+<li>注意，当<strong>entries</strong>已满时（<code>count ==
+entries.Length</code>），发生扩容<code>Resize()</code>以及targetBucket的重新计算，毕竟现在的<code>buckets.Length</code>已经不同了</li>
+</ul></li>
+</ul>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">entries[index].hashCode &#x3D; hashCode;
+entries[index].next &#x3D; buckets[targetBucket];
+entries[index].key &#x3D; key;
+entries[index].value &#x3D; value;
+buckets[targetBucket] &#x3D; index;
+version++;</code></pre>
+<p>最后，通过上述步骤得到的index，设置entries[index]的各种key / hashcode
+/
+value信息，将此entries[index]设置为targetBucket的队首（buckets[targetBucket]
+→ new_entry.next → previous_entry）。</p>
+<p><strong>FEATURE_RANDOMIZED_STRING_HASHING</strong></p>
+<p>如果上述提到的冲突次数大于<strong>HashHelpers.HashCollisionThreshold</strong>（100）次，且当前comparer被判定为“WellKnownEqualityComparer”，则会为当前Dictionary选择一个<strong>RandomziedEqualityComparer</strong>，之后对Dictionary进行<code>Resize</code>，并且<strong>forceNewHashCodes</strong>，使用新的comparer来计算hashcode</p>
+<p>举例在mscorlib中就能找到System/StringComparer.cs，其中包含了
+<strong>CultureAwareRandomizedComparer</strong>，<strong>OrdinalRandomizedComparer</strong>
+等comparer，这里就先不展开了。</p>
+<h3 id="扩容-resize">扩容 Resize()</h3>
+<p><code>Resize()</code>
+方法会用一个大于当前元素个数两倍的质数，来对当前字典进行扩容。</p>
+<p>默认无参的Resize()方法会根据当前的有效元素个数count，调用方法
+<code>HashHelpers.ExpandPrime</code>。</p>
+<p><code>HashHelpers.ExpandPrime(int oldSize)</code>
+的行为逻辑为简单地将 <strong>oldSize</strong> x 2 得到
+<strong>newSize</strong>，做一个越界检查（此处对比的常量为
+<strong>HashHelpers.MaxPrimeArrayLength / 0x7FEFFFFD /
+2146435069</strong>），接着并将 <strong>newSize</strong> 传入方法
+<code>HashHelpers.GetPrime</code>
+得到比它更大的质数，最后将此结果用于调用方法 <code>Resize(int newSize,
+bool forceNewHashCodes)</code>。</p>
+<h3 id="扩容-resizeint-newsize-bool-forcenewhashcodes">扩容 Resize(int
+newSize, bool forceNewHashCodes)</h3>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void Resize(int newSize, bool forceNewHashCodes) &#123;
+    Contract.Assert(newSize &gt;&#x3D; entries.Length);
+    int[] newBuckets &#x3D; new int[newSize];
+    for (int i &#x3D; 0; i &lt; newBuckets.Length; i++) newBuckets[i] &#x3D; -1;
+    Entry[] newEntries &#x3D; new Entry[newSize];
+    Array.Copy(entries, 0, newEntries, 0, count);
+    if(forceNewHashCodes) &#123;
+        for (int i &#x3D; 0; i &lt; count; i++) &#123;
+            if(newEntries[i].hashCode !&#x3D; -1) &#123;
+                newEntries[i].hashCode &#x3D; (comparer.GetHashCode(newEntries[i].key) &amp; 0x7FFFFFFF);
+            &#125;
+        &#125;
+    &#125;
+    &#x2F;&#x2F; pay attention to this loop
+    for (int i &#x3D; 0; i &lt; count; i++) &#123;
+        int bucket &#x3D; newEntries[i].hashCode % newSize;
+        newEntries[i].next &#x3D; newBuckets[bucket];
+        newBuckets[bucket] &#x3D; i;
+    &#125;
+    buckets &#x3D; newBuckets;
+    entries &#x3D; newEntries;
+&#125;</code></pre>
+<p>方法内部按照新的size大小开辟了两个新数组，分别是
+<strong>buckets</strong> 和
+<strong>entries</strong>。<strong>buckets</strong>的每个成员都会被初始化为-1。而对
+<strong>entries</strong>，则是先进行了已有 count 个条目的
+<code>Array.Copy</code>。</p>
+<p>如果方法传入了<strong>forceNewHashCodes</strong>，那么每个entry的hashcode都会基于字典内部的comparer以及entry的key重新计算一遍。</p>
+<p>很有意思的是方法内部通过一个循环来重置了<code>Resize</code>操作后的<strong>buckets</strong>以及<strong>entries</strong>链表，而循环体的实现可以同时应对两种情况：</p>
+<ul>
+<li>对那些对应bucket为空的entry，entry的next会被设置为-1，之后这个bucket会指向这个entry；</li>
+<li>对那些对应bucket不为空的entry（即存在其他相同hashcode的entry），entry的next会被设置为bucket指向的同hashcode
+entry，随后bucket同样会指向这个entry。</li>
+</ul>
+<p>这样一来，新的entry总是被插入到bucket指向的队首。</p>
+<h3 id="移除元素-removetkey-key">移除元素 Remove(TKey key)</h3>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public bool Remove(TKey key) &#123;
+    if(key &#x3D;&#x3D; null) &#123;
+        ThrowHelper.ThrowArgumentNullException(ExceptionArgument.key);
+    &#125;
+
+    if (buckets !&#x3D; null) &#123;
+        int hashCode &#x3D; comparer.GetHashCode(key) &amp; 0x7FFFFFFF;
+        int bucket &#x3D; hashCode % buckets.Length;
+        int last &#x3D; -1;
+        for (int i &#x3D; buckets[bucket]; i &gt;&#x3D; 0; last &#x3D; i, i &#x3D; entries[i].next) &#123;
+            if (entries[i].hashCode &#x3D;&#x3D; hashCode &amp;&amp; comparer.Equals(entries[i].key, key)) &#123;
+                if (last &lt; 0) &#123;
+                    buckets[bucket] &#x3D; entries[i].next;
+                &#125;
+                else &#123;
+                    entries[last].next &#x3D; entries[i].next;
+                &#125;
+                entries[i].hashCode &#x3D; -1;
+                entries[i].next &#x3D; freeList;
+                entries[i].key &#x3D; default(TKey);
+                entries[i].value &#x3D; default(TValue);
+                freeList &#x3D; i;
+                freeCount++;
+                version++;
+                return true;
+            &#125;
+        &#125;
+    &#125;
+    return false;
+&#125;</code></pre>
+<p>当Remove操作发生时：</p>
+<p>维护 <strong>buckets</strong> / <strong>entries</strong> 链表：</p>
+<ul>
+<li>如果移除的entry是此hashcode对应的bucket指向的首个entry，那么需要更新bucket的值</li>
+<li>如果不是bucket指向的entry，那么需要更新同hashcode的指向这个entry的上一entry存储的next</li>
+</ul>
+<p>维护空闲队列，freeList / freeCount 更新操作发生：</p>
+<ul>
+<li>被移除的entry，其next会指向当前freeList，即旧的freeList队首</li>
+<li>freeList指向被移除的entry，此空闲entry现在变成freeList的队首元素</li>
+<li>freeCount / version 递增</li>
+</ul>
+<p>注意也是这个方法内表明了，
+当Entry被移除时，hashCode会被标记为-1，这也是根据<strong>comparer</strong>获取HashCode后总是要取低31位的原因。</p>
+<h3 id="查找元素-containskeytkey-key-containsvaluetvalue-value">查找元素
+ContainsKey(TKey key) / ContainsValue(TValue value)</h3>
+<p><code>ContainsKey</code> 的实现是基于方法 <code>FindEntry(TKey
+key)</code> 的，而 <code>ContainsValue</code>
+的实现是一个简单的对<strong>entries</strong>的遍历，对于非null的目标value，会使用当前TValue类型的DefaultEqualityComparer进行比较。</p>
+<p><code>FindEntry(TKey key)</code>
+的实现是先基于key获取hashcode，再从<strong>buckets</strong>索引到entries的起始位置，接下来根据每个entry的next遍历整个数组中的链表，进行key的相等判定。</p>
+<p>对字典的直接索引方法 dict[key] 也是基于方法 <code>FindEntry(TKey
+key)</code>
+的，这里就不赘述了，唯一需要注意的是索引方法在找不到对应key时会直接<strong>抛出异常</strong>，想要安全的获取值，推荐的是下述<code>TryGetValue</code>方法。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public TValue this[TKey key] &#123;
+    get &#123;
+        int i &#x3D; FindEntry(key);
+        if (i &gt;&#x3D; 0) return entries[i].value;
+        ThrowHelper.ThrowKeyNotFoundException();
+        return default(TValue);
+    &#125;
+    set &#123;
+        Insert(key, value, false);
+    &#125;
+&#125;</code></pre>
+<h3 id="获取元素-trygetvaluetkey-key-out-tvalue-value">获取元素
+TryGetValue(TKey key, out Tvalue value)</h3>
+<p>TryGetValue 方法同样基于 <code>FindEntry(TKey
+key)</code>，只是其结果通过 out
+关键字返回，而key是否在字段中的结果会使用bool结果返回。</p>
+<h2 id="迭代器-enumerator">迭代器 Enumerator</h2>
+<p>字典中存在三个可遍历的对象，分别是
+<strong>Dictionary&lt;TKey,TValue&gt;.Enumerator</strong>，<strong>Dictionary&lt;TKey,TValue&gt;.KeyCollection</strong>，以及
+<strong>Dictionary&lt;TKey,TValue&gt;.ValueCollection</strong>
+分别可通过字典的 GetEnumerator，以及 Keys，Values 属性返回。</p>
+<p>其中 <strong>Dictionary&lt;TKey,TValue&gt;.Enumerator</strong>
+为struct，而<strong>KeyCollection</strong>与<strong>ValueCollection</strong>均为class，且存在相应的内部成员，会在第一次获取的时候发生实例化及堆内存分配。<strong>KeyCollection</strong>
+与 <strong>ValueCollection</strong> 均存在自己的内部 Enumerator
+声明。</p>
+<p>值得一提的是三者的 Dispose()
+方法中均为空，没有重要弃置的外部资源。</p>
+<h3
+id="dictionarytkeytvalue.enumerator">Dictionary&lt;TKey,TValue&gt;.Enumerator</h3>
+<p>持有当前dictionary引用。</p>
+<p>调用方法 MoveNext() 时会基于 entries 进行遍历，遍历过程中只有
+<code>hashcode ≥ 0</code> 的条目会被返回，即只会遍历有效条目。方法内会将
+version，遍历下标 index，以及当前KeyValuePair&lt;TKey, TValue&gt;
+(struct) 作为自身成员保存。</p>
+<p>当前遍历的键值对为struct，可不用担心堆内存分配，此结果被保存在
+<strong>current</strong> 成员中，也是 <strong>Current</strong>
+属性的返回结果。</p>
+<h3 id="keycollection-valuecollection">KeyCollection /
+ValueCollection</h3>
+<p>两者返回的Enumerator，及其遍历过程均与字典自身返回KeyValuePair的Enumerator无太大差异，下面直接贴上代码进行比较。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; Dictionary&lt;TKey,TValue&gt;.Enumerator.MoveNext
+public bool MoveNext() &#123;
+    &#x2F;&#x2F; ...
+
+    &#x2F;&#x2F; 使用uint转换比较，可以保证即使dicionary.count为Int32.MaxValue，
+    &#x2F;&#x2F; 遍历结束后将index设置为count+1（int下为负值），后续也不会通过这个判断式进入while块
+    while ((uint)index &lt; (uint)dictionary.count) &#123;
+        if (dictionary.entries[index].hashCode &gt;&#x3D; 0) &#123;
+            current &#x3D; new KeyValuePair&lt;TKey, TValue&gt;(dictionary.entries[index].key, dictionary.entries[index].value);
+            index++;
+            return true;
+        &#125;
+        index++;
+    &#125;
+
+    index &#x3D; dictionary.count + 1;
+    current &#x3D; new KeyValuePair&lt;TKey, TValue&gt;();
+    return false;
+&#125;
+
+    &#x2F;&#x2F; Dictionary&lt;TKey,TValue&gt;.KeyCollection.Enumerator.MoveNext
+    public bool MoveNext() &#123;
+        &#x2F;&#x2F; ...
+
+        while ((uint)index &lt; (uint)dictionary.count) &#123;
+            if (dictionary.entries[index].hashCode &gt;&#x3D; 0) &#123;
+                currentKey &#x3D; dictionary.entries[index].key;
+                index++;
+                return true;
+            &#125;
+            index++;
+        &#125;
+
+        index &#x3D; dictionary.count + 1;
+        currentKey &#x3D; default(TKey);
+        return false;
+    &#125;
+    
+    &#x2F;&#x2F; Dictionary&lt;TKey,TValue&gt;.ValueCollection.Enumerator.MoveNext
+    public bool MoveNext() &#123;                    
+        if (version !&#x3D; dictionary.version) &#123;
+            ThrowHelper.ThrowInvalidOperationException(ExceptionResource.InvalidOperation_EnumFailedVersion);
+        &#125;
+        
+        while ((uint)index &lt; (uint)dictionary.count) &#123;
+            if (dictionary.entries[index].hashCode &gt;&#x3D; 0) &#123;
+                currentValue &#x3D; dictionary.entries[index].value;
+                index++;
+                return true;
+            &#125;
+            index++;
+        &#125;
+        index &#x3D; dictionary.count + 1;
+        currentValue &#x3D; default(TValue);
+        return false;
+    &#125;</code></pre>
+<h2 id="可借鉴之处">可借鉴之处</h2>
+<p>记录一些在阅读 .net framework 4.8 的 Dictionary
+源码过程中，觉得未来在设计数据结构可以参照学习的要点:</p>
+<ul>
+<li>存储Dictionary的Value的实体<strong>Entry</strong>被设计为了值类型，而不是引用类型。一般而言，对于基本的数据类型或者纯字段或者小于16个字节的，设计为struct，而不是class能够明显提高内存局部性，并且能极大减少GC压力。</li>
+<li>特别地，相比class数组，struct数组的内存局部性有极大的优势。</li>
+<li>删除Dictionary某个key对应的元素，只是将<strong>entries</strong>中对应的元素移到了空闲列表中，在下次插入时，优先把数据分配到空闲列表上。这样一定程度上能减少page交换，和新的内存注销和分配。</li>
+<li>这种技巧在C++编程语言中广泛存在，由于在非托管语言中，内存的注销和分配是一个相对来说比较耗资源的操作，所以这种内存留用操作非常普遍。</li>
+<li>在判断链表是否到达尽头时，即next是否为-1时，对于普通储值的链表，直接将-1转换为uint，然后跟<strong>entries</strong>的length做比较，这里利用了负数转为无符号整型会溢出成为非常大的整数的特性。</li>
+</ul>
+<h2 id="mono-2.0-dictionary-allocation">mono 2.0 Dictionary
+Allocation</h2>
+<p>在这里额外记录一个个人觉得在比较过时的.NET环境开发中需要注意的点，就是字典在初始化以及扩容时带来的较大内存开销，从初始化的两个重要方法中我们可以看到：</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">const int INITIAL_SIZE &#x3D; 10;
+const float DEFAULT_LOAD_FACTOR &#x3D; (90f &#x2F; 100);
+
+private void Init (int capacity, IEqualityComparer&lt;TKey&gt; hcp)
+&#123;
+    if (capacity &lt; 0)
+        throw new ArgumentOutOfRangeException (&quot;capacity&quot;);
+    this.hcp &#x3D; (hcp !&#x3D; null) ? hcp : EqualityComparer&lt;TKey&gt;.Default;
+    if (capacity &#x3D;&#x3D; 0)
+        capacity &#x3D; INITIAL_SIZE;
+
+    &#x2F;* Modify capacity so &#39;capacity&#39; elements can be added without resizing *&#x2F;
+    capacity &#x3D; (int)(capacity &#x2F; DEFAULT_LOAD_FACTOR) + 1;
+    
+    InitArrays (capacity);
+    generation &#x3D; 0;
+&#125;
+
+private void InitArrays (int size) &#123;
+    table &#x3D; new int [size];
+
+    linkSlots &#x3D; new Link [size];
+    emptySlot &#x3D; NO_SLOT;
+
+    keySlots &#x3D; new TKey [size];
+    valueSlots &#x3D; new TValue [size];
+    touchedSlots &#x3D; 0;
+
+    threshold &#x3D; (int)(table.Length * DEFAULT_LOAD_FACTOR);
+    if (threshold &#x3D;&#x3D; 0 &amp;&amp; table.Length &gt; 0)
+        threshold &#x3D; 1;
+&#125;</code></pre>
+<p>可以看到一般来说若没有传入初始容量，或者传入0，直接的结果就是导致计算初始容量时将得到12，且在InitArrays中将分配四个数组，分别负责：</p>
+<ol type="1">
+<li>table：存储取余后的hashcode，到linkSlots下标的映射，这个下标同样用于索引keySlots与valueSlots。</li>
+<li>linkSlots：存储计算hashcode结果以及next信息</li>
+<li>keySlots：键内容的存储数组</li>
+<li>valueSlots：值内容的存储数组</li>
+</ol>
+<p>因此如果有把握此字典被插入的元素并不多（甚至仅有一个元素），或许可以考虑一开始就传入初始容量1，这样至少分配的数组的大小是最小的。</p>
+<p>测试代码示例：</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class DictionaryAllocationTest : MonoBehaviour
+&#123;
+    private Dictionary&lt;uint, GameObject&gt; m_Objects;
+    &#x2F;&#x2F; Start is called before the first frame update
+    void Start()
+    &#123;
+        m_Objects &#x3D; new Dictionary&lt;uint, GameObject&gt;();
+        for (int i &#x3D; 0; i &lt; 14; i++)
+        &#123;
+            m_Objects.Add((uint)i, null);
+        &#125;
+    &#125;
+&#125;</code></pre>
+<p><code>Start()</code>
+中构造函数执行完毕，尚未进行元素插入的debug结果：</p>
+<a href="/p/b1b59cb05264/mono2-dict-after-ctor.png" class="gallery-item"><img src="/p/b1b59cb05264/mono2-dict-after-ctor.png" class="" title="构造函数之后的内部数组情况"></a>
+<p>而当插入12个元素后，内部数组将同步扩容到37：</p>
+<a href="/p/b1b59cb05264/mono2-dict-after-12inserts.png" class="gallery-item"><img src="/p/b1b59cb05264/mono2-dict-after-12inserts.png" class="" title="抵达容量限制扩容后的内部数组情况"></a>
+<p>而在上述更新版本的字典实现中，无论是初始化大小，还是扩容速度，都要更为保守。</p>
+<p>因此需要注意当自己在版本老旧的.NET环境开发，且代码运行在内存资源吃紧的场景下时，要慎用Dictionary。</p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>计算机科学</category>
+        <category>编程语言</category>
+        <category>C#</category>
+      </categories>
+      <tags>
+        <tag>C#</tag>
+        <tag>.NET</tag>
+        <tag>源码阅读</tag>
+      </tags>
+  </entry>
 </search>
