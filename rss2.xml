@@ -15,8 +15,37 @@
     <atom:link href="https://www.threegates.net/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description>欢迎来到ThreeGates！ThreeGates是一个我用于分享游戏开发知识和游戏体验的平台，希望你能在这里发现有趣的东西...</description>
-    <pubDate>Sun, 20 Oct 2024 10:13:38 GMT</pubDate>
+    <pubDate>Sat, 21 Dec 2024 06:00:07 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>.NET source 系列：System.Collections.Generic.LinkedList</title>
+      <link>https://www.threegates.net/p/4c13c2dd8346/</link>
+      <guid>https://www.threegates.net/p/4c13c2dd8346/</guid>
+      <pubDate>Sat, 21 Dec 2024 05:08:17 GMT</pubDate>
+      
+      <description>探究了 .net framework 4.8 下的 LinkedList 及其常见操作实现。LinkedList 的实现符合常见的链表数据结构设计，且 LinkedList 实现的是通用性更强的双向、环状列表，阅读源码的过程更像是指针操作的一次复习。LinkedList提供了完备的节点插入，移除操作，但却都仅仅依赖为数不多的几个内部实现，很有启发性。</description>
+      
+      
+      
+      
+      <category domain="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/">计算机科学</category>
+      
+      <category domain="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</category>
+      
+      <category domain="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/C/">C#</category>
+      
+      
+      <category domain="https://www.threegates.net/tags/C/">C#</category>
+      
+      <category domain="https://www.threegates.net/tags/NET/">.NET</category>
+      
+      <category domain="https://www.threegates.net/tags/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">源码阅读</category>
+      
+      
+      <comments>https://www.threegates.net/p/4c13c2dd8346/#disqus_thread</comments>
+      
+    </item>
     
     <item>
       <title>.NET source 系列：System.Collections.Generic.Dictionary</title>

@@ -4456,4 +4456,220 @@ private void InitArrays (int size) &#123;
         <tag>源码阅读</tag>
       </tags>
   </entry>
+  <entry>
+    <title>.NET source 系列：System.Collections.Generic.LinkedList</title>
+    <url>/p/4c13c2dd8346/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="net-source-linkedlist">[.NET source] LinkedList</h1>
+<p>namespace: System.Collections.Generic.LinkedList</p>
+<p>project: ndp.csproj</p>
+<p>file: <a
+href="https://referencesource.microsoft.com/#System/compmod/system/collections/generic/linkedlist.cs,df5a6c7b6b60da4f">linkedlist.cs</a></p>
+<p>version: 参考版本为属于 .net standard 2.0 的 .NET Framework 4.8</p>
+<h2 id="摘要">摘要</h2>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class LinkedList&lt;T&gt;: ICollection&lt;T&gt;, System.Collections.ICollection
+       ,ISerializable, IDeserializationCallback 
+&#123;
+    internal LinkedListNode&lt;T&gt; head;
+    internal int count;
+    internal int version;
+    private Object _syncRoot;
+
+    &#x2F;&#x2F; serialization ...
+&#125;
+
+public sealed class LinkedListNode&lt;T&gt; &#123;
+    internal LinkedList&lt;T&gt; list;
+    internal LinkedListNode&lt;T&gt; next;
+    internal LinkedListNode&lt;T&gt; prev;
+    internal T item;
+    
+    public LinkedListNode( T value) &#123;
+        this.item &#x3D; value;
+    &#125;
+
+    internal LinkedListNode(LinkedList&lt;T&gt; list, T value) &#123;
+        this.list &#x3D; list;
+        this.item &#x3D; value;
+    &#125;
+
+    public LinkedListNode&lt;T&gt; Next &#123;
+        get &#123; return next &#x3D;&#x3D; null || next &#x3D;&#x3D; list.head? null: next;&#125;
+    &#125;
+
+    public LinkedListNode&lt;T&gt; Previous &#123;
+        get &#123; return prev &#x3D;&#x3D; null || this &#x3D;&#x3D; list.head? null: prev;&#125;
+    &#125;
+    &#x2F;&#x2F; ...    
+&#125;  </code></pre>
+<blockquote>
+<p>This LinkedList is a doubly-Linked circular list.</p>
+</blockquote>
+<p>LinkedList 的实现符合常见的链表数据结构设计，且 LinkedList
+实现的是通用性更强的双向、环状（<code>head→prev == tail</code>,
+<code>tail→next ==
+head</code>）列表，阅读源码的过程更像是指针操作的一次复习。</p>
+<p>LinkedList 能够返回节点个数 <strong>count</strong>，以及链表的头节点
+<strong>First</strong>，尾节点 <strong>Last</strong>
+(<code>head.prev</code>)</p>
+<span id="more"></span>
+<h2 id="对外方法">对外方法</h2>
+<h3 id="构造函数-ctor">构造函数 ctor</h3>
+<ol type="1">
+<li>存在无参，以及接受 IEnumerable&lt;T&gt; 两个版本的构造函数</li>
+<li>接受 IEnumerable&lt;T&gt; 的构造函数依赖的是方法
+<code>LinkedList&lt;T&gt;.AddLast</code></li>
+</ol>
+<h3 id="空链表判断">空链表判断</h3>
+<p>可以通过简单的 <code>head == null</code> 判断当前链表是否为空</p>
+<h3 id="头尾插入节点-addfirst-addlast">头尾插入节点 AddFirst /
+AddLast</h3>
+<p>头尾插入元素的方法都支持插入值 <code>(T value)</code> 以及插入节点
+<code>(LinkedListNode&lt;T&gt; node)</code> 的版本。</p>
+<p><strong>AddFirst</strong> 操作对于空链表情况，内部实现为
+<code>InternalInsertNodeToEmptyList(node)</code>，对于非空链表，内部实现为
+<code>InternalInsertNodeBefore(head,
+node)</code>，即将节点node插入到头指针head之前，之后再把指针的头节点设置为传入的node。</p>
+<p><strong>AddLast</strong> 操作的巧妙之处在于方法实现与
+<strong>AddFirst</strong>
+基本是一致的，唯一差异在于链表非空的情况下，在<code>InternalInsertNodeBefore(head,
+node)</code>
+之后，少了一步把头节点设置为传入的node，这样新插入的节点就自然在链表的最末尾了，因为在双向指针中我们有
+<code>head → prev == tail</code></p>
+<h3 id="前后插入节点-addafter-addbefore">前后插入节点 AddAfter /
+AddBefore</h3>
+<p>AddAfter 的操作依赖 <code>InternalInsertNodeBefore(node→next,
+newNode)</code> 。</p>
+<p>AddBefore 的操作则直接使用 <code>InternalInsertNodeBefore(node,
+newNode)</code>，但需要额外注意的是若此处的目标节点 node
+是头节点，前插之后记得更新头节点</p>
+<h3 id="节点查找-find-findlast">节点查找 Find / FindLast</h3>
+<p>Find 内部仅区分查找的元素 <code>(T value)</code> 是否为
+null，以此决定用
+<code>EqualityComparer&lt;T&gt;.Default</code>，还是简单地进行
+<code>node.item == null</code> 的判断。</p>
+<p>而 FindLast 和 Find 的差异仅在于从后往前找，还是从前往后找。</p>
+<h3 id="链表的清空-clear">链表的清空 Clear</h3>
+<p>链表的清空操作涉及到节点的无效化（Invalidate）操作，使用节点 Next
+遍历整个链表，将每个节点都无效化。Clear 操作最后将链表的头指针 head
+置空，节点个数值置0。</p>
+<h3 id="拷贝到数组-copytot-array-int-index">拷贝到数组 CopyTo(T[] array,
+int index)</h3>
+<p>（需要自己开辟数组传入）</p>
+<p>虽然除去一些数组大小的合法性检测，逻辑还是比较简单的：遍历链表并依次存入到数组中而已，
+但是惊讶于有这样一个方法，或许在一些场合会派上用场。</p>
+<h3 id="节点移除-remove">节点移除 Remove</h3>
+<p>类似节点的插入，节点的移除操作除了指定值的 <code>Remove(T
+value)</code>，还有移除头节点的
+<code>RemoveFirst()</code>，以及移除尾节点的
+<code>RemoveLast()</code>，它们都依赖同一个内部方法
+<code>InternalRemoveNode(LinkedListNode&lt;T&gt; node)</code></p>
+<h2 id="内部实现">内部实现</h2>
+<h3 id="节点移除-internalremovenode">节点移除 InternalRemoveNode</h3>
+<p>此方法的实现除去合法性校验部分，只剩下了一个标准的双向链表移除节点操作</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">internal void InternalRemoveNode(LinkedListNode&lt;T&gt; node) &#123;
+    &#x2F;&#x2F; ...
+    if ( node.next &#x3D;&#x3D; node) &#123;
+        &#x2F;&#x2F; Debug.Assert(count &#x3D;&#x3D; 1 &amp;&amp; head &#x3D;&#x3D; node, ...
+        head  &#x3D; null;
+    &#125; 
+    else &#123;
+        node.next.prev &#x3D; node.prev;
+        node.prev.next &#x3D; node.next;
+        if ( head &#x3D;&#x3D; node) &#123;
+            head &#x3D; node.next;
+        &#125;
+    &#125;
+    node.Invalidate();  
+    count--;
+    version++;          
+&#125;</code></pre>
+<p>移除节点将会更新链表的节点个数 count，以及版本 version</p>
+<h3 id="初始化空链表-internalinsertnodetoemptylist">初始化空链表
+InternalInsertNodeToEmptyList</h3>
+<p>使用新节点初始化空链表时，head 指向唯一节点，且此节点的 prev，next
+均为自己</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void InternalInsertNodeToEmptyList(LinkedListNode&lt;T&gt; newNode) &#123;
+    &#x2F;&#x2F; Debug.Assert( head &#x3D;&#x3D; null &amp;&amp; count &#x3D;&#x3D; 0, ...
+    newNode.next &#x3D; newNode;
+    newNode.prev &#x3D; newNode;
+    head &#x3D; newNode;
+    version++;
+    count++; 
+&#125;
+ </code></pre>
+<h3 id="节点前插-internalinsertnodebefore">节点前插
+InternalInsertNodeBefore</h3>
+<p>一个规范的双向链表节点前插实现，可以作为参考</p>
+<p>LinkedList 中的所有链表插入操作仅依赖这一个方法，后插的操作会通过
+<code>InsertNodeBefore(node→next, newNode)</code> 来实现</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void InternalInsertNodeBefore(LinkedListNode&lt;T&gt; node, LinkedListNode&lt;T&gt; newNode) &#123;
+    newNode.next &#x3D; node;
+    newNode.prev &#x3D; node.prev;
+    node.prev.next &#x3D; newNode;
+    node.prev &#x3D; newNode;            
+    version++;
+    count++;
+&#125;</code></pre>
+<h3 id="节点无效化-invalidatenode">节点无效化 InvalidateNode</h3>
+<p>无效化操作会将节点存有的链表引用，前向、后向指针都置为
+null，这样当操作完成后，这些节点就都会被GC回收了。</p>
+<h3 id="节点校验-validatenode-validatenewnode">节点校验 ValidateNode /
+ValidateNewNode</h3>
+<p>对于新节点，将校验节点是否为null，节点是否还Attach在之前的list上（要求
+<code>node.list</code>
+为null）；而对于已在链表中的节点，同样校验节点是否为null，且校验节点存有的链表引用是否为当前链表（要求
+<code>node.list == this</code> ）</p>
+<h3 id="节点的next与previous">节点的Next与Previous</h3>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public LinkedListNode&lt;T&gt; Next &#123;
+    get &#123; return next &#x3D;&#x3D; null || next &#x3D;&#x3D; list.head? null: next;&#125;
+&#125;
+
+public LinkedListNode&lt;T&gt; Previous &#123;
+    get &#123; return prev &#x3D;&#x3D; null || this &#x3D;&#x3D; list.head? null: prev;&#125;
+&#125;</code></pre>
+<p>在双向链表中的节点有此设计：若当前节点的下一个节点已是头节点，那么在访问
+Next 时会返回 null
+来表示自己是尾节点；若当前节点与引用链表的头节点相等，那么在访问
+Previous 时会返回 null 来表示自己是头节点。</p>
+<h2 id="迭代器-enumerator">迭代器 Enumerator</h2>
+<p>LinkedList 的迭代器实现也是比较符合直觉的，重点观察下
+<code>MoveNext()</code> 方法中的终止条件即可：</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public bool MoveNext() &#123;
+    if (version !&#x3D; list.version) &#123;
+        throw new InvalidOperationException(SR.GetString(SR.InvalidOperation_EnumFailedVersion));
+    &#125;
+ 
+    if (node &#x3D;&#x3D; null) &#123;
+        index &#x3D; list.Count + 1;
+        return false;
+    &#125;
+ 
+    ++index;
+    current &#x3D; node.item;   
+    node &#x3D; node.next;  
+    if (node &#x3D;&#x3D; list.head) &#123;
+        node &#x3D; null;
+    &#125;
+    return true;
+&#125;</code></pre>
+<p>除了熟悉的 version check，只需要注意迭代在下方的 <code>node ==
+list.head</code> 基本结束，下次便会由于 node 已设置 null，而将 index
+设置为无效值<code>count + 1</code>，以此来结束迭代。</p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>计算机科学</category>
+        <category>编程语言</category>
+        <category>C#</category>
+      </categories>
+      <tags>
+        <tag>C#</tag>
+        <tag>.NET</tag>
+        <tag>源码阅读</tag>
+      </tags>
+  </entry>
 </search>
