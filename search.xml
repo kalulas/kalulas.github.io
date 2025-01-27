@@ -1537,7 +1537,7 @@ prismjs:
     # Available values: default | flat | mac
     style: default
   # Fold code block
-  # NexT 新版本提供的折叠过长代码功能，就版本配置会在这里因为缺少配置触发一个 Error...
+  # NexT 新版本提供的折叠过长代码功能，旧版本配置会在这里因为缺少配置触发一个 Error...
   fold:
     enable: true
     height: 500</code></pre>
