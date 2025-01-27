@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.14.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+
+
+<link rel="canonical" href="https://www.threegates.net/p/e22df32995f4/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.threegates.net/p/e22df32995f4/","path":"p/e22df32995f4/","title":"《The Way to Go》Chapter13 错误处理与测试"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>《The Way to Go》Chapter13 错误处理与测试 | ThreeGates</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="ThreeGates" type="application/atom+xml">
+<link rel="alternate" href="/rss2.xml" title="ThreeGates" type="application/rss+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">ThreeGates</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">edwardchen's gamedev blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">30</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">22</span></a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter-13-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E4%B8%8E%E6%B5%8B%E8%AF%95"><span class="nav-number">1.</span> <span class="nav-text">Chapter 13 错误处理与测试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E4%B8%8E%E6%B5%8B%E8%AF%95"><span class="nav-number">1.1.</span> <span class="nav-text">错误处理与测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">错误处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%BC%82%E5%B8%B8%E5%92%8Cpanic"><span class="nav-number">1.3.</span> <span class="nav-text">运行时异常和panic</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8Epanic%E4%B8%AD%E6%81%A2%E5%A4%8Drecover"><span class="nav-number">1.4.</span> <span class="nav-text">从panic中恢复（recover）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8C%85%E4%B8%AD%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E5%92%8Cpanicking"><span class="nav-number">1.5.</span> <span class="nav-text">自定义包中的错误处理和panicking</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#go%E4%B8%AD%E7%9A%84%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%92%8C%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95"><span class="nav-number">1.6.</span> <span class="nav-text">Go中的单元测试和基准测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E5%88%86%E6%9E%90%E5%B9%B6%E4%BC%98%E5%8C%96go%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.7.</span> <span class="nav-text">性能调试：分析并优化Go程序</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Edward Chen 陈柏铭"
+      src="/images/disney-burger.jpg">
+  <p class="site-author-name" itemprop="name">Edward Chen 陈柏铭</p>
+  <div class="site-description" itemprop="description">欢迎来到ThreeGates！ThreeGates是一个我用于分享游戏开发知识和游戏体验的平台，希望你能在这里发现有趣的东西...</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kalulas" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kalulas" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/chen-bo-ming-11-48" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;chen-bo-ming-11-48" rel="noopener me" target="_blank"><i class="fas fa-plane-arrival fa-fw"></i>Zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://steamcommunity.com/id/499485532/" title="Steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;id&#x2F;499485532&#x2F;" rel="noopener me" target="_blank"><i class="fab fa-steam-square fa-fw"></i>Steam</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kalulas41@gmail.com" title="E-Mail → mailto:kalulas41@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.threegates.net/p/e22df32995f4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/disney-burger.jpg">
+      <meta itemprop="name" content="Edward Chen 陈柏铭">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ThreeGates">
+      <meta itemprop="description" content="欢迎来到ThreeGates！ThreeGates是一个我用于分享游戏开发知识和游戏体验的平台，希望你能在这里发现有趣的东西...">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="《The Way to Go》Chapter13 错误处理与测试 | ThreeGates">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《The Way to Go》Chapter13 错误处理与测试
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-10-23 22:48:36 / 修改时间：22:57:55" itemprop="dateCreated datePublished" datetime="2022-10-23T22:48:36+08:00">2022-10-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">计算机科学</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">编程语言</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Go/" itemprop="url" rel="index"><span itemprop="name">Go</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="chapter-13-错误处理与测试">Chapter 13 错误处理与测试</h1>
+<h2 id="错误处理与测试">错误处理与测试</h2>
+<ol type="1">
+<li><p>Go通常在函数和方法中返回错误对象作为返回值，如果返回nil则没有错误发生</p></li>
+<li><p>永远不要忽略错误，否则可能会导致程序崩溃！调用函数后必须检查错误</p></li>
+<li><p>为了让代码更清晰，应该使用包含错误值变量的if 符合语句</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">if value, err :&#x3D; pack1.Func1(param1); err !&#x3D; nil &#123;
+	fmt.Printf(&quot;Error %s in pack1.Func1 with parameter %v&quot;, err.Error(), param1)
+	return    &#x2F;&#x2F; or: return err
+&#125; else &#123;
+	&#x2F;&#x2F; Process(value)
+&#125;</code></pre></p></li>
+</ol>
+<span id="more"></span>
+<h2 id="错误处理">错误处理</h2>
+<ol type="1">
+<li><p>使用errors包来创建一个错误类型对象，附带上错误信息</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">err :&#x3D; errors.New(&quot;math - square root of negative number&quot;)</code></pre></p></li>
+<li><p>自定义一个错误结构，除了低层级错误信息还附带一些额外信息；在不同错误可能发生的场景下，对错误使用类型断言/类型判断(type-switch)</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; PathError records an error and the operation and file path that caused it.
+type PathError struct &#123;
+	Op string    &#x2F;&#x2F; &quot;open&quot;, &quot;unlink&quot;, etc.
+	Path string  &#x2F;&#x2F; The associated file.
+	Err error  &#x2F;&#x2F; Returned by the system call. 低层级错误信息
+&#125;
+
+&#x2F;&#x2F;  err !&#x3D; nil
+if e, ok :&#x3D; err.(*os.PathError); ok &#123;
+	&#x2F;&#x2F; remedy situation
+&#125;</code></pre></p></li>
+</ol>
+<h2 id="运行时异常和panic">运行时异常和panic</h2>
+<ol type="1">
+<li>当发生了需要将程序停止的错误时，使用<code>panic()</code>产生一个中止程序的运行时错误。</li>
+<li>传递任意类型的参数给<code>panic()</code>，会在程序终止的信息中被打印出来。</li>
+<li><code>panic()</code>所在函数的后一行代码不会执行，但panic会把执行控制权交还给上层，并执行每层的defer，这个过程叫做<code>panicking</code></li>
+</ol>
+<h2 id="从panic中恢复recover">从panic中恢复（recover）</h2>
+<p><code>recover</code>只能在<code>defer</code>修饰的函数中使用，如果发生了panic，那么<code>defer</code>修饰的函数会执行，且<code>recover</code>将得到对应的错误值，否者将返回nil并且没有其他效果</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">func protect(g func()) &#123;
+	defer func() &#123;
+		log.Println(&quot;done&quot;)
+		&#x2F;&#x2F; Println executes normally even if there is a panic
+		if err :&#x3D; recover(); err !&#x3D; nil &#123;
+			log.Printf(&quot;run time panic: %v&quot;, err)
+		&#125; &#x2F;&#x2F; 这里之后执行protect()之后的指令
+	&#125;()
+	log.Println(&quot;start&quot;)
+	g() &#x2F;&#x2F;   possible runtime-error
+&#125;</code></pre>
+<h2
+id="自定义包中的错误处理和panicking">自定义包中的错误处理和panicking</h2>
+<p>应该遵守的最佳实践：</p>
+<ol type="1">
+<li>在包内部，总是应该从panic中recover，不允许显式的超出包范围的panic()</li>
+<li>向包的调用者返回错误值（而不是panic）</li>
+</ol>
+<h2 id="go中的单元测试和基准测试">Go中的单元测试和基准测试</h2>
+<p>测试使用的工具是gotest，使用名为<code>testing</code>的包，测试代码和包中的业务代码是分开的，<code>_test</code>代码与程序不会被普通的Go编译器编译，只有gotest会编译所有的程序。</p>
+<p>使用<code>go
+test</code>来编译测试程序，对于通过的测试会打印PASS，对于<code>go test
+-test.bench=.*</code>会运行基准测试，调用N次并展示N次的值和执行的平均时间。</p>
+<h2 id="性能调试分析并优化go程序">性能调试：分析并优化Go程序</h2>
+<ol type="1">
+<li><p>unix命令行中可以使用<code>time</code>命令，输出程序的执行时间和内存占用等</p></li>
+<li><p>使用Go中的<code>testing</code>包进行基准测试，使用-cpuprofile /
+-memprofile 标志向指定文件写入CPU或内存使用情况报告</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">go test -x -v -cpuprofile&#x3D;prof.out -file x_test.go</code></pre></p></li>
+<li><p>可以在程序中引入 <code>runtime/pprof</code>
+包，这个包以pprof可视化工具需要的格式写入运行时报告数据。gopprof是Google
+pprofC++
+分析器的一个轻微变种，如果开启此性能分析，Go程序会以大约每秒100次的频率阻塞。为实现性能分析，你可以像下面这样添加代码：</p></li>
+</ol>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">var cpuprofile &#x3D; flag.String(&quot;cpuprofile&quot;, &quot;&quot;, &quot;write cpu profile to file&quot;)
+
+func main() &#123;
+	flag.Parse()
+	if *cpuprofile !&#x3D; &quot;&quot; &#123;
+		f, err :&#x3D; os.Create(*cpuprofile)
+		if err !&#x3D; nil &#123;
+			log.Fatal(err)
+		&#125;
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	&#125;
+...</code></pre>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" rel="tag"># 编程语言</a>
+              <a href="/tags/Go/" rel="tag"># Go</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/e842888b11eb/" rel="prev" title="《The Way to Go》阅读笔记">
+                  <i class="fa fa-chevron-left"></i> 《The Way to Go》阅读笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/4aa7a9cb350b/" rel="next" title="《The Way to Go》Chapter14 协程">
+                  《The Way to Go》Chapter14 协程 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  
+  <div class="comments">
+    <script src="https://giscus.app/client.js"
+        data-repo="kalulas/personal-blog-comment" 
+        data-repo-id="R_kgDOGlbE9w" 
+        data-category="giscus"
+        data-category-id="DIC_kwDOGlbE984CS5lk"
+        data-mapping="title" 
+        data-reactions-enabled="1" 
+        data-emit-metadata="1" 
+        data-theme="light"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        data-input-position="top"
+        data-loading="lazy"
+        async>
+    </script>
+  </div>
+  
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Edward Chen 陈柏铭</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/kalulas" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" integrity="sha256-4mJNT2bMXxcc1GCJaxBmMPdmah5ji0Ldnd79DKd1hoM=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" integrity="sha256-AjM0J5XIbiB590BrznLEgZGLnOQWrt62s3BEq65Q/I0=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha256-9cmf7tcLdXpKsPi/2AWE93PbZpTp4M4tqzFk+lWomjU=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
