@@ -1510,6 +1510,39 @@ theme_config 项，在这里为了更清晰的版本历史，我们选择了独�
 配置文件</li>
 <li><strong>themes</strong> 目录下的配置文件</li>
 </ol>
+<h3 id="调整代码配色主题">调整代码配色主题</h3>
+<p>threegates 使用的代码配色/高亮引擎是 prism，在 hexo 配置文件
+<strong>_config.yml</strong> 中有如下配置</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"># hexo 7.0 起需要指定 highlighter
+syntax_highlighter: prismjs
+# highlight 部分也在这里，不同不重要
+prismjs:
+  preprocess: false
+  line_number: true
+  line_threshold: 0 # 可以配置超过多少行才显示行号
+  tab_replace: &#39;    &#39;</code></pre>
+<p>在主题配置文件 <strong>_config.next.yml</strong> 有如下配置</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">codeblock:
+  # Code Highlight theme
+  # All available themes: https:&#x2F;&#x2F;theme-next.js.org&#x2F;highlight&#x2F;
+  # theme 部分配置可以无视
+  # ...
+  # prism 块下设置不同颜色主题下的代码配色方案
+  prism:
+    light: prism-tomorrow
+    dark: prism-tomorrow
+  # Add copy button on codeblock
+  copy_button:
+    enable: true
+    # Available values: default | flat | mac
+    style: default
+  # Fold code block
+  # NexT 新版本提供的折叠过长代码功能，就版本配置会在这里因为缺少配置触发一个 Error...
+  fold:
+    enable: true
+    height: 500</code></pre>
+<p>如果需要预览配色方案的效果，可以前往<a
+href="https://theme-next.js.org/highlight/">这个网站</a></p>
 <h3 id="样式layout自定义">样式（layout）自定义</h3>
 <p>阅读了hexo和NEXT的模板相关文章，简单看了下关联的njx，ejs文件，想通过is_post()或者is_home()的helper方法实现一下仅在文章页显示阅读进度条的效果，但是似乎返回结果不正确，现在在next的github页提了issue还在等回复。</p>
 <p>njx中的语法与ejs不完全相同，简单参考了非官方文档：</p>
