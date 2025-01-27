@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
 
 
@@ -224,9 +224,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-11-22 22:16:54 / 修改时间：23:22:20" itemprop="dateCreated datePublished" datetime="2022-11-22T22:16:54+08:00">2022-11-22</time>
+      <time title="创建时间：2022-11-22 22:16:54" itemprop="dateCreated datePublished" datetime="2022-11-22T22:16:54+08:00">2022-11-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-27 19:37:08" itemprop="dateModified" datetime="2025-01-27T19:37:08+08:00">2025-01-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -256,14 +262,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.6k</span>
+      <span>557</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>13 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -280,9 +286,7 @@
 <li>从需要渲染的对象上获取Renderer组件（对于复杂的3D模型，一般得到的是<code>MeshRenderer</code>）</li>
 <li>根据Renderer组件的bounds.center，bounds.extents计算出世界坐标的八个点</li>
 <li>使用拍摄渲染对象的Camera调用接口<code>UnityEngine.Camera.WorldToScreenPoint</code>，获取八个点的屏幕坐标</li>
-<li>遍历八个点，取出x方向与y方向的最大最小值，返回一个<code>Vector4(minX,
-minY, maxX,
-maxY)</code>，这个坐标即是3D模型在2DUI上的显示包围盒（bounds）</li>
+<li>遍历八个点，取出x方向与y方向的最大最小值，返回一个<code>Vector4(minX, minY, maxX, maxY)</code>，这个坐标即是3D模型在2DUI上的显示包围盒（bounds）</li>
 <li>最后在UI层调整包围矩形的位置和大小即可</li>
 </ol>
 <span id="more"></span>

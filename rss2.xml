@@ -15,7 +15,7 @@
     <atom:link href="https://www.threegates.net/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description>欢迎来到ThreeGates！ThreeGates是一个我用于分享游戏开发知识和游戏体验的平台，希望你能在这里发现有趣的东西...</description>
-    <pubDate>Sat, 21 Dec 2024 06:00:07 GMT</pubDate>
+    <pubDate>Mon, 27 Jan 2025 11:37:08 GMT</pubDate>
     <generator>http://hexo.io/</generator>
     
     <item>
@@ -110,9 +110,9 @@ Capacity得到，直接返回数组 &lt;code&gt;_items&lt;/code&gt; 的长度。
       
       <category domain="https://www.threegates.net/tags/NET/">.NET</category>
       
-      <category domain="https://www.threegates.net/tags/IL2CPP/">IL2CPP</category>
-      
       <category domain="https://www.threegates.net/tags/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">源码阅读</category>
+      
+      <category domain="https://www.threegates.net/tags/IL2CPP/">IL2CPP</category>
       
       
       <comments>https://www.threegates.net/p/e5c0cabb6711/#disqus_thread</comments>
@@ -495,9 +495,7 @@ sitemap:
 &lt;li&gt;从需要渲染的对象上获取Renderer组件（对于复杂的3D模型，一般得到的是&lt;code&gt;MeshRenderer&lt;/code&gt;）&lt;/li&gt;
 &lt;li&gt;根据Renderer组件的bounds.center，bounds.extents计算出世界坐标的八个点&lt;/li&gt;
 &lt;li&gt;使用拍摄渲染对象的Camera调用接口&lt;code&gt;UnityEngine.Camera.WorldToScreenPoint&lt;/code&gt;，获取八个点的屏幕坐标&lt;/li&gt;
-&lt;li&gt;遍历八个点，取出x方向与y方向的最大最小值，返回一个&lt;code&gt;Vector4(minX,
-minY, maxX,
-maxY)&lt;/code&gt;，这个坐标即是3D模型在2DUI上的显示包围盒（bounds）&lt;/li&gt;
+&lt;li&gt;遍历八个点，取出x方向与y方向的最大最小值，返回一个&lt;code&gt;Vector4(minX, minY, maxX, maxY)&lt;/code&gt;，这个坐标即是3D模型在2DUI上的显示包围盒（bounds）&lt;/li&gt;
 &lt;li&gt;最后在UI层调整包围矩形的位置和大小即可&lt;/li&gt;
 &lt;/ol&gt;</description>
       
@@ -600,10 +598,10 @@ id=&quot;协程goroutine与通道channel&quot;&gt;协程（goroutine）与通道
 &lt;li&gt;&lt;p&gt;永远不要忽略错误，否则可能会导致程序崩溃！调用函数后必须检查错误&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;为了让代码更清晰，应该使用包含错误值变量的if 符合语句&lt;/p&gt;
 &lt;p&gt;&lt;pre class=&quot;line-numbers language-go&quot; data-language=&quot;go&quot;&gt;&lt;code class=&quot;language-go&quot;&gt;if value, err :&amp;#x3D; pack1.Func1(param1); err !&amp;#x3D; nil &amp;#123;
-	fmt.Printf(&amp;quot;Error %s in pack1.Func1 with parameter %v&amp;quot;, err.Error(), param1)
-	return    &amp;#x2F;&amp;#x2F; or: return err
+    fmt.Printf(&amp;quot;Error %s in pack1.Func1 with parameter %v&amp;quot;, err.Error(), param1)
+    return    &amp;#x2F;&amp;#x2F; or: return err
 &amp;#125; else &amp;#123;
-	&amp;#x2F;&amp;#x2F; Process(value)
+    &amp;#x2F;&amp;#x2F; Process(value)
 &amp;#125;&lt;/code&gt;&lt;/pre&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;</description>
       
@@ -835,8 +833,7 @@ repo上，使用pages来进行网站部署，markdown源文件再自己使用git
 &lt;p&gt;&lt;strong&gt;hexo new [layout] &amp;lt;title&amp;gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;创建新文章，使用默认的layout：post&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;hexo generate&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;一般会使用缩写&lt;code&gt;hexo
-g&lt;/code&gt;，并且加上&lt;code&gt;-d&lt;/code&gt;参数来一键部署到远端（我目前是部署到了github上），也可以加上&lt;code&gt;-w&lt;/code&gt;来观察文件变化，或是加上&lt;code&gt;-f&lt;/code&gt;来重新生成&lt;/p&gt;
+&lt;p&gt;一般会使用缩写&lt;code&gt;hexo g&lt;/code&gt;，并且加上&lt;code&gt;-d&lt;/code&gt;参数来一键部署到远端（我目前是部署到了github上），也可以加上&lt;code&gt;-w&lt;/code&gt;来观察文件变化，或是加上&lt;code&gt;-f&lt;/code&gt;来重新生成&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;hexo server&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;虽然是部署到远端上，但是也可以在真正提交前先在本地简单地生成部署一下，看下文章显示是否有问题，或者用这个命令来协助debug（带上&lt;code&gt;--log&lt;/code&gt;，以及&lt;code&gt;--debug&lt;/code&gt;参数）&lt;/p&gt;
 &lt;p&gt;加上&lt;code&gt;-p&lt;/code&gt;来指定部署的端口，以防在特定环境下收到安全组影响&lt;/p&gt;

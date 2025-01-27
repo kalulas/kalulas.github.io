@@ -6,7 +6,7 @@
   <link href="https://www.threegates.net/atom.xml" rel="self"/>
   
   <link href="https://www.threegates.net/"/>
-  <updated>2024-12-21T06:00:07.627Z</updated>
+  <updated>2025-01-27T11:37:08.000Z</updated>
   <id>https://www.threegates.net/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://www.threegates.net/p/4c13c2dd8346/"/>
     <id>https://www.threegates.net/p/4c13c2dd8346/</id>
     <published>2024-12-21T05:08:17.000Z</published>
-    <updated>2024-12-21T06:00:07.627Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">探究了 .net framework 4.8 下的 LinkedList 及其常见操作实现。LinkedList 的实现符合常见的链表数据结构设计，且 LinkedList 实现的是通用性更强的双向、环状列表，阅读源码的过程更像是指针操作的一次复习。LinkedList提供了完备的节点插入，移除操作，但却都仅仅依赖为数不多的几个内部实现，很有启发性。</summary>
@@ -48,7 +48,7 @@
     <link href="https://www.threegates.net/p/b1b59cb05264/"/>
     <id>https://www.threegates.net/p/b1b59cb05264/</id>
     <published>2024-10-20T09:36:24.000Z</published>
-    <updated>2024-10-20T10:13:38.921Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">探究了 .net framework 4.8 下的dictionary及其常见操作实现</summary>
@@ -75,7 +75,7 @@
     <link href="https://www.threegates.net/p/e5c0cabb6711/"/>
     <id>https://www.threegates.net/p/e5c0cabb6711/</id>
     <published>2024-08-25T07:12:15.000Z</published>
-    <updated>2024-09-23T11:40:42.923Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1
@@ -105,9 +105,9 @@ Capacity得到，直接返回数组 &lt;code&gt;_items&lt;/code&gt; 的长度。
     
     <category term=".NET" scheme="https://www.threegates.net/tags/NET/"/>
     
-    <category term="IL2CPP" scheme="https://www.threegates.net/tags/IL2CPP/"/>
-    
     <category term="源码阅读" scheme="https://www.threegates.net/tags/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/"/>
+    
+    <category term="IL2CPP" scheme="https://www.threegates.net/tags/IL2CPP/"/>
     
   </entry>
   
@@ -116,7 +116,7 @@ Capacity得到，直接返回数组 &lt;code&gt;_items&lt;/code&gt; 的长度。
     <link href="https://www.threegates.net/p/783e3028351b/"/>
     <id>https://www.threegates.net/p/783e3028351b/</id>
     <published>2024-03-06T05:04:15.000Z</published>
-    <updated>2024-03-06T05:17:34.559Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;protocol-buffers-编码&quot;&gt;Protocol Buffers 编码&lt;/h1&gt;
@@ -159,7 +159,7 @@ href=&quot;https://www.zhihu.com/question/585411183&quot;&gt;https://www.zhihu.c
     <link href="https://www.threegates.net/p/0a6e6f8be357/"/>
     <id>https://www.threegates.net/p/0a6e6f8be357/</id>
     <published>2023-10-12T07:16:14.000Z</published>
-    <updated>2023-10-12T07:32:59.206Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;p&gt;翻译自：&lt;a
@@ -199,7 +199,7 @@ C 的 &lt;code&gt;malloc()&lt;/code&gt;, C++ 的 &lt;code&gt;operator new()&lt
     <link href="https://www.threegates.net/p/9f45e6ee4d77/"/>
     <id>https://www.threegates.net/p/9f45e6ee4d77/</id>
     <published>2023-09-17T12:04:49.000Z</published>
-    <updated>2023-09-17T12:26:06.060Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;today&quot;&gt;Today&lt;/h1&gt;
@@ -253,7 +253,7 @@ alt=&quot;空间划分树结构&quot; /&gt;&lt;/a&gt;
     <link href="https://www.threegates.net/p/24d663e5b3a4/"/>
     <id>https://www.threegates.net/p/24d663e5b3a4/</id>
     <published>2023-07-10T15:20:30.000Z</published>
-    <updated>2024-08-30T13:53:23.273Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h2 id=&quot;参考&quot;&gt;参考&lt;/h2&gt;
@@ -290,7 +290,7 @@ code）在这些平台上都无法运行。为此，你需要把所有的托管�
     <link href="https://www.threegates.net/p/13902132f155/"/>
     <id>https://www.threegates.net/p/13902132f155/</id>
     <published>2023-07-08T09:15:26.000Z</published>
-    <updated>2023-07-08T09:34:51.523Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;p&gt;翻译自Godot引擎贡献指南，原文：&lt;a
@@ -324,7 +324,7 @@ alt=&quot;best_practices1&quot; /&gt;&lt;/a&gt;
     <link href="https://www.threegates.net/p/fc631eddaa53/"/>
     <id>https://www.threegates.net/p/fc631eddaa53/</id>
     <published>2023-05-21T15:37:56.000Z</published>
-    <updated>2024-01-07T16:22:06.150Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;tablecraft-is-finally-here&quot;&gt;TableCraft is finally here!&lt;/h1&gt;
@@ -346,7 +346,7 @@ href=&quot;https://github.com/kalulas/TableCraft/releases/tag/v1.0.0&quot;&gt;v1
     <link href="https://www.threegates.net/p/77589f7bf80e/"/>
     <id>https://www.threegates.net/p/77589f7bf80e/</id>
     <published>2023-01-25T09:05:02.000Z</published>
-    <updated>2023-01-25T10:31:03.222Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;第四章-类型基础&quot;&gt;第四章 类型基础&lt;/h1&gt;
@@ -380,7 +380,7 @@ href=&quot;https://github.com/kalulas/TableCraft/releases/tag/v1.0.0&quot;&gt;v1
     <link href="https://www.threegates.net/p/6f279d447649/"/>
     <id>https://www.threegates.net/p/6f279d447649/</id>
     <published>2022-12-20T12:15:56.000Z</published>
-    <updated>2022-12-20T12:53:17.385Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h2 id=&quot;使用ssh进行github身份验证&quot;&gt;使用ssh进行GitHub身份验证&lt;/h2&gt;
@@ -421,7 +421,7 @@ href=&quot;https://docs.github.com/cn/authentication/keeping-your-account-and-da
     <link href="https://www.threegates.net/p/e620710b2f05/"/>
     <id>https://www.threegates.net/p/e620710b2f05/</id>
     <published>2022-12-11T09:58:00.000Z</published>
-    <updated>2022-12-11T10:10:27.389Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1
@@ -461,7 +461,7 @@ sitemap:
     <link href="https://www.threegates.net/p/8d386e7b10e2/"/>
     <id>https://www.threegates.net/p/8d386e7b10e2/</id>
     <published>2022-11-22T14:16:54.000Z</published>
-    <updated>2022-11-22T15:22:20.964Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;前言&quot;&gt;前言&lt;/h1&gt;
@@ -471,9 +471,7 @@ sitemap:
 &lt;li&gt;从需要渲染的对象上获取Renderer组件（对于复杂的3D模型，一般得到的是&lt;code&gt;MeshRenderer&lt;/code&gt;）&lt;/li&gt;
 &lt;li&gt;根据Renderer组件的bounds.center，bounds.extents计算出世界坐标的八个点&lt;/li&gt;
 &lt;li&gt;使用拍摄渲染对象的Camera调用接口&lt;code&gt;UnityEngine.Camera.WorldToScreenPoint&lt;/code&gt;，获取八个点的屏幕坐标&lt;/li&gt;
-&lt;li&gt;遍历八个点，取出x方向与y方向的最大最小值，返回一个&lt;code&gt;Vector4(minX,
-minY, maxX,
-maxY)&lt;/code&gt;，这个坐标即是3D模型在2DUI上的显示包围盒（bounds）&lt;/li&gt;
+&lt;li&gt;遍历八个点，取出x方向与y方向的最大最小值，返回一个&lt;code&gt;Vector4(minX, minY, maxX, maxY)&lt;/code&gt;，这个坐标即是3D模型在2DUI上的显示包围盒（bounds）&lt;/li&gt;
 &lt;li&gt;最后在UI层调整包围矩形的位置和大小即可&lt;/li&gt;
 &lt;/ol&gt;</summary>
     
@@ -497,7 +495,7 @@ maxY)&lt;/code&gt;，这个坐标即是3D模型在2DUI上的显示包围盒（bo
     <link href="https://www.threegates.net/p/c629bb3de01f/"/>
     <id>https://www.threegates.net/p/c629bb3de01f/</id>
     <published>2022-10-30T10:30:30.000Z</published>
-    <updated>2022-10-30T10:38:03.590Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;chapter16-常见陷阱与错误&quot;&gt;Chapter16 常见陷阱与错误&lt;/h1&gt;
@@ -531,7 +529,7 @@ href=&quot;https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/16.0
     <link href="https://www.threegates.net/p/4aa7a9cb350b/"/>
     <id>https://www.threegates.net/p/4aa7a9cb350b/</id>
     <published>2022-10-23T14:48:59.000Z</published>
-    <updated>2022-10-23T14:57:55.377Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;chapter-14&quot;&gt;Chapter 14&lt;/h1&gt;
@@ -560,7 +558,7 @@ id=&quot;协程goroutine与通道channel&quot;&gt;协程（goroutine）与通道
     <link href="https://www.threegates.net/p/e22df32995f4/"/>
     <id>https://www.threegates.net/p/e22df32995f4/</id>
     <published>2022-10-23T14:48:36.000Z</published>
-    <updated>2022-10-23T14:57:55.376Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;chapter-13-错误处理与测试&quot;&gt;Chapter 13 错误处理与测试&lt;/h1&gt;
@@ -570,10 +568,10 @@ id=&quot;协程goroutine与通道channel&quot;&gt;协程（goroutine）与通道
 &lt;li&gt;&lt;p&gt;永远不要忽略错误，否则可能会导致程序崩溃！调用函数后必须检查错误&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;为了让代码更清晰，应该使用包含错误值变量的if 符合语句&lt;/p&gt;
 &lt;p&gt;&lt;pre class=&quot;line-numbers language-go&quot; data-language=&quot;go&quot;&gt;&lt;code class=&quot;language-go&quot;&gt;if value, err :&amp;#x3D; pack1.Func1(param1); err !&amp;#x3D; nil &amp;#123;
-	fmt.Printf(&amp;quot;Error %s in pack1.Func1 with parameter %v&amp;quot;, err.Error(), param1)
-	return    &amp;#x2F;&amp;#x2F; or: return err
+    fmt.Printf(&amp;quot;Error %s in pack1.Func1 with parameter %v&amp;quot;, err.Error(), param1)
+    return    &amp;#x2F;&amp;#x2F; or: return err
 &amp;#125; else &amp;#123;
-	&amp;#x2F;&amp;#x2F; Process(value)
+    &amp;#x2F;&amp;#x2F; Process(value)
 &amp;#125;&lt;/code&gt;&lt;/pre&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;</summary>
     
@@ -597,7 +595,7 @@ id=&quot;协程goroutine与通道channel&quot;&gt;协程（goroutine）与通道
     <link href="https://www.threegates.net/p/e842888b11eb/"/>
     <id>https://www.threegates.net/p/e842888b11eb/</id>
     <published>2022-07-31T14:24:57.000Z</published>
-    <updated>2022-10-23T15:22:52.174Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;chapter1&quot;&gt;Chapter1&lt;/h1&gt;
@@ -629,7 +627,7 @@ id=&quot;协程goroutine与通道channel&quot;&gt;协程（goroutine）与通道
     <link href="https://www.threegates.net/p/a31f36d806f9/"/>
     <id>https://www.threegates.net/p/a31f36d806f9/</id>
     <published>2022-01-31T08:43:48.000Z</published>
-    <updated>2023-01-22T07:48:27.297Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h2 id=&quot;写在前面&quot;&gt;写在前面&lt;/h2&gt;
@@ -659,7 +657,7 @@ href=&quot;https://www.bilibili.com/video/BV1ux411k7Pk?spm_id_from=333.999.0.0&q
     <link href="https://www.threegates.net/p/d376051877fb/"/>
     <id>https://www.threegates.net/p/d376051877fb/</id>
     <published>2022-01-15T10:21:14.000Z</published>
-    <updated>2022-11-22T15:11:09.850Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;四元数与欧拉角&quot;&gt;四元数与欧拉角&lt;/h1&gt;
@@ -705,7 +703,7 @@ class=&quot;math inline&quot;&gt;\(\begin{bmatrix}\cos(
     <link href="https://www.threegates.net/p/27ad02cebc90/"/>
     <id>https://www.threegates.net/p/27ad02cebc90/</id>
     <published>2021-12-21T03:31:37.000Z</published>
-    <updated>2023-01-25T10:31:35.424Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h2 id=&quot;序&quot;&gt;序&lt;/h2&gt;
@@ -742,7 +740,7 @@ private void OnPlayerGuideFinished()
     <link href="https://www.threegates.net/p/ab7a58fcc8d2/"/>
     <id>https://www.threegates.net/p/ab7a58fcc8d2/</id>
     <published>2021-12-11T06:15:36.000Z</published>
-    <updated>2023-02-21T04:52:02.928Z</updated>
+    <updated>2025-01-27T11:37:08.000Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h3 id=&quot;需求&quot;&gt;需求&lt;/h3&gt;
@@ -776,7 +774,7 @@ private void OnPlayerGuideFinished()
     <link href="https://www.threegates.net/p/c9e58284d744/"/>
     <id>https://www.threegates.net/p/c9e58284d744/</id>
     <published>2021-12-05T10:38:45.000Z</published>
-    <updated>2023-01-26T12:33:23.538Z</updated>
+    <updated>2025-01-27T15:25:03.356Z</updated>
     
     
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css&quot; /&gt;&lt;div class=&quot;.article-gallery&quot;&gt;&lt;h1 id=&quot;使用hexo快速进行博客搭建&quot;&gt;使用hexo快速进行博客搭建&lt;/h1&gt;
@@ -793,8 +791,7 @@ repo上，使用pages来进行网站部署，markdown源文件再自己使用git
 &lt;p&gt;&lt;strong&gt;hexo new [layout] &amp;lt;title&amp;gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;创建新文章，使用默认的layout：post&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;hexo generate&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;一般会使用缩写&lt;code&gt;hexo
-g&lt;/code&gt;，并且加上&lt;code&gt;-d&lt;/code&gt;参数来一键部署到远端（我目前是部署到了github上），也可以加上&lt;code&gt;-w&lt;/code&gt;来观察文件变化，或是加上&lt;code&gt;-f&lt;/code&gt;来重新生成&lt;/p&gt;
+&lt;p&gt;一般会使用缩写&lt;code&gt;hexo g&lt;/code&gt;，并且加上&lt;code&gt;-d&lt;/code&gt;参数来一键部署到远端（我目前是部署到了github上），也可以加上&lt;code&gt;-w&lt;/code&gt;来观察文件变化，或是加上&lt;code&gt;-f&lt;/code&gt;来重新生成&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;hexo server&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;虽然是部署到远端上，但是也可以在真正提交前先在本地简单地生成部署一下，看下文章显示是否有问题，或者用这个命令来协助debug（带上&lt;code&gt;--log&lt;/code&gt;，以及&lt;code&gt;--debug&lt;/code&gt;参数）&lt;/p&gt;
 &lt;p&gt;加上&lt;code&gt;-p&lt;/code&gt;来指定部署的端口，以防在特定环境下收到安全组影响&lt;/p&gt;

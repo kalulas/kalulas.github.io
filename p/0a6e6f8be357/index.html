@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
 
 
@@ -226,9 +226,15 @@ VMAs）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2023-10-12 15:16:14 / 修改时间：15:32:59" itemprop="dateCreated datePublished" datetime="2023-10-12T15:16:14+08:00">2023-10-12</time>
+      <time title="创建时间：2023-10-12 15:16:14" itemprop="dateCreated datePublished" datetime="2023-10-12T15:16:14+08:00">2023-10-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-27 19:37:08" itemprop="dateModified" datetime="2025-01-27T19:37:08+08:00">2025-01-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -262,14 +268,14 @@ VMAs）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.1k</span>
+      <span>1.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -333,8 +339,9 @@ libc.so，framwork.dex）的文件后备内存，或者更罕见的一个例子�
 <h2 id="回顾">回顾</h2>
 <ul>
 <li>动态分配的内存，像是通过 C的 <code>malloc()</code>,
-C++的 <code>operator new()</code> 或者 Java的 <code>new
-X()</code> 进行分配内存总是 匿名 且 dirty 的，除非它从未被使用过。</li>
+C++的 <code>operator new()</code> 或者
+Java的 <code>new X()</code> 进行分配内存总是 匿名 且 dirty
+的，除非它从未被使用过。</li>
 <li>如果内存在一段时间内没有被读写，为了减轻内存压力，它会被换出到ZRAM上并且进入到swapped状态。</li>
 <li>Resident（且dirty）或是swapped状态的匿名内存总是耗费资源的，如无必要，需要尽可能避免。</li>
 <li>来自代码（java代码，原生代码）的文件映射内存，库以及资源文件几乎总是clean状态。Clean状态的内存一样会带来系统内存开销，但通常应用开发者对它没有太大控制权。</li>

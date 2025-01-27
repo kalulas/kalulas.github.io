@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
 
 
@@ -231,9 +231,15 @@ Allocation</span></a></li></ol></li></ol></div>
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2024-10-20 17:36:24 / 修改时间：18:13:38" itemprop="dateCreated datePublished" datetime="2024-10-20T17:36:24+08:00">2024-10-20</time>
+      <time title="创建时间：2024-10-20 17:36:24" itemprop="dateCreated datePublished" datetime="2024-10-20T17:36:24+08:00">2024-10-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-27 19:37:08" itemprop="dateModified" datetime="2025-01-27T19:37:08+08:00">2025-01-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -267,14 +273,14 @@ Allocation</span></a></li></ol></li></ol></div>
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>15k</span>
+      <span>4.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>53 分钟</span>
+      <span>15 分钟</span>
     </span>
 </div>
 
@@ -420,8 +426,7 @@ primes 数组中最大值，那么简单地查表就能得到大于它的目标�
 <p>否则，<code>GetPrime()</code> 方法将回退到朴素的质数查找：从
 <code>min | 1</code> 开始直到
 <code>Int32.MaxValue</code>，进行步长为2的遍历，判断每个数字是否是质数
-<code>HashHelpers.IsPrime(int
-candidate)</code>。注意，这个判断方法涉及平方根操作，与一个时间复杂度为<span
+<code>HashHelpers.IsPrime(int candidate)</code>。注意，这个判断方法涉及平方根操作，与一个时间复杂度为<span
 class="math inline">\(\bf{O}(\sqrt{\bf{n}})\)</span>的循环。</p>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; System.Collections.HashHelpers.IsPrime
 &#x2F;&#x2F; system\Collections\hashtable.cs:1738
@@ -456,15 +461,10 @@ TValue value) / 索引器</h3>
 public void Add(TKey key, TValue value) &#123;
     Insert(key, value, true);
 &#125;</code></pre>
-<p>因为Dictionary实现了非泛型版本的IDictionary，所以也有<code>Add(object
-key, object value)</code>这样的方法，但也只是在<code>Add(TKey key,
-TValue value)</code>的基础上新增了类型转换和一些错误检查而已。</p>
-<p>方法<code>Add(TKey key, TValue value)</code>依赖方法<code>Insert(TKey
-key, TValue value, bool
-add)</code>的实现，参数<strong>add</strong>就是用来区分调用是否来自于<code>Add()</code>方法。在.net源码中看到这样的标识方法还挺意外的…</p>
+<p>因为Dictionary实现了非泛型版本的IDictionary，所以也有<code>Add(object key, object value)</code>这样的方法，但也只是在<code>Add(TKey key, TValue value)</code>的基础上新增了类型转换和一些错误检查而已。</p>
+<p>方法<code>Add(TKey key, TValue value)</code>依赖方法<code>Insert(TKey key, TValue value, bool add)</code>的实现，参数<strong>add</strong>就是用来区分调用是否来自于<code>Add()</code>方法。在.net源码中看到这样的标识方法还挺意外的…</p>
 <p>另外一个依赖方法<code>Insert()</code>的插入元素方法就是使用索引器
-<code>this[TKey
-key]</code>，这时传入的参数add就会是false。一直以来的使用经验也告诉我们传不同参数会带来什么不同了：当调用Add()方法时，若key已存在会<strong>抛出异常</strong>，而使用索引器能够直接覆盖此key对应的内容。</p>
+<code>this[TKey key]</code>，这时传入的参数add就会是false。一直以来的使用经验也告诉我们传不同参数会带来什么不同了：当调用Add()方法时，若key已存在会<strong>抛出异常</strong>，而使用索引器能够直接覆盖此key对应的内容。</p>
 <h3 id="插入元素-inserttkey-key-tvalue-value-bool-add">插入元素
 Insert(TKey key, TValue value, bool add)</h3>
 <p><code>Insert()</code>
@@ -492,8 +492,7 @@ Insert(TKey key, TValue value, bool add)</h3>
 <li>如果freeCount尚有剩余，那么使用freeList的队首元素下标，freeList队首后移，更新freeCount，而不更新<strong>count</strong></li>
 <li>否则直接使用当前元素count为下标索引entries，更新<strong>count</strong>
 <ul>
-<li>注意，当<strong>entries</strong>已满时（<code>count ==
-entries.Length</code>），发生扩容<code>Resize()</code>以及targetBucket的重新计算，毕竟现在的<code>buckets.Length</code>已经不同了</li>
+<li>注意，当<strong>entries</strong>已满时（<code>count == entries.Length</code>），发生扩容<code>Resize()</code>以及targetBucket的重新计算，毕竟现在的<code>buckets.Length</code>已经不同了</li>
 </ul></li>
 </ul>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">entries[index].hashCode &#x3D; hashCode;
@@ -522,8 +521,8 @@ value信息，将此entries[index]设置为targetBucket的队首（buckets[targe
 <strong>HashHelpers.MaxPrimeArrayLength / 0x7FEFFFFD /
 2146435069</strong>），接着并将 <strong>newSize</strong> 传入方法
 <code>HashHelpers.GetPrime</code>
-得到比它更大的质数，最后将此结果用于调用方法 <code>Resize(int newSize,
-bool forceNewHashCodes)</code>。</p>
+得到比它更大的质数，最后将此结果用于调用方法
+<code>Resize(int newSize, bool forceNewHashCodes)</code>。</p>
 <h3 id="扩容-resizeint-newsize-bool-forcenewhashcodes">扩容 Resize(int
 newSize, bool forceNewHashCodes)</h3>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void Resize(int newSize, bool forceNewHashCodes) &#123;
@@ -608,13 +607,13 @@ entry，随后bucket同样会指向这个entry。</li>
 当Entry被移除时，hashCode会被标记为-1，这也是根据<strong>comparer</strong>获取HashCode后总是要取低31位的原因。</p>
 <h3 id="查找元素-containskeytkey-key-containsvaluetvalue-value">查找元素
 ContainsKey(TKey key) / ContainsValue(TValue value)</h3>
-<p><code>ContainsKey</code> 的实现是基于方法 <code>FindEntry(TKey
-key)</code> 的，而 <code>ContainsValue</code>
+<p><code>ContainsKey</code> 的实现是基于方法
+<code>FindEntry(TKey key)</code> 的，而 <code>ContainsValue</code>
 的实现是一个简单的对<strong>entries</strong>的遍历，对于非null的目标value，会使用当前TValue类型的DefaultEqualityComparer进行比较。</p>
 <p><code>FindEntry(TKey key)</code>
 的实现是先基于key获取hashcode，再从<strong>buckets</strong>索引到entries的起始位置，接下来根据每个entry的next遍历整个数组中的链表，进行key的相等判定。</p>
-<p>对字典的直接索引方法 dict[key] 也是基于方法 <code>FindEntry(TKey
-key)</code>
+<p>对字典的直接索引方法 dict[key] 也是基于方法
+<code>FindEntry(TKey key)</code>
 的，这里就不赘述了，唯一需要注意的是索引方法在找不到对应key时会直接<strong>抛出异常</strong>，想要安全的获取值，推荐的是下述<code>TryGetValue</code>方法。</p>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public TValue this[TKey key] &#123;
     get &#123;
@@ -629,8 +628,8 @@ key)</code>
 &#125;</code></pre>
 <h3 id="获取元素-trygetvaluetkey-key-out-tvalue-value">获取元素
 TryGetValue(TKey key, out Tvalue value)</h3>
-<p>TryGetValue 方法同样基于 <code>FindEntry(TKey
-key)</code>，只是其结果通过 out
+<p>TryGetValue 方法同样基于
+<code>FindEntry(TKey key)</code>，只是其结果通过 out
 关键字返回，而key是否在字段中的结果会使用bool结果返回。</p>
 <h2 id="迭代器-enumerator">迭代器 Enumerator</h2>
 <p>字典中存在三个可遍历的对象，分别是

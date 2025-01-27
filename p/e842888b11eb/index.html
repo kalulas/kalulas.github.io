@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
 
 
@@ -232,7 +232,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-23 23:22:52" itemprop="dateModified" datetime="2022-10-23T23:22:52+08:00">2022-10-23</time>
+      <time title="修改时间：2025-01-27 19:37:08" itemprop="dateModified" datetime="2025-01-27T19:37:08+08:00">2025-01-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -266,14 +266,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>19k</span>
+      <span>11k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1:09</span>
+      <span>38 分钟</span>
     </span>
 </div>
 
@@ -331,7 +331,7 @@ Go 会在全局文件进行查找；如果包名以 <code>./</code>开头，则
 error。main没有参数也没有返回类型。</p>
 <p>对相同类型的函数参数，可以这样描述函数</p>
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">func Add(param1, param2 int) int &#123;
-	&#x2F;&#x2F; ...
+    &#x2F;&#x2F; ...
 &#125;</code></pre>
 <h3 id="类型">类型</h3>
 <p>使用 var
@@ -350,7 +350,7 @@ nil，在 Java 中是 null，在 C 和 C++ 中是NULL或 0）。值得注意的�
 var b &#x3D; 5 &#x2F;&#x2F; 隐式声明类型</code></pre>
 <p>在<strong>函数内部</strong>的简短形式，省略var</p>
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">func Sample() &#123;
-	a :&#x3D; 5
+    a :&#x3D; 5
 &#125;</code></pre>
 <p>交换变量，不用写tmp了</p>
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">a, b &#x3D; b, a</code></pre>
@@ -390,12 +390,9 @@ float64）没有double类型。</p>
 <li>相对于一般规则而言，Go
 在进行字符串拼接时允许使用对运算符 <code>+</code> 的重载，但 Go
 本身不允许开发者进行自定义的运算符重载</li>
-<li><code>/</code> 对于整数运算而言，结果依旧为整数，例如：<code>9 / 4
--&gt; 2</code>。取余运算符只能作用于整数：<code>9 % 4 -&gt;
-1</code>。</li>
+<li><code>/</code> 对于整数运算而言，结果依旧为整数，例如：<code>9 / 4 -&gt; 2</code>。取余运算符只能作用于整数：<code>9 % 4 -&gt; 1</code>。</li>
 <li>你可以将语句 <code>b = b + a</code> 简写为 <code>b += a</code></li>
-<li>带有 <code>++</code>和 <code>--</code> 的<strong>只能作为语句，而非表达式</strong>，因此 <code>n
-= i++</code> 这种写法是无效的，</li>
+<li>带有 <code>++</code>和 <code>--</code> 的<strong>只能作为语句，而非表达式</strong>，因此 <code>n = i++</code> 这种写法是无效的，</li>
 </ul>
 <h3 id="类型别名">类型别名</h3>
 <p>给某个类型起另一个名字，新类型不会拥有原类型附带方法，新类型也可自定义方法</p>
@@ -433,20 +430,20 @@ var ch3 int &#x3D; &#39;\U00101234&#39; &#x2F;&#x2F; four bytes</code></pre>
 <p>字符串与[]byte的转换</p>
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; 逆转！
 func ReverseString(input string) string &#123;
-	c :&#x3D; []byte(input)
-	for i :&#x3D; 0; i &lt; len(c)&#x2F;2; i++ &#123;
-		other :&#x3D; len(c) - i - 1
-		c[i], c[other] &#x3D; c[other], c[i]
-	&#125;
+    c :&#x3D; []byte(input)
+    for i :&#x3D; 0; i &lt; len(c)&#x2F;2; i++ &#123;
+        other :&#x3D; len(c) - i - 1
+        c[i], c[other] &#x3D; c[other], c[i]
+    &#125;
 
-	return string(c)
+    return string(c)
 &#125;</code></pre>
 <h1 id="chapter5">Chapter5</h1>
 <h2 id="if-else-结构">if-else 结构</h2>
 <p>特点：条件不需要圆括号，但是语句需要大括号</p>
 <p>可以使用初始化语句，在if语句的作用域中声明一个变量，需要在声明语句后面跟上一个分号</p>
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">if val :&#x3D; 10; val &gt; max &#123;
-	&#x2F;&#x2F; do something
+    &#x2F;&#x2F; do something
 &#125;</code></pre>
 <h2 id="测试多返回值函数的错误">测试多返回值函数的错误</h2>
 <p>Go语言函数经常使用两个返回值来表示执行是否成功，通常返回零值、nil、false来表示失败，或者使用一个error类型的变量来代替作为第二个返回值；成功执行的话，error值为nil。</p>
@@ -454,8 +451,8 @@ func ReverseString(input string) string &#123;
 <p>有时当错误没有发生时，继续运行就是唯一要做的事情，所以if语句块后面不需要使用else分支（卫语句）</p>
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">value, err :&#x3D; pack1.Function1(param1)
 if err !&#x3D; nil &#123;
-	fmt.Printf(&quot;An error occured in pack1.Function1 with parameter %v&quot;, param1)
-	return err
+    fmt.Printf(&quot;An error occured in pack1.Function1 with parameter %v&quot;, param1)
+    return err
 &#125;
 &#x2F;&#x2F; 未发生错误，继续执行：</code></pre>
 <h2 id="switch-语句">switch 语句</h2>
@@ -466,21 +463,21 @@ if err !&#x3D; nil &#123;
 <li><p>如果想要执行后续分支的代码，可以使用<code>fallthrough</code>关键字</p></li>
 <li><p>switch语句也可以不提供任何被判断的值，然后在每个case分支中进行不同条件的测试，可用于替代测试条件非常多的<code>if-else</code>语句</p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">switch &#123;
-	case i &lt; 0:
-		f1()
-	case i &#x3D;&#x3D; 0:
-		f2()
-	case i &gt; 0:
-		f3()
+    case i &lt; 0:
+        f1()
+    case i &#x3D;&#x3D; 0:
+        f2()
+    case i &gt; 0:
+        f3()
 &#125;</code></pre></p></li>
 <li><p>同样的类似if-else结构，也可以在switch后跟上一个初始化语句</p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">switch result :&#x3D; calculate(); &#123;
-	case result &lt; 0:
-		...
-	case result &gt; 0:
-		...
-	default:
-		&#x2F;&#x2F; 0
+    case result &lt; 0:
+        ...
+    case result &gt; 0:
+        ...
+    default:
+        &#x2F;&#x2F; 0
 &#125;</code></pre></p></li>
 <li></li>
 </ol>
@@ -509,17 +506,16 @@ if err !&#x3D; nil &#123;
 <li><p>使用多重返回值：可以使用命名返回值，或者非命名返回值；<strong>尽量使用命名返回值，使代码更容易读懂</strong></p></li>
 <li><p>使用命名返回值时，可以为返回值变量赋值后return，也可以return对应的返回值变量，但以返回的明确值为准</p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">func GetX2AndX3_2(input int) (x2 int, x3 int) &#123; &#x2F;&#x2F; 假设输入为10
-	x2 &#x3D; input * 2
-	x3 &#x3D; input * 3
-	&#x2F;&#x2F;return &#x2F;&#x2F; 返回 20，30
-	&#x2F;&#x2F;return x2, x3 &#x2F;&#x2F; 同样返回 20，30
-	return input, input &#x2F;&#x2F; 返回10，10，x2和x3也被赋值为10
+    x2 &#x3D; input * 2
+    x3 &#x3D; input * 3
+    &#x2F;&#x2F;return &#x2F;&#x2F; 返回 20，30
+    &#x2F;&#x2F;return x2, x3 &#x2F;&#x2F; 同样返回 20，30
+    return input, input &#x2F;&#x2F; 返回10，10，x2和x3也被赋值为10
 &#125;</code></pre></p></li>
 </ol>
 <h2 id="传递变长参数">传递变长参数</h2>
 <ol type="1">
-<li><p>如果函数最后一个参数采用...type的形式，这个函数就可以处理一个变长参数，接收一个类似于切片（slice）的参数，如下，变量 <code>who</code>的值为 <code>[]string&#123;"Joe",
-"Anna", "Eileen"&#125;</code></p>
+<li><p>如果函数最后一个参数采用...type的形式，这个函数就可以处理一个变长参数，接收一个类似于切片（slice）的参数，如下，变量 <code>who</code>的值为 <code>[]string&#123;"Joe", "Anna", "Eileen"&#125;</code></p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">func Greeting(prefix string, who ...string)
 Greeting(&quot;hello:&quot;, &quot;Joe&quot;, &quot;Anna&quot;, &quot;Eileen&quot;)</code></pre></p></li>
 <li><p>如果参数存储在slice类型变量<code>slice</code>中，可以通过<code>slice...</code>的形式来传递参数，调用变参函数</p>
@@ -544,11 +540,11 @@ func IndexFunc(s string, f func(c rune) bool) int
 除了没有名字和声明一个函数是一样的</p></li>
 <li><p>这样的一个匿名函数不能独立存在，需要将它赋值于某个变量，再通过这个变量名进行调用；或者直接对这个匿名函数进行调用</p></li>
 <li><p>对下述例子中的函数变量，变量代表的是<code>func(int)</code>，变量的值是一个内存地址</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">	for i :&#x3D; 0; i &lt; 4; i++ &#123;
-		g :&#x3D; func(i int) &#123; fmt.Printf(&quot;%d &quot;, i) &#125;
-		g(i)
-		fmt.Printf(&quot; - g is of type %T and has value %v\n&quot;, g, g)
-	&#125;
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">    for i :&#x3D; 0; i &lt; 4; i++ &#123;
+        g :&#x3D; func(i int) &#123; fmt.Printf(&quot;%d &quot;, i) &#125;
+        g(i)
+        fmt.Printf(&quot; - g is of type %T and has value %v\n&quot;, g, g)
+    &#125;
 
 &#x2F;&#x2F; -- output
 0 - g is of type func(int) and has value 0x681a80
@@ -566,15 +562,15 @@ func IndexFunc(s string, f func(c rune) bool) int
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">var identifier [len]type
 &#x2F;&#x2F; 举例一个数组的初始化
 func main() &#123;
-	var arr1 [5]int &#x2F;&#x2F; 初始化为全0
+    var arr1 [5]int &#x2F;&#x2F; 初始化为全0
 
-	for i:&#x3D;0; i &lt; len(arr1); i++ &#123;
-		arr1[i] &#x3D; i * 2
-	&#125;
+    for i:&#x3D;0; i &lt; len(arr1); i++ &#123;
+        arr1[i] &#x3D; i * 2
+    &#125;
 
-	for i:&#x3D;0; i &lt; len(arr1); i++ &#123;
-		fmt.Printf(&quot;Array at index %d is %d\n&quot;, i, arr1[i])
-	&#125;
+    for i:&#x3D;0; i &lt; len(arr1); i++ &#123;
+        fmt.Printf(&quot;Array at index %d is %d\n&quot;, i, arr1[i])
+    &#125;
 &#125;</code></pre>
 <p>注意，Go语言中的数组是<strong>值类型</strong>，不像C/C++中是指向首元素的指针，所以把一个数组赋值给另一个时，或者将数组作为参数传入时，都会产生<strong>数组拷贝</strong>。</p>
 <p>将一个大数组传递给函数会消耗很多内存，通过传递数组的指针，或者使用数组的<strong>切片</strong>来避免这种情况。</p>
@@ -616,31 +612,25 @@ slice1 :&#x3D; make([]type, len, cap) &#x2F;&#x2F; 精简形式, 接收cap为切
 </ol>
 <h3 id="bytes包">bytes包</h3>
 <p>类似java / C#
-中的StringBuilder类，通过声明bytes.Buffer对象，或者new一个出来，或者通过函数<code>func
-NewBuffer(buf []byte)
-*Buffer</code>，创建一个 <code>Buffer</code>对象并且用 <code>buf</code>初始化好</p>
+中的StringBuilder类，通过声明bytes.Buffer对象，或者new一个出来，或者通过函数<code>func NewBuffer(buf []byte) *Buffer</code>，创建一个 <code>Buffer</code>对象并且用 <code>buf</code>初始化好</p>
 <h2 id="for-range-结构">for-range 结构</h2>
 <ol type="1">
 <li><p>在for-range结构中使用_来忽略索引 / 变量</p></li>
 <li><p>如果只需要索引，可以直接忽略第二个变量</p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">seasons :&#x3D; []string&#123;&quot;Spring&quot;, &quot;Summer&quot;, &quot;Autumn&quot;, &quot;Winter&quot;&#125;
 for _, season &#x3D; range seasons &#123;
-		fmt.Printf(&quot;%s\n&quot;, season)
+        fmt.Printf(&quot;%s\n&quot;, season)
 &#125;
 
 for ix :&#x3D; range seasons &#123;
-	fmt.Printf(&quot;%d&quot;, ix)
+    fmt.Printf(&quot;%d&quot;, ix)
 &#125;</code></pre></p></li>
 </ol>
 <h2 id="切片重组reslice">切片重组（reslice）</h2>
 <h2 id="切片复制与追加">切片复制与追加</h2>
 <ol type="1">
-<li>使用<code>copy(to []T, from
-[]T)</code>来将from切片中的内容拷贝到to切片中，覆盖to现有的元素，函数返回赋值的个数</li>
-<li>使用<code>append(s []T, x
-...T)</code>来将多个相同类型元素（如果需要追加切片，将第二个参数拓展成参数列表<code>x
-= append(x,
-y...)</code>）追加到切片后，并返回新的切片。如果原切片容量不足，会分配新的数组给切片，所以新的切片<strong>可能</strong>不再指向同一个数组。</li>
+<li>使用<code>copy(to []T, from []T)</code>来将from切片中的内容拷贝到to切片中，覆盖to现有的元素，函数返回赋值的个数</li>
+<li>使用<code>append(s []T, x ...T)</code>来将多个相同类型元素（如果需要追加切片，将第二个参数拓展成参数列表<code>x = append(x, y...)</code>）追加到切片后，并返回新的切片。如果原切片容量不足，会分配新的数组给切片，所以新的切片<strong>可能</strong>不再指向同一个数组。</li>
 <li>由2可以得到，如果将切片作为函数参数传入，在函数内部对切片进行了扩容，最好再将切片作为返回值传出，才能在函数外部得到扩容后的切片</li>
 </ol>
 <h2 id="字符串数组和切片的应用">字符串、数组和切片的应用</h2>
@@ -651,8 +641,7 @@ y...)</code>）追加到切片后，并返回新的切片。如果原切片容�
 target="_blank" rel="noopener" href="https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/07.6.md#767-append-%E5%87%BD%E6%95%B0%E5%B8%B8%E8%A7%81%E6%93%8D%E4%BD%9C">7.6.7
 append() 函数常见操作</a></li>
 <li>切片底层指向一个数组，只有不被任何切片指向的时候，数组的内存才会被释放，所以注意切片指向的数组，在必要时，以部分内容新建一个切片</li>
-<li>使用<code>c :=
-byte[](str)</code>来将字符串转化为字符切片，从而修改字符串内容，字符串内容无法被直接索引修改（放在等号左边）</li>
+<li>使用<code>c := byte[](str)</code>来将字符串转化为字符切片，从而修改字符串内容，字符串内容无法被直接索引修改（放在等号左边）</li>
 </ol>
 <h1 id="chapter8">Chapter8</h1>
 <h2 id="map-的声明初始化和make">Map 的声明、初始化和make</h2>
@@ -662,25 +651,20 @@ byte[](str)</code>来将字符串转化为字符切片，从而修改字符串�
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">var map1 map[keytype]valuetype
 var map1 map[string]int</code></pre></p></li>
 <li><p>key需要时可以用操作符比较的类型，value可以是任何类型</p></li>
-<li><p>map可以用 <code>map[keyType]valueType&#123;key1: val1, key2:
-val2&#125;</code>的描述方法来初始化，就像数组和结构体一样</p></li>
+<li><p>map可以用 <code>map[keyType]valueType&#123;key1: val1, key2: val2&#125;</code>的描述方法来初始化，就像数组和结构体一样</p></li>
 <li><p>引用类型的map使用<code>make</code>进行初始化</p></li>
 <li><p>使用<code>make</code>初始化map时可以标明初始容量，当增长到容量上限时，map大小会自动+1</p></li>
 <li><p>将value定义成<code>[]int</code>类型或者其他类型的切片，来解决一个value对应多个值的问题</p></li>
 </ol>
 <h2 id="键值对检查元素删除">键值对检查，元素删除</h2>
 <ol type="1">
-<li>可以使用 <code>val1 =
-map1[key1]</code>的方法获取 <code>key1</code> 对应的值 <code>val1</code>。如果 <code>map</code>中不存在 <code>key1</code>，<code>val1</code>就是一个值类型的空值。</li>
-<li>如何区分key1不存在还是对应value是空值？可以使用<code>val1, isPresent
-=
-map1[key1]</code>，当key存在于map中时，<code>isPresent</code>会返回true</li>
+<li>可以使用 <code>val1 = map1[key1]</code>的方法获取 <code>key1</code> 对应的值 <code>val1</code>。如果 <code>map</code>中不存在 <code>key1</code>，<code>val1</code>就是一个值类型的空值。</li>
+<li>如何区分key1不存在还是对应value是空值？可以使用<code>val1, isPresent = map1[key1]</code>，当key存在于map中时，<code>isPresent</code>会返回true</li>
 </ol>
 <h2 id="for-range-配套用法遍历map">for-range 配套用法（遍历map）</h2>
 <ol type="1">
-<li>和前面类似的，如果只关心值不关心key，可以<code>_,value := range
-map</code> ，反之如果只关心key不关心值，可以 <code>key := range
-map</code></li>
+<li>和前面类似的，如果只关心值不关心key，可以<code>_,value := range map</code>
+，反之如果只关心key不关心值，可以 <code>key := range map</code></li>
 <li>注意，map的本质是散列表，map的增长扩容会导致重新散列，同时Go设计者也让每次遍历的起点不一样，所以遍历map总是无序的，为了让我们不依赖map的遍历排序中的顺序</li>
 <li>如果想要获得<code>map</code>类型的切片，就需要使用两次<code>make()</code>函数，第一次用于分配切片，第二次用于分配切片中的每个<code>map</code>元素；注意，当你使用<code>range</code>来遍历分配时，获得的只是map值的拷贝，所以并不能真正进行<code>map</code>元素的初始化</li>
 </ol>
@@ -710,8 +694,8 @@ map</code></li>
 <ol type="1">
 <li><p><code>sync.Mutex</code>是一个互斥锁，守护在临界区入口保证同一时间只能有一个线程进入临界区</p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type Info struct &#123;
-	mu sync.Mutex
-	&#x2F;&#x2F; ... other fields, e.g.: Str string
+    mu sync.Mutex
+    &#x2F;&#x2F; ... other fields, e.g.: Str string
 &#125;
 
 &#x2F;&#x2F; example
@@ -725,8 +709,8 @@ info.mu.Unlock()</code></pre></p></li>
 和表示大有理数的 <code>big.Rat</code>类型</p>
 <h2 id="自定义包与可见性">自定义包与可见性</h2>
 <ol type="1">
-<li><p>import 的一般格式：<code>import
-“包的路径或URL地址”</code>，非自定义本地包一般存放在$GOROOT/src（官方包）下或​$GOPATH/src（第三方包）下</p></li>
+<li><p>import
+的一般格式：<code>import “包的路径或URL地址”</code>，非自定义本地包一般存放在$GOROOT/src（官方包）下或​$GOPATH/src（第三方包）下</p></li>
 <li><p><strong>（module
 mode）</strong>用相对路径（”./”）import自定义包在module
 mode下不支持，可以使用从module名（在go.mod中定义）开始相对路径的方式进行import</p>
@@ -744,9 +728,7 @@ get下载的package，会被下载到$GOPATH的pkg目录下</p></li>
 <li><p><strong>（module
 mode）</strong>要使用下载的package，需要编辑项目的go.mod（是不是IDE帮我自动编辑了我不是很清楚）</p>
 <p><a href="/p/e842888b11eb/Untitled_6.png" class="gallery-item"><img src="/p/e842888b11eb/Untitled_6.png" class="" title="go.mod文件内容"></a></p></li>
-<li><p>使用<code>import [name]
-“path”</code>，来给import的包起一个别名，使用<code>import _
-“path”</code>，来忽略这个包，仅通过import执行package的init方法</p></li>
+<li><p>使用<code>import [name] “path”</code>，来给import的包起一个别名，使用<code>import _ “path”</code>，来忽略这个包，仅通过import执行package的init方法</p></li>
 </ol>
 <h1 id="chapter10">Chapter10</h1>
 <h2 id="结构与方法">结构与方法</h2>
@@ -759,8 +741,8 @@ mode）</strong>要使用下载的package，需要编辑项目的go.mod（是不
 <ol type="1">
 <li><p>结构体的定义方式：</p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type identifier struct &#123;
-	field1 type1
-	field2 type2
+    field1 type1
+    field2 type2
 &#125;</code></pre></p></li>
 <li><p>声明结构体变量的方式</p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">var t *T
@@ -802,9 +784,9 @@ The name of person is chapter10.Person&#123;firstName:&quot;EDWARD&quot;, lastNa
 <h2 id="带标签的结构体">带标签的结构体</h2>
 <p>类似注释，在结构体的字段类型后面可以用<code>""</code>进行字段的解释，称为标签(tag)</p>
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">type TagType struct &#123; &#x2F;&#x2F; tags
-	field1 bool   &quot;An important answer&quot;
-	field2 string &quot;The name of the thing&quot;
-	field3 int    &quot;How much there are&quot;
+    field1 bool   &quot;An important answer&quot;
+    field2 string &quot;The name of the thing&quot;
+    field3 int    &quot;How much there are&quot;
 &#125;</code></pre>
 <h2 id="匿名字段和内嵌结构体">匿名字段和内嵌结构体</h2>
 <ol type="1">
@@ -840,7 +822,7 @@ The name of person is chapter10.Person&#123;firstName:&quot;EDWARD&quot;, lastNa
 <li><p>内嵌将一个已存在类型的字段和方法注入到了另一个类型里：匿名字段上的方法“晋升”成为了外层类型的方法。</p></li>
 <li><p>外层类型的方法会覆写内嵌类型对应的方法，想要调用内嵌类型的方法，用内嵌类型名进行访问</p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">func (n *NamedPoint) Abs() float64 &#123;
-	return n.Point.Abs() * 100.
+    return n.Point.Abs() * 100.
 &#125;</code></pre></p></li>
 </ol>
 <h3 id="如何在类型中嵌入功能">如何在类型中嵌入功能</h3>
@@ -848,13 +830,13 @@ The name of person is chapter10.Person&#123;firstName:&quot;EDWARD&quot;, lastNa
 <li><p>聚合（组合）：包含所需功能类型的具体字段；内嵌：使用内嵌类型，把所需的功能类型内嵌</p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; 聚合（组合）
 type Customer struct &#123;
-	Name string
-	log  *Log
+    Name string
+    log  *Log
 &#125;
 &#x2F;&#x2F; 内嵌
 type Customer struct &#123;
-	Name string
-	Log
+    Name string
+    Log
 &#125;</code></pre></p></li>
 </ol>
 <h3 id="多重继承">多重继承</h3>
@@ -880,28 +862,28 @@ table ptr指向该类型的方法表）</p>
 <li><p>除了接口被<strong>隐式</strong>地实现，其他都与你熟悉的接口差不多</p></li>
 <li><p>接口类型的变量可以指向实现了此接口的实例</p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type Shaper interface &#123;
-	Area() float32
+    Area() float32
 &#125;
 
 type Square struct &#123;
-	side float32
+    side float32
 &#125;
 
 func (sq *Square) Area() float32 &#123;
-	return sq.side * sq.side
+    return sq.side * sq.side
 &#125;
 
 func main() &#123;
-	sq1 :&#x3D; new(Square)
-	sq1.side &#x3D; 5
+    sq1 :&#x3D; new(Square)
+    sq1.side &#x3D; 5
 
-	var areaIntf Shaper
-	areaIntf &#x3D; sq1
-	&#x2F;&#x2F; shorter,without separate declaration:
-	&#x2F;&#x2F; areaIntf :&#x3D; Shaper(sq1)
-	&#x2F;&#x2F; or even:
-	&#x2F;&#x2F; areaIntf :&#x3D; sq1
-	fmt.Printf(&quot;The square has area: %f\n&quot;, areaIntf.Area())
+    var areaIntf Shaper
+    areaIntf &#x3D; sq1
+    &#x2F;&#x2F; shorter,without separate declaration:
+    &#x2F;&#x2F; areaIntf :&#x3D; Shaper(sq1)
+    &#x2F;&#x2F; or even:
+    &#x2F;&#x2F; areaIntf :&#x3D; sq1
+    fmt.Printf(&quot;The square has area: %f\n&quot;, areaIntf.Area())
 &#125;</code></pre></p></li>
 <li><p>实现了同一接口的实例可以填充到同一个数组 / 切片中</p></li>
 <li><p>接口是一种契约，实现接口的类型必须满足它，它描述了类型的行为，规定类型可以做什么。接口将类型能做什么，与如何做分离开来，使得变量可以在不同时刻表现出不同行为。</p></li>
@@ -929,23 +911,23 @@ if _, ok :&#x3D; varI.(T); ok &#123;
 </ol>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; 举例：receiver是*T类型
 type Shaper interface &#123;
-	Area() float32
+    Area() float32
 &#125;
 
 func (sq *Square) Area() float32 &#123;
-	return sq.side * sq.side
+    return sq.side * sq.side
 &#125;
 
 func main() &#123;
-	var areaIntf Shaper
-	sq1 :&#x3D; new(Square)
-	sq1.side &#x3D; 5
+    var areaIntf Shaper
+    sq1 :&#x3D; new(Square)
+    sq1.side &#x3D; 5
 
-	areaIntf &#x3D; sq1
-	&#x2F;&#x2F; Is Square the type of areaIntf?
-	if t, ok :&#x3D; areaIntf.(*Square); ok &#123;
-		fmt.Printf(&quot;The type of areaIntf is: %T\n&quot;, t)
-	&#125;
+    areaIntf &#x3D; sq1
+    &#x2F;&#x2F; Is Square the type of areaIntf?
+    if t, ok :&#x3D; areaIntf.(*Square); ok &#123;
+        fmt.Printf(&quot;The type of areaIntf is: %T\n&quot;, t)
+    &#125;
 &#125;</code></pre></p>
 <p><a href="/p/e842888b11eb/Untitled_8.png" class="gallery-item"><img src="/p/e842888b11eb/Untitled_8.png" class="" title="实现Shaper接口的是*Square类型，对Square类型断言会有编译报错"></a></p></li>
 <li><p>至于<code>T</code>类型还是<code>*T</code>类型的检测会通过，取决于赋值给接口变量的是结构体值还是结构体的指针</p></li>
@@ -954,13 +936,13 @@ func main() &#123;
 <p>接口变量的类型可以用以下特殊形式（在11.3的类型处使用<code>type</code>关键字）的switch语句来进行检测：<code>type-switch</code></p>
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">switch t :&#x3D; areaIntf.(type) &#123; &#x2F;&#x2F; &lt;-
 case *Square:
-	fmt.Printf(&quot;Type Square %T with value %v\n&quot;, t, t)
+    fmt.Printf(&quot;Type Square %T with value %v\n&quot;, t, t)
 case *Circle:
-	fmt.Printf(&quot;Type Circle %T with value %v\n&quot;, t, t)
+    fmt.Printf(&quot;Type Circle %T with value %v\n&quot;, t, t)
 case nil:
-	fmt.Printf(&quot;nil value: nothing to check?\n&quot;)
+    fmt.Printf(&quot;nil value: nothing to check?\n&quot;)
 default:
-	fmt.Printf(&quot;Unexpected type %T\n&quot;, t)
+    fmt.Printf(&quot;Unexpected type %T\n&quot;, t)
 &#125;</code></pre>
 <h2 id="测试是否实现了接口">测试是否实现了接口</h2>
 <p>与11.3类似，不同的是将类型替换为接口名，即可检测变量是否实现了特定接口</p>
@@ -992,24 +974,24 @@ var val interface &#123;&#125; &#x2F;&#x2F; 空接口类型</code></pre>
 <li><p>空接口类似 <code>Java/C#</code>中所有类的基类： <code>Object</code>类，二者的目标也很相近，可以给一个空接口类型变量赋任何类型的值</p></li>
 <li><p>使用空接口来实现类似泛型的功能，将一个空接口类型作为Element</p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type Vector struct &#123;
-	a []Element
+    a []Element
 &#125;
 
 func (p *Vector) At(i int) Element &#123;
-	return p.a[i]
+    return p.a[i]
 &#125;
 
 func (p *Vector) Set(i int, e Element) &#123;
-	p.a[i] &#x3D; e
+    p.a[i] &#x3D; e
 &#125;</code></pre></p></li>
 <li><p>不能将特定类型的切片直接赋值给空接口切片，因为他们的内存布局不一致，需要for-range来一个一个显式赋值</p></li>
 <li><p>一个接口的值可以赋值给另一个接口变量，只要底层类型实现了必要的方法，注意这个转换在<strong>运行时</strong>检查，转换失败将导致一个<strong>运行时错误</strong></p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type myPrintInterface interface &#123;
-	print()
+    print()
 &#125;
 
 func f3(x myInterface) &#123;
-	x.(myPrintInterface).print() &#x2F;&#x2F; type assertion to myPrintInterface
+    x.(myPrintInterface).print() &#x2F;&#x2F; type assertion to myPrintInterface
 &#125;</code></pre></p></li>
 </ol>
 <h2 id="反射">反射</h2>
@@ -1018,11 +1000,9 @@ func f3(x myInterface) &#123;
 <li><code>reflect.TypeOf</code>和<code>reflect.ValueOf</code>用于返回被检查对象的类型和值，他们的参数类型都是interface{}</li>
 <li><code>reflect.ValueOf</code>返回的reflect.Value类型对象存在<code>Type()</code>返回类型，<code>Kind()</code>返回一个常量来表示类型，同样当你确定了reflect.Value的确切类型，有叫做Int()，Float()的方法来获取存储值，或者直接用<code>Interface</code>来获取空接口类型值</li>
 <li>通过反射来修改值时，可以通过对Value的CanSet方法来检查是否可设置，如果想要Value对象可设置，有时需要用指针来调用<code>ValueOf</code>，并且需要使用<code>Elem()</code>函数</li>
-<li>使用<code>Field(index
-int)</code>来获取结构体的成员，并且通过<code>SetInt</code>，<code>SetString</code>等接口设置值</li>
+<li>使用<code>Field(index int)</code>来获取结构体的成员，并且通过<code>SetInt</code>，<code>SetString</code>等接口设置值</li>
 <li>使用<code>NumField</code>来获取结构体有多少个成员</li>
-<li>使用<code>Method(index
-int)</code>来获取结构体的方法，并且使用<code>Call()</code>进行调用</li>
+<li>使用<code>Method(index int)</code>来获取结构体的方法，并且使用<code>Call()</code>进行调用</li>
 </ol>
 <h2 id="接口与动态类型">接口与动态类型</h2>
 <ol type="1">
@@ -1032,8 +1012,8 @@ int)</code>来获取结构体的方法，并且使用<code>Call()</code>进行�
 <li><p>Go的动态方法调用，需要编译器静态检查的支持，变量赋值给接口类型变量时，编译器会检查类型是否实现了接口所有的函数。一般传入像<code>interface&#123;&#125;</code>这样的泛型变量，之后再用类型断言来进行变量的检查。</p></li>
 <li><p>接口的继承：当类型内嵌另一个实现了接口的类型指针时，该类型就可以使用另一个类型的所有接口方法，通过组合的方式实现了继承</p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type Task struct &#123;
-	Command string
-	*log.Logger &#x2F;&#x2F; log.Logger实现了Log()方法
+    Command string
+    *log.Logger &#x2F;&#x2F; log.Logger实现了Log()方法
 &#125;
 
 task.Log() &#x2F;&#x2F; Task类型的实例调用Logger的Log()方法</code></pre></p></li>

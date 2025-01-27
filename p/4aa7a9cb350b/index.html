@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
 
 
@@ -224,9 +224,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-10-23 22:48:59 / 修改时间：22:57:55" itemprop="dateCreated datePublished" datetime="2022-10-23T22:48:59+08:00">2022-10-23</time>
+      <time title="创建时间：2022-10-23 22:48:59" itemprop="dateCreated datePublished" datetime="2022-10-23T22:48:59+08:00">2022-10-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-27 19:37:08" itemprop="dateModified" datetime="2025-01-27T19:37:08+08:00">2025-01-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -260,14 +266,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>5.3k</span>
+      <span>2.8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>19 分钟</span>
+      <span>10 分钟</span>
     </span>
 </div>
 
@@ -315,10 +321,9 @@ id="协程goroutine与通道channel">协程（goroutine）与通道（channel）
 ch1 &#x3D; make(chan string)
 &#x2F;&#x2F; 精简形式
 ch1 :&#x3D; make(chan string)</code></pre></p></li>
-<li><p>使用操作符<code>&lt;-</code> 来表示数据的传输，<code>ch &lt;-
-int1</code>
-表示用通道<code>ch</code>发送变量<code>int1</code>，<code>int2 = ←
-ch</code>
+<li><p>使用操作符<code>&lt;-</code>
+来表示数据的传输，<code>ch &lt;- int1</code>
+表示用通道<code>ch</code>发送变量<code>int1</code>，<code>int2 = ← ch</code>
 表示，从通道<code>ch</code>中取出数据，赋值给<code>int2</code></p></li>
 <li><p>通道的发送和接收都是<strong>原子操作</strong>，它们互不干扰地完成</p></li>
 </ol>
@@ -335,13 +340,13 @@ ch</code>
 </ol>
 <p>不带缓冲的通道传递有点像两个人传递东西，如果传出去没有对方接走，人就离开了（不阻塞），东西就会掉下去。传出去必须要等到对方接走，自己才能继续做其他事情，所以是同步的。</p>
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">func f1(in chan int) &#123;
-	fmt.Println(&lt;-in)
+    fmt.Println(&lt;-in)
 &#125;
 
 func main() &#123;
-	out :&#x3D; make(chan int)
-	out &lt;- 2
-	go f1(out) &#x2F;&#x2F; out 中的 2 无人接收，main协程中的&#39;go f1(out)&#39;被阻塞
+    out :&#x3D; make(chan int)
+    out &lt;- 2
+    go f1(out) &#x2F;&#x2F; out 中的 2 无人接收，main协程中的&#39;go f1(out)&#39;被阻塞
 &#125;</code></pre>
 <h3 id="同步通道-使用带缓冲的通道">同步通道-使用带缓冲的通道</h3>
 <p>不带缓冲的通道容量是0，通信要双方都准备好了才能进行，容量1和无缓冲绝对是不一样的。</p>
@@ -360,10 +365,10 @@ sem :&#x3D; make(chan Empty, N)
 ...
 &#x2F;&#x2F; 开始N个协程
 for i, xi :&#x3D; range data &#123;
-	go func (i int, xi float64) &#123;
-		res[i] &#x3D; doSomething(i, xi)
-		sem &lt;- empty
-	&#125; (i, xi)
+    go func (i int, xi float64) &#123;
+        res[i] &#x3D; doSomething(i, xi)
+        sem &lt;- empty
+    &#125; (i, xi)
 &#125;
 &#x2F;&#x2F; 等待所有的协程结束
 for i :&#x3D; 0; i &lt; N; i++ &#123; &lt;-sem &#125;</code></pre>
@@ -371,31 +376,30 @@ for i :&#x3D; 0; i &lt; N; i++ &#123; &lt;-sem &#125;</code></pre>
 <p>声明空接口类型，并声明信号量</p>
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">type Empty interface &#123;&#125;
 type semaphore chan Empty</code></pre>
-<p>将可用资源的数量 <code>N</code>来初始化信号量 <code>semaphore</code>：<code>sem
-= make(semaphore, N)</code></p>
+<p>将可用资源的数量 <code>N</code>来初始化信号量 <code>semaphore</code>：<code>sem = make(semaphore, N)</code></p>
 <p>便可定义P操作与V操作</p>
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; acquire n resources
 func (s semaphore) P(n int) &#123;
-	e :&#x3D; new(Empty)
-	for i :&#x3D; 0; i &lt; n; i++ &#123;
-		s &lt;- e
-	&#125;
+    e :&#x3D; new(Empty)
+    for i :&#x3D; 0; i &lt; n; i++ &#123;
+        s &lt;- e
+    &#125;
 &#125;
 
 &#x2F;&#x2F; release n resources
 func (s semaphore) V(n int) &#123;
-	for i:&#x3D; 0; i &lt; n; i++&#123;
-		&lt;- s
-	&#125;
+    for i:&#x3D; 0; i &lt; n; i++&#123;
+        &lt;- s
+    &#125;
 &#125;</code></pre>
 <h3 id="通道的方向">通道的方向</h3>
 <p>可以通过注解来表示通道只发送或者只接收数据，如下</p>
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">func source(ch chan&lt;- int)&#123;
-	for &#123; ch &lt;- 1 &#125;
+    for &#123; ch &lt;- 1 &#125;
 &#125;
 
 func sink(ch &lt;-chan int) &#123;
-	for &#123; &lt;-ch &#125;
+    for &#123; &lt;-ch &#125;
 &#125;</code></pre>
 <p>通道在创建时都是双向的，它们创建后被用于分配给有方向的通道变量</p>
 <h2 id="关闭通道">关闭通道</h2>
@@ -434,11 +438,10 @@ default: &#x2F;&#x2F; no value ready to be received
 </ol>
 <h2 id="通道超时和计时器ticker">通道、超时和计时器（Ticker）</h2>
 <ol type="1">
-<li><p>在工厂函数 <code>time.NewTicker</code>中以 <code>Duration</code> 类型的参数传入：<code>func
-NewTicker(dur) *Ticker</code>，时间间隔单位纳秒</p></li>
+<li><p>在工厂函数 <code>time.NewTicker</code>中以 <code>Duration</code> 类型的参数传入：<code>func NewTicker(dur) *Ticker</code>，时间间隔单位纳秒</p></li>
 <li><p>使用<code>time.Tick()</code>来返回一个指定时间间隔发送时间的通道</p></li>
-<li><p>定时器<code>Timer</code>和计时器<code>Ticker</code>类似，但定时器只发送一次时间，使用<code>time.After(d
-Duration)</code> 来返回一个通道</p></li>
+<li><p>定时器<code>Timer</code>和计时器<code>Ticker</code>类似，但定时器只发送一次时间，使用<code>time.After(d Duration)</code>
+来返回一个通道</p></li>
 <li><p>场景：从多个数据库同时读取，只需要接收首先到达的答案：这个场景也演示了一个发送数据而不是接收数据的<code>select</code></p>
 <p><pre class="line-numbers language-go" data-language="go"><code class="language-go">func Query(conns []Conn, query string) Result &#123;
     ch :&#x3D; make(chan Result, 1) 
@@ -489,13 +492,13 @@ const MAXREQS &#x3D; 50
 var sem &#x3D; make(chan int, MAXREQS)
 
 func process(r *Request) &#123;
-	&#x2F;&#x2F; do something
+    &#x2F;&#x2F; do something
 &#125;
 
 func handle(r *Request) &#123;
-	sem &lt;- 1 &#x2F;&#x2F; doesn&#39;t matter what we put in it
-	process(r)
-	&lt;-sem &#x2F;&#x2F; one empty place in the buffer: the next request can start
+    sem &lt;- 1 &#x2F;&#x2F; doesn&#39;t matter what we put in it
+    process(r)
+    &lt;-sem &#x2F;&#x2F; one empty place in the buffer: the next request can start
 &#125;</code></pre>
 <h2 id="链式协程">链式协程</h2>
 <p>这样的通道表达式也是可行的：</p>
@@ -506,28 +509,28 @@ func handle(r *Request) &#123;
 <p>可以使用协程在后台顺序执行匿名函数来替代使用同步互斥锁。比如在构造函数中启动一个后台协程，然后把对象的读写都实现为匿名函数，让其按顺序处理，有效地将它们序列化从而提供了安全的并发访问。</p>
 <pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; 构造时开启协程
 func NewPerson(name string, salary float64) *Person &#123;
-	p :&#x3D; &amp;Person&#123;name, salary, make(chan func())&#125;
-	go p.backend()
-	return p
+    p :&#x3D; &amp;Person&#123;name, salary, make(chan func())&#125;
+    go p.backend()
+    return p
 &#125;
 
 func (p *Person) backend() &#123;
-	for f :&#x3D; range p.chF &#123;
-		f()
-	&#125;
+    for f :&#x3D; range p.chF &#123;
+        f()
+    &#125;
 &#125;
 
 &#x2F;&#x2F; 读写func()
 &#x2F;&#x2F; Set salary.
 func (p *Person) SetSalary(sal float64) &#123;
-	p.chF &lt;- func() &#123; p.salary &#x3D; sal &#125;
+    p.chF &lt;- func() &#123; p.salary &#x3D; sal &#125;
 &#125;
 
 &#x2F;&#x2F; Retrieve salary.
 func (p *Person) Salary() float64 &#123;
-	fChan :&#x3D; make(chan float64)
-	p.chF &lt;- func() &#123; fChan &lt;- p.salary &#125;
-	return &lt;-fChan
+    fChan :&#x3D; make(chan float64)
+    p.chF &lt;- func() &#123; fChan &lt;- p.salary &#125;
+    return &lt;-fChan
 &#125;</code></pre>
 </div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
