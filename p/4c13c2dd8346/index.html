@@ -17,8 +17,22 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":4,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js"></script>
 
+    <meta name="description" content="探究了 .net framework 4.8 下的 LinkedList 及其常见操作实现。LinkedList 的实现符合常见的链表数据结构设计，且 LinkedList 实现的是通用性更强的双向、环状列表，阅读源码的过程更像是指针操作的一次复习。LinkedList提供了完备的节点插入，移除操作，但却都仅仅依赖为数不多的几个内部实现，很有启发性。">
+<meta property="og:type" content="article">
+<meta property="og:title" content=".NET source 系列：System.Collections.Generic.LinkedList">
+<meta property="og:url" content="https://www.threegates.net/p/4c13c2dd8346/index.html">
+<meta property="og:site_name" content="ThreeGates">
+<meta property="og:description" content="探究了 .net framework 4.8 下的 LinkedList 及其常见操作实现。LinkedList 的实现符合常见的链表数据结构设计，且 LinkedList 实现的是通用性更强的双向、环状列表，阅读源码的过程更像是指针操作的一次复习。LinkedList提供了完备的节点插入，移除操作，但却都仅仅依赖为数不多的几个内部实现，很有启发性。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-12-21T05:08:17.000Z">
+<meta property="article:modified_time" content="2025-01-27T11:37:08.000Z">
+<meta property="article:author" content="Edward Chen 陈柏铭">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content=".NET">
+<meta property="article:tag" content="源码阅读">
+<meta name="twitter:card" content="summary">
 
 
 <link rel="canonical" href="https://www.threegates.net/p/4c13c2dd8346/">
@@ -497,6 +511,23 @@ null，而将 index
     
 
     <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Edward Chen 陈柏铭
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://www.threegates.net/p/4c13c2dd8346/" title=".NET source 系列：System.Collections.Generic.LinkedList">https://www.threegates.net/p/4c13c2dd8346/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
           <div class="post-tags">
               <a href="/tags/C/" rel="tag"># C#</a>
               <a href="/tags/NET/" rel="tag"># .NET</a>

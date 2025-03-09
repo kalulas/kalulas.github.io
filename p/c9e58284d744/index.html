@@ -17,8 +17,26 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":4,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js"></script>
 
+    <meta name="description" content="使用hexo快速进行博客搭建 之前用wordpress搭建的博客需要折腾的东西太多，编辑器支持也不太好，没有Notion里记笔记来的方便（该说写个笔记两头传本来就麻烦），所以这次用hexo来搭建看看。 部署选择了一键同步生成的网站内容到github repo上，使用pages来进行网站部署，markdown源文件再自己使用github来同步。 这篇文章主要记录一下搭建网站的过程，还有给搭建的时候看">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用hexo快速进行博客搭建">
+<meta property="og:url" content="https://www.threegates.net/p/c9e58284d744/index.html">
+<meta property="og:site_name" content="ThreeGates">
+<meta property="og:description" content="使用hexo快速进行博客搭建 之前用wordpress搭建的博客需要折腾的东西太多，编辑器支持也不太好，没有Notion里记笔记来的方便（该说写个笔记两头传本来就麻烦），所以这次用hexo来搭建看看。 部署选择了一键同步生成的网站内容到github repo上，使用pages来进行网站部署，markdown源文件再自己使用github来同步。 这篇文章主要记录一下搭建网站的过程，还有给搭建的时候看">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.threegates.net/p/c9e58284d744/aliyun-dns-config.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/22/b8hiH1C3gnxD2Yo.png">
+<meta property="og:image" content="https://www.threegates.net/p/c9e58284d744/image-20211224175532445.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/22/eLjDP1XYNJ6o73t.png">
+<meta property="article:published_time" content="2021-12-05T10:38:45.000Z">
+<meta property="article:modified_time" content="2025-01-27T16:25:28.412Z">
+<meta property="article:author" content="Edward Chen 陈柏铭">
+<meta property="article:tag" content="记录">
+<meta property="article:tag" content="博客搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.threegates.net/p/c9e58284d744/aliyun-dns-config.png">
 
 
 <link rel="canonical" href="https://www.threegates.net/p/c9e58284d744/">
@@ -651,6 +669,23 @@ package更新</figcaption>
     
 
     <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Edward Chen 陈柏铭
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://www.threegates.net/p/c9e58284d744/" title="使用hexo快速进行博客搭建">https://www.threegates.net/p/c9e58284d744/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
           <div class="post-tags">
               <a href="/tags/%E8%AE%B0%E5%BD%95/" rel="tag"># 记录</a>
               <a href="/tags/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/" rel="tag"># 博客搭建</a>

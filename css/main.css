@@ -1279,6 +1279,9 @@ pre code {
   padding: 2px 5px;
   text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
 }
+.use-motion .menu-item {
+  visibility: hidden;
+}
 .github-corner :hover .octo-arm {
   animation: octocat-wave 560ms ease-in-out;
 }
@@ -1356,7 +1359,7 @@ pre code {
     transition: all 0.2s ease-in-out;
   }
   .links-of-author a::before {
-    background: #08fff4;
+    background: #ffe8b6;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);

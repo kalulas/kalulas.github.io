@@ -17,8 +17,29 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":4,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":4,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js"></script>
 
+    <meta name="description" content="Today  Acceleration 加速结构：使用AABB来加速光线追踪  Uniform grids Spatial partitions  Basic radiometry（辐射度量学）  进阶：不同于Whitted-Style的光线追踪   光线追踪加速结构 均匀网格方案：Uniform grids 预处理：构建加速网格 找一个包围盒，在包围盒中构建均匀网格，记录每一个与物体相交的网格">
+<meta property="og:type" content="article">
+<meta property="og:title" content="games101-lecture14 笔记">
+<meta property="og:url" content="https://www.threegates.net/p/9f45e6ee4d77/index.html">
+<meta property="og:site_name" content="ThreeGates">
+<meta property="og:description" content="Today  Acceleration 加速结构：使用AABB来加速光线追踪  Uniform grids Spatial partitions  Basic radiometry（辐射度量学）  进阶：不同于Whitted-Style的光线追踪   光线追踪加速结构 均匀网格方案：Uniform grids 预处理：构建加速网格 找一个包围盒，在包围盒中构建均匀网格，记录每一个与物体相交的网格">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/09/17/QPXy1Yma5cLDHVo.png">
+<meta property="og:image" content="https://s2.loli.net/2023/09/17/DXlbzgTZG3AHxYL.png">
+<meta property="og:image" content="https://s2.loli.net/2023/09/17/2mgejXkSHtpMG9s.png">
+<meta property="og:image" content="https://s2.loli.net/2023/09/17/32mh5ERYDCQy4ZG.png">
+<meta property="og:image" content="https://s2.loli.net/2023/09/17/wI8arSMgVsCc7Ll.png">
+<meta property="og:image" content="https://s2.loli.net/2023/09/17/2oKzTQVYgqm5ilL.png">
+<meta property="article:published_time" content="2023-09-17T12:04:49.000Z">
+<meta property="article:modified_time" content="2025-01-27T11:37:08.000Z">
+<meta property="article:author" content="Edward Chen 陈柏铭">
+<meta property="article:tag" content="计算机图形学">
+<meta property="article:tag" content="RayTracing">
+<meta property="article:tag" content="空间划分">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/09/17/QPXy1Yma5cLDHVo.png">
 
 
 <link rel="canonical" href="https://www.threegates.net/p/9f45e6ee4d77/">
@@ -513,6 +534,23 @@ alt="球表面面积微分" /></a>
     
 
     <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Edward Chen 陈柏铭
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://www.threegates.net/p/9f45e6ee4d77/" title="games101-lecture14 笔记">https://www.threegates.net/p/9f45e6ee4d77/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
           <div class="post-tags">
               <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/" rel="tag"># 计算机图形学</a>
               <a href="/tags/RayTracing/" rel="tag"># RayTracing</a>
