@@ -1543,6 +1543,17 @@ prismjs:
     height: 500</code></pre>
 <p>如果需要预览配色方案的效果，可以前往<a
 href="https://theme-next.js.org/highlight/">这个网站</a></p>
+<h3 id="调整内联代码布局">调整内联代码布局</h3>
+<p>由于内联代码的 style 为
+<code>overflow-wrap: break-word</code>，生成出的博客内容必须保证内联代码块内容在同一行，从而导致部分行的中文内容无法填充完整，且间隔被均等分，看着特别不舒服。</p>
+<p>目前的修改方式是手动调整了 next 主题的 css 生成规则文件
+<strong>_mixins.styl</strong>，可能会由于后续的 next
+主题更新被覆盖，需要注意。</p>
+<pre class="line-numbers language-stylus" data-language="stylus"><code class="language-stylus">&#x2F;&#x2F; node_nodules&#x2F;hexo-theme-next&#x2F;source&#x2F;css&#x2F;_mixins.styl
+word-wrap() &#123;
+    &#x2F;&#x2F; overflow-wrap: break-word; &#x2F;&#x2F; &lt;- 移除
+    word-break: break-all; &#x2F;&#x2F; &lt;- 新增
+&#125;</code></pre>
 <h3 id="样式layout自定义">样式（layout）自定义</h3>
 <p>阅读了hexo和NEXT的模板相关文章，简单看了下关联的njx，ejs文件，想通过is_post()或者is_home()的helper方法实现一下仅在文章页显示阅读进度条的效果，但是似乎返回结果不正确，现在在next的github页提了issue还在等回复。</p>
 <p>njx中的语法与ejs不完全相同，简单参考了非官方文档：</p>
