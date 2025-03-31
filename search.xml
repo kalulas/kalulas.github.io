@@ -4700,4 +4700,620 @@ AssetBundle中的应用以及实现原理，而没有太多涉及游戏运行时
         <tag>Unity</tag>
       </tags>
   </entry>
+  <entry>
+    <title>探究 .NET 源码系列：System.Text.StringBuilder</title>
+    <url>/p/170a3913b9c4/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="net-source-stringbuilder">[.NET source] StringBuilder</h1>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>namespace</th>
+<th>System.Text.StringBuilder</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>project</td>
+<td>ndp.csproj</td>
+</tr>
+<tr class="even">
+<td>file</td>
+<td><a
+href="https://referencesource.microsoft.com/#mscorlib/system/text/stringbuilder.cs">stringbuilder.cs</a></td>
+</tr>
+<tr class="odd">
+<td>version</td>
+<td>属于 .net standard 2.0 的 .NET Framework 4.8</td>
+</tr>
+</tbody>
+</table>
+<h2 id="摘要">摘要</h2>
+<blockquote>
+<p>This class represents a mutable string. It is convenient for
+situations in which it is desirable to modify a string, perhaps by
+removing, replacing, or inserting characters, without creating a new
+String subsequent to each modification.</p>
+<p>此类型代表一个可变字符串，有时我们需要对字符串进行移除，替换，插入字符等操作，但又不想每个操作都产生一个新的子串，在这样的情境下
+StringBuilder 就特别有用。</p>
+<p>A StringBuilder is internally represented as a linked list of blocks
+each of which holds a chunk of the string. It turns out string as a
+whole can also be represented as just a chunk, so that is what we
+do.</p>
+<p>StringBuilder
+在内部表示为由块（Block）组成的链表，每个块都包含一个字符串块（Chunk）。
+实际上完整的字符串也可以仅用一个块来表示，所以我们便这么实现了。</p>
+</blockquote>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public sealed class StringBuilder : ISerializable &#123;
+    &#x2F;&#x2F; The characters in this block
+    internal char[] m_ChunkChars;
+    &#x2F;&#x2F; Link to the block logically before this block
+    internal StringBuilder m_ChunkPrevious;
+    &#x2F;&#x2F; The index in m_ChunkChars that represent the end of the block
+    internal int m_ChunkLength;
+    &#x2F;&#x2F; The logial offset (sum of all characters in previous blocks)
+    internal int m_ChunkOffset;
+    internal int m_MaxCapacity &#x3D; 0;
+
+    internal const int DefaultCapacity &#x3D; 16;
+    &#x2F;&#x2F; ...
+    
+    &#x2F;&#x2F; We want to keep chunk arrays out of large object heap (&lt; 85K bytes ~ 40K chars) to be sure.
+    &#x2F;&#x2F; Making the maximum chunk size big means less allocation code called, but also more waste
+    &#x2F;&#x2F; in unused characters and slower inserts &#x2F; replaces (since you do need to slide characters over
+    &#x2F;&#x2F; within a buffer).  
+    internal const int MaxChunkSize &#x3D; 8000;
+    
+    &#x2F;&#x2F; ...
+&#125;</code></pre>
+<p>部分类型成员说明：</p>
+<ul>
+<li><strong>m_ChunkChars</strong>：内建字符数组，存储字符串内容用</li>
+<li><strong>m_ChunkLength</strong>：指向了当前 chunk 中的字符数组
+m_ChunkChars 的最后一个有效字符，即当前 chunk 有效内容的长度</li>
+<li><strong>m_ChunkOffset</strong>：之前所有 blocks / chunks
+的字符总数，即当前 chunk 的字符偏移量</li>
+<li><strong>m_MaxCapacity</strong>：完整字符串的长度限制</li>
+</ul>
+<p>从 StringBuilder 的类型成员能够推断出，实际上每个 StringBuilder
+都被看作是一个
+<strong>Chunk</strong>，在不断添加新的字符串内容时，当前创建的
+StringBuilder 会通过构造新的 StringBuilder 实例的方式，来创建出一个新的
+<strong>Chunk</strong>。</p>
+<p>那么也就是说，在获取 Capacity 以及 Length 时，我们都需要考虑 previous
+Chunk 的存在，同时在重新设置（setter）Capacity 和 Length
+时也要多做一些额外工作。</p>
+<p>在探究构造函数和重要的内部实现与对外方法时，会重点关注此部分内容。</p>
+<h2 id="构造函数">构造函数</h2>
+<p>提供了多个构造函数，可以分别指定初始容量，初始字符串值，指定初始字符串值为给定字符串的一个子串…并且它们均依赖同一份构造函数实现，即
+<code>StringBuilder(String value, int startIndex, int length, int capacity)</code></p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public StringBuilder(String value, int startIndex, int length, int capacity) &#123;
+    &#x2F;&#x2F; 初始参数 startIndex, length, capacity 的一些合法性检测 ...
+    if (value &#x3D;&#x3D; null) &#123;
+        value &#x3D; String.Empty;
+    &#125;
+    &#x2F;&#x2F; if (startIndex &gt; value.Length - length) &#123; &#x2F;&#x2F; 越界检测
+    m_MaxCapacity &#x3D; Int32.MaxValue;
+    if (capacity &#x3D;&#x3D; 0) &#123;
+        capacity &#x3D; DefaultCapacity;
+    &#125;
+    if (capacity &lt; length)
+        capacity &#x3D; length;
+
+    m_ChunkChars &#x3D; new char[capacity];
+    m_ChunkLength &#x3D; length;
+
+    unsafe &#123;
+        fixed (char* sourcePtr &#x3D; value)
+            ThreadSafeCopy(sourcePtr + startIndex, m_ChunkChars, 0, length);
+    &#125;
+&#125;</code></pre>
+<p>可以得到以下信息：</p>
+<ul>
+<li>StringBuilder 有默认大小 <code>DefaultCapacity == 16</code></li>
+<li>StringBuilder 中的字符内容被存储在
+<strong>m_ChunkChars</strong>，并且长度也被记录于
+<strong>m_ChunkLength</strong></li>
+</ul>
+<h2 id="部分关键实现">部分关键实现</h2>
+<h3 id="字符串内容拷贝-stringbuilder.threadsafecopy">字符串内容拷贝
+StringBuilder.ThreadSafeCopy</h3>
+<p>字符串内容的拷贝基于 unsafe 方法
+<code>static unsafe StringBuilder.ThreadSafeCopy</code>，方法内部做了字符串数组的边界检测，并且基于方法
+<strong>System.String.wstrcpy</strong> 实现了内容的拷贝。</p>
+<p>顺带一提，可以看到 <strong>System.String.wstrcpy</strong> 内部基于
+<strong>System.Buffer.Memcpy</strong>，并且对于每个字符均采用两个字节的长度。使用
+<code>charCount * 2</code> 是因为此版本下 C# 中的字符串是以 UTF-16
+编码存储的（但注意 UTF-16 也是变长编码）。每个字符占用 2 个字节（16
+位），因此需要将字符数乘以 2 来计算字节数。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ndp\clr\src\BCL\system\text\stringbuilder.cs:1846
+
+if ((uint)destinationIndex &lt;&#x3D; (uint)destination.Length &amp;&amp; (destinationIndex + count) &lt;&#x3D; destination.Length)
+&#123;                                                                                                          
+    fixed (char* destinationPtr &#x3D; &amp;destination[destinationIndex])                                          
+        string.wstrcpy(destinationPtr, sourcePtr, count);                                                  
+&#125;                                                                                                          
+
+&#x2F;&#x2F; ndp\clr\src\BCL\system\string.cs:1546
+        internal static unsafe void wstrcpy(char *dmem, char *smem, int charCount)
+        &#123;
+            Buffer.Memcpy((byte*)dmem, (byte*)smem, charCount * 2); &#x2F;&#x2F; 2 used everywhere instead of sizeof(char)
+        &#125;</code></pre>
+<h3 id="容量的获取与设置-capacity">容量的获取与设置 Capacity</h3>
+<p>从容量的获取不难看出 <strong>m_ChunkOffset</strong> 即是先前 Chunk
+中包含字符串数量。</p>
+<p>builder 的 <strong>Capacity</strong>
+是当前chunk的字符偏移值，加上内部数组的大小。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public int Capacity &#123;
+    get &#123; return m_ChunkChars.Length + m_ChunkOffset; &#125;</code></pre>
+<p>容量的设置方法中也考虑了 <strong>m_ChunkOffset</strong>，当前
+StringBuilder
+的字符数组，会被一个新的字符数组取代（由于做了合法性检测保证新的
+Capacity &gt; Length，此处不同担心新的字符数组长度是非法值）</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">if (Capacity !&#x3D; value) &#123;
+    int newLen &#x3D; value - m_ChunkOffset;
+    char[] newArray &#x3D; new char[newLen];
+    Array.Copy(m_ChunkChars, newArray, m_ChunkLength);
+    m_ChunkChars &#x3D; newArray;
+&#125;</code></pre>
+<h3 id="长度的获取与设置-length">长度的获取与设置 Length</h3>
+<p>builder 的 <strong>Length</strong>
+是当前chunk的字符偏移值，加上内部数组中有效内容的长度。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public int Length &#123;
+    get &#123;
+        Contract.Ensures(Contract.Result&lt;int&gt;() &gt;&#x3D; 0);
+        return m_ChunkOffset + m_ChunkLength;
+    &#125;</code></pre>
+<p>而从容量的设置我们可以看到 StringBuilder
+在容量更新时是如何处理多个Chunk的情况的：</p>
+<p>首先还是惯例的合法性检测，同时保留当前的容量值</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; Sets the length of the String in this buffer.  If length is less than the current
+&#x2F;&#x2F; instance, the StringBuilder is truncated.  If length is greater than the current 
+&#x2F;&#x2F; instance, nulls are appended.  The capacity is adjusted to be the same as the length.
+public int Length &#123;
+    set &#123;
+        &#x2F;&#x2F;If the new length is less than 0 or greater than our Maximum capacity, bail.
+        &#x2F;&#x2F; 一些合法性检测，保证 0 &lt; value &lt;&#x3D; MaxCapacity
+        &#x2F;&#x2F; ... &#x2F;&#x2F; Contract.EndContractBlock();
+
+        int originalCapacity &#x3D; Capacity;
+    &#125;
+&#125;</code></pre>
+<p>如果是将 StringBuilder 置空的常见操作，那么只是重置
+<strong>m_ChunkLength</strong> 以及
+<strong>m_ChunkOffset</strong>，没有太多进一步操作了。考虑到将
+StringBuilder 重置是一个发生频率比较高的操作，将
+<strong>m_ChunkChars</strong> 中的内容先做保留或许也是正确的选择。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">if (value &#x3D;&#x3D; 0 &amp;&amp; m_ChunkPrevious &#x3D;&#x3D; null)
+&#123;
+    m_ChunkLength &#x3D; 0;
+    m_ChunkOffset &#x3D; 0;
+    Contract.Assert(Capacity &gt;&#x3D; originalCapacity, &quot;setting the Length should never decrease the Capacity&quot;);
+    return;
+&#125;</code></pre>
+<p>如果长度发生了增长，那么将填充 <code>delta * ‘\0’</code>
+到字符数组的末尾。这个操作和对外方法 <code>Append</code>
+并没有区别，都有可能造成新的Chunk增长，但之后在探究
+<code>ExpandByABlock</code>
+实现时我们会发现这里顶多也只会增长一个Chunk。（可以看到注释评价此处的实现是可以改进的，可能做一个简单的
+<strong>m_ChunkChars</strong>
+容量调整，或者直接加上一个新的Chunk都会更简单高效一些）</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">int delta &#x3D; value - Length;
+&#x2F;&#x2F; if the specified length is greater than the current length
+if (delta &gt; 0)
+&#123;
+    &#x2F;&#x2F; the end of the string value of the current StringBuilder object is padded with the Unicode NULL character
+    Append(&#39;\0&#39;, delta);        &#x2F;&#x2F; We could improve on this, but who does this anyway?
+&#125;</code></pre>
+<p>如果长度发生了缩减，那么通过方法 <code>FindChunkForIndex</code>
+先找到对应的chunk，然后分为“是当前chunk”还有“不是当前chunk”来讨论：</p>
+<p>如果是当前chunk，那么简单地更新一下 <strong>m_ChunkLength</strong>
+即可；如果不是当前chunk，那么实际的操作是：</p>
+<ol type="1">
+<li>由于 StringBuilder
+的长度发生了缩减，其内部的有效内容也会发生相应的缩减，builder的当前chunk，将被用来取代缩减位置所对应的chunk，下简称为<strong>targetChunk</strong>。</li>
+<li>首先，新的内部数组长度，将保证至少能够容纳缩减的这些内容，长度为
+<code>originalCapacity - targetChunk.m_ChunkOffset</code></li>
+<li>其次，<strong>targetChunk</strong>中的内容将被完整复制到这个新的数组（可能有新length以后的内容，但不要紧，后面
+<strong>m_ChunkLength</strong> 的更新将会无视掉这部分多余的内容）</li>
+<li>最后，当前chunk将会使用这个新开辟的字符数组，同时继承<strong>targetChunk</strong>的前向chunk，offset等信息</li>
+<li>这些被略过，以及被取代掉的chunk，以及它们内部的数组内容都已没有引用，它们所占有的内存空间将在下一次
+GC.Collect 时释放掉</li>
+</ol>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; if the specified length is less than or equal to the current length 
+else
+&#123;
+    StringBuilder chunk &#x3D; FindChunkForIndex(value);
+    if (chunk !&#x3D; this)
+    &#123;
+        &#x2F;&#x2F; we crossed a chunk boundary when reducing the Length, we must replace this middle-chunk with a new
+        &#x2F;&#x2F; larger chunk to ensure the original capacity is preserved
+        int newLen &#x3D; originalCapacity - chunk.m_ChunkOffset;
+        char[] newArray &#x3D; new char[newLen];
+        Contract.Assert(newLen &gt; chunk.m_ChunkChars.Length, &quot;the new chunk should be larger than the one it is replacing&quot;);
+        Array.Copy(chunk.m_ChunkChars, newArray, chunk.m_ChunkLength);
+        
+        m_ChunkChars &#x3D; newArray;
+        m_ChunkPrevious &#x3D; chunk.m_ChunkPrevious;                        
+        m_ChunkOffset &#x3D; chunk.m_ChunkOffset;
+    &#125;
+    m_ChunkLength &#x3D; value - chunk.m_ChunkOffset;
+    VerifyClassInvariant();
+&#125;</code></pre>
+<h3 id="清空操作-clear">清空操作 Clear</h3>
+<p>简单地提一下，builder的清空操作实际上就是将 Length 设置为0的操作</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; Convenience method for sb.Length&#x3D;0;
+public StringBuilder Clear() &#123;
+    this.Length &#x3D; 0;
+    return this;
+&#125;</code></pre>
+<h3 id="字符索引-index">字符索引 index</h3>
+<p>从 index 方法的实现是符合直觉的，如果 index - chunk.offset
+大于等于0，那么，字符就在当前chunk中，直接对 m_ChunkChars
+进行数组索引；如果小于0，说明字符位于先前的chunk中，chunk指向previous，并使用新的offset更新index值，不断循环即可。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public char this[int index] &#123;
+    &#x2F;&#x2F; 
+
+    get &#123;
+        StringBuilder chunk &#x3D; this;
+        for (; ; )
+        &#123;
+            int indexInBlock &#x3D; index - chunk.m_ChunkOffset;
+            if (indexInBlock &gt;&#x3D; 0)
+            &#123;
+                if (indexInBlock &gt;&#x3D; chunk.m_ChunkLength)
+                    throw new IndexOutOfRangeException();
+                return chunk.m_ChunkChars[indexInBlock];
+            &#125;
+            chunk &#x3D; chunk.m_ChunkPrevious;
+            if (chunk &#x3D;&#x3D; null)
+                throw new IndexOutOfRangeException();
+        &#125;
+    &#125;
+    &#x2F;&#x2F; set 方法是类似的</code></pre>
+<p>这就导致如果对很多的chunk组成的builder进行从头到尾的逐字符遍历，实际执行的指令数可能会很多，比如在
+<strong>System.Net.NetworkingPerfCounters</strong> 中的这个方法。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ndp\fx\src\net\System\Net\_NetworkingPerfCounters.cs:372
+&#x2F;&#x2F; NetworkingPerfCounters.ReplaceInvalidChars
+        private static string ReplaceInvalidChars(string instanceName)
+        &#123;
+            &#x2F;&#x2F; map invalid characters as suggested by MSDN (see PerformanceCounter.InstanceName Property help)
+
+            StringBuilder result &#x3D; new StringBuilder(instanceName);
+            for (int i &#x3D; 0; i &lt; result.Length; i++)
+            &#123;
+                switch (result[i])
+                &#123;
+                    case &#39;(&#39;:
+                        result[i] &#x3D; &#39;[&#39;;
+                        break;
+                    case &#39;)&#39;:
+                        result[i] &#x3D; &#39;]&#39;;
+                        break;
+                    case &#39;&#x2F;&#39;:
+                    case &#39;\\&#39;:
+                    case &#39;#&#39;:
+                        result[i] &#x3D; &#39;_&#39;;
+                        break;
+                &#125;
+            &#125;
+
+            return result.ToString();
+        &#125;</code></pre>
+<p>当然，如果instanceName并不长（在这个case中实际上只有一个chunk），那问题就不大。</p>
+<div class="note warning"><p>这警示我们实现自定义index方法时注重可读性，并且在调用其他人写的自定义index方法时，最好也去了解一下具体实现。</p>
+</div>
+<h3 id="输出字符串-tostring">输出字符串 ToString()</h3>
+<p>ToString 方法依赖了 String 类的内部静态方法
+<code>String.FastAllocateString</code>，来分配出长度为 Length
+的字符串对象 <strong>ret，</strong>通过 unsafe 得到此目标字符串的地址
+<strong>destination_ptr。</strong></p>
+<p>后续首先将 <strong>m_ChunkChars</strong> 中的内容通过 unsafe 方式
+<code>string.wstrcpy</code> 到目标字符串的
+<code>destination_ptr + checkOffset</code> 位置，处理完毕后指向前一个
+chunk (StringBuilder)，继续处理，直到所有 chunk
+处理完毕，这样完整的字符串构建过程便完成了。</p>
+<p>StringBuilder 还提供了可执行从某个位置起指定字符个数版本的
+<code>ToString(int startIndex, int length)</code>，这里不再赘述。</p>
+<h3 id="分配新的chunk-expandbyablockint-minblockcharcount">分配新的Chunk
+/ ExpandByABlock(int minBlockCharCount)</h3>
+<ol type="1">
+<li><p>长度校验：当前字符串总长度 + 新 chunk 需求长度 不可超过
+<code>m_MaxCapacity</code></p></li>
+<li><p>新 chunk 大小计算：此处细节比较多，新分配的一个 chunk 大小将为
+<code>Math.Max(minBlockCharCount, Math.Min(Length, MaxChunkSize))</code>,
+有以下这些考量</p>
+<ol type="1">
+<li>保证新分配的 chunk 满足需求 <strong>minBlockCharCount</strong></li>
+<li>保证在连续请求（Append）短字符串时，采用总体字符串长度
+<strong>Length</strong> 能保证分配出较长的
+chunk，来容纳多个短字符串</li>
+<li>在此基础上，通过 <strong>MaxChunkSize（常量
+8000）</strong>保证在总体字符串较长的情况下，不会分配出特别大的
+chunk，以此来保证分配内存操作保留在 small object heap，而不是 large
+object heap。这里两种不同 heap
+的概念之前没有学习过，可以后续详细了解下。贴上源码中的两处注释以供后续参考：</li>
+</ol>
+<p><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ndp\clr\src\bcl\system\text\stringbuilder.cs:76
+        
+&#x2F;&#x2F; We want to keep chunk arrays out of large object heap (&lt; 85K bytes ~ 40K chars) to be sure.   
+&#x2F;&#x2F; Making the maximum chunk size big means less allocation code called, but also more waste      
+&#x2F;&#x2F; in unused characters and slower inserts &#x2F; replaces (since you do need to slide characters over
+&#x2F;&#x2F; within a buffer).                                                                             
+internal const int MaxChunkSize &#x3D; 8000;
+        
+&#x2F;&#x2F; ndp\clr\src\bcl\system\text\stringbuilder.cs:1977
+        
+&#x2F;&#x2F; Compute the length of the new block we need                                       
+&#x2F;&#x2F; We make the new chunk at least big enough for the current need (minBlockCharCount)
+&#x2F;&#x2F; But also as big as the current length (thus doubling capacity), up to a maximum   
+&#x2F;&#x2F; (so we stay in the small object heap, and never allocate really big chunks even if
+&#x2F;&#x2F; the string gets really big.                                                       
+int newBlockLength &#x3D; Math.Max(minBlockCharCount, Math.Min(Length, MaxChunkSize));    </code></pre></p></li>
+<li><p>当前 chunk 通过复制拷贝的方式传递给 m_ChunkPrevious
+&lt;StringBuilder&gt;，ChunkOffset 增长到扩容前的 Length 值</p></li>
+<li><p>最后如果发现 ChunkOffset 加上计算出的
+<strong>newBlockLength</strong> 已经超过了 int.MaxInt，发生上溢，会抛出
+OutOfMemory 异常</p></li>
+<li><p>最后，当前 StringBuilder 被作为整个字符串的最后一个
+chunk，分配一个大小为 newBlockLength 的内建字符数组给
+<strong>m_ChunkChars</strong></p></li>
+</ol>
+<h2 id="对外方法">对外方法</h2>
+<h3 id="append">Append</h3>
+<p>大多数 <strong>Append</strong> 方法会依赖 unsafe 方法
+<code>Append(char* value, int valueCount)</code>，简单处理为两种情况：</p>
+<ul>
+<li>若需 append 的内容未超过当前 chunk 容量 →
+<code>ThreadSafeCopy</code> 填充当前 chunk</li>
+<li>需 append 内容超过当前 chunk 容量：
+<ol type="1">
+<li>将当前 chunk 剩余容量填充满 → <code>ThreadSafeCopy</code></li>
+<li>将当前 chunk 复制到内部新的 chunk 作为 previous，当前 chunk
+再作为整个字符串中的最后一个 chunk 返回 →
+<code>ExpandByABlock(int minBlockCharCount)</code></li>
+<li>需 append 的剩余内容填充到新的 chunk 中 →
+<code>ThreadSafeCopy</code></li>
+</ol></li>
+</ul>
+<h3 id="appendstring-value">Append(String value)</h3>
+<p>作为使用相当频繁的 Append 方法， 与上述
+<code>Append(char* value, int valueCount)</code> 存在些许不同。若 append
+新内容后所需长度没有超过当前 chunk 的容量，那么进行简化的操作：</p>
+<ol type="1">
+<li>append 长度不超过2时直接进行字符数组设置</li>
+<li>超过2时进行 string.wstrcpy 将 append 数组复制到当前 chunk 中</li>
+</ol>
+<p>其他情况下使用 AppendHelper，回到上述
+<code>Append(char* value, int valueCount)</code> →
+<code>ThreadSafeCopy</code> 调用链</p>
+<h3
+id="copytoint-sourceindex-char-destination-int-destinationindex-int-count">CopyTo(int
+sourceIndex, char[] destination, int destinationIndex, int count)</h3>
+<p>StringBuilder 提供将 builder 内指定子串内容复制到目标字符数组的方法
+<code>CopyTo</code>，实现基于从后往前的 chunk 遍历搜索 +
+<code>ThreadSafeCopy</code>，比较符合直觉，此处不展开。</p>
+<h3 id="insert">Insert</h3>
+<p>大多数 <strong>Insert</strong> 方法依赖方法
+<code>Insert(int index, String value, int count)</code>
+，方法除去大多数合法性校验外，核心逻辑集中在两个方法：<code>MakeRoom</code>
+以及循环调用 count 次的 <code>ReplaceInPlaceAtChunk</code></p>
+<p>合法性校验中值得额外提及的是，插入字符串总长度 value.Length * cout
+加上已有长度 <strong>Length</strong> 仍然不可超过限定长度
+<strong>MaxCapacity</strong></p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">StringBuilder chunk;                                                                   
+int indexInChunk;                                                                      
+MakeRoom(index, (int) insertingChars, out chunk, out indexInChunk, false);             
+unsafe &#123;                                                                               
+    fixed (char* valuePtr &#x3D; value) &#123;                                                   
+        while (count &gt; 0)                                                              
+        &#123;                                                                              
+            ReplaceInPlaceAtChunk(ref chunk, ref indexInChunk, valuePtr, value.Length);
+            --count;                                                                   
+        &#125;                                                                              
+    &#125;                                                                                  
+&#125;                                                                                      </code></pre>
+<p>方法 <code>MakeRoom</code> 细节如下，先通过向前遍历找到插入位置 index
+对应的chunk，接下来若此 chunk 存在足够剩余空间容纳大小为 count
+的目标字符串，那么将此处的 count 长度子串移动到 count
+个字符之后，腾出空间。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">if (!doneMoveFollowingChars &amp;&amp; chunk.m_ChunkLength &lt;&#x3D; DefaultCapacity * 2 &amp;&amp; chunk.m_ChunkChars.Length - chunk.m_ChunkLength &gt;&#x3D; count)
+&#123;                                                                                                                                     
+    for (int i &#x3D; chunk.m_ChunkLength; i &gt; indexInChunk; )                                                                             
+    &#123;                                                                                                                                 
+        --i;                                                                                                                          
+        chunk.m_ChunkChars[i + count] &#x3D; chunk.m_ChunkChars[i];                                                                        
+    &#125;                                                                                                                                 
+    chunk.m_ChunkLength +&#x3D; count;                                                                                                     
+    return;                                                                                                                           
+&#125;                                                                                                                                     </code></pre>
+<p>其他情况下会构造一个容量可容纳 count 字符的新 StringBuilder 作为当前
+chunk 的前一个 chunk，对预计算出的插入位置
+<strong>indexInChunk</strong>，将当前chunk的插入位置前内容通过
+<code>ThreadSafeCopy</code> 移动到前一个 chunk 中，再将 chunk
+和插入位置传出到方法外部，让外部从指定位置开始插入字符串内容。</p>
+<p>方法 <code>ReplaceInPlaceAtChunk</code> 将指定的 char* value, int
+count 内容通过 ThreadSafeCopy 写入到指定 chunk 中，并且在当前 chunk
+无法容纳所有内容时，能够通过索引向后查找下一个 chunk，继续后续的 replace
+操作。</p>
+<p>不过注意这个操作可行性建立在传入的 chunk 是实际 StringBuilder 的前向
+chunk 的基础上，因为 <code>Next()</code> 实际是先得到传入 chunk 的
+offset+length，再通过最尾部 chunk 向前查找 offset 的形式实现的。</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">int lengthInChunk &#x3D; chunk.m_ChunkLength - indexInChunk;                      
+Contract.Assert(lengthInChunk &gt;&#x3D; 0, &quot;index not in chunk&quot;);                   
+                                                                             
+int lengthToCopy &#x3D; Math.Min(lengthInChunk, count);                           
+ThreadSafeCopy(value, chunk.m_ChunkChars, indexInChunk, lengthToCopy);       
+                                                                             
+&#x2F;&#x2F; Advance the index.                                                        
+indexInChunk +&#x3D; lengthToCopy;                                                
+if (indexInChunk &gt;&#x3D; chunk.m_ChunkLength)                                     
+&#123;                                                                            
+    chunk &#x3D; Next(chunk);                                                     
+    indexInChunk &#x3D; 0;                                                        
+&#125;                                                                            
+count -&#x3D; lengthToCopy;                                                       
+if (count &#x3D;&#x3D; 0)                                                              
+    break;                                                                   
+value +&#x3D; lengthToCopy;                                                       </code></pre>
+<h3 id="replace">Replace</h3>
+<p>Replace 操作用于将 StringBuilder 中的所有 oldValue 替换为 newValue
+字符串，实现细节有以下：</p>
+<ul>
+<li>以每个 chunk 为单位搜索匹配的字符串，当此 chunk
+结束或搜索目标长度完成时，才会一次性进行 replace 操作，replace
+操作依赖方法 <code>ReplaceAllInChunk</code></li>
+<li>每次 replace
+操作后字符串长度变化，要找到下一个chunk依赖上述提及的方法
+<code>FindChunkForIndex</code></li>
+<li>再搜索匹配的字符串过程中，方法内部开辟一个 int[] 数组
+<strong>replacements</strong> 用于记录需匹配字符在 chunk
+中的下标，同时记录当前 chunk 中匹配的个数
+replacementsCount，以保证这个数组在多次 replace
+操作间能复用，不需要重新开辟。</li>
+<li>int[] 数组 replacements 的增长速度为
+<code>length = 1.5 * length + 4</code>，在起始阶段为更快一些</li>
+</ul>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; Push it on my replacements array (with growth), we will do all replacements in a                        
+&#x2F;&#x2F; given chunk in one operation below (see ReplaceAllInChunk) so we don&#39;t have to slide                    
+&#x2F;&#x2F; many times.                                                                                             
+if (replacements &#x3D;&#x3D; null)                                                                                  
+    replacements &#x3D; new int[5];                                                                             
+else if (replacementsCount &gt;&#x3D; replacements.Length)                                                         
+&#123;                                                                                                          
+    int[] newArray &#x3D; new int[replacements.Length * 3 &#x2F; 2 + 4];     &#x2F;&#x2F; grow by 1.5X but more in the begining
+    Array.Copy(replacements, newArray, replacements.Length);                                               
+    replacements &#x3D; newArray;                                                                               
+&#125;                                                                                                          
+replacements[replacementsCount++] &#x3D; indexInChunk;                                                          
+indexInChunk +&#x3D; oldValue.Length;                                                                           
+count -&#x3D; oldValue.Length;                                                                                  </code></pre>
+<div class="note warning"><p>在设计自己的数据容器时，可以参考此处的容器增长速度。阅读多个数据容器源码后，会发现
+1.5x
+是一个较常见的增长速度，当然如果追求极致空间利用率，肯定还是需要结合实际业务场景进行调优。</p>
+</div>
+<h3 id="remove">Remove</h3>
+<p>Remove 操作用于将指定位置 startIndex 位置后 length
+长度的内容移除，实现细节有以下：</p>
+<ul>
+<li>作为一个优化策略，若传入的参数表明要移除所有内容，那么直接通过设置
+property <code>Length = 0</code> 的方式来清空整个 StringBuilder
+关联的多个 chunks</li>
+<li>其他一般情况下的实现细节在方法
+<code>Remove(int startIndex, int count, out StringBuilder chunk, out int indexInChunk)</code>
+中。</li>
+<li>先用一个从后向前的 chunk 遍历找到删除范围的起始 chunk，以及终止
+chunk。这里在遍历的过程中还会顺带更新每个 chunk 的
+offset，因为马上前序的 chunk 就要发生 remove 操作了。</li>
+<li>如果删除的起始和终止并不在同一个 chunk 中，那么先将起始 chunk 的有效
+<strong>m_ChunkLength</strong>
+调整到删除范围的起始（这样被删除的内容虽然还在数组里，实际会被视为无效内容），再将终止
+chunk 的前序 chunk 直接链接到起始 chunk 上，并调整终止 chunk 的
+offset，相应地从 <strong>m_ChunkLength</strong>
+中减去被移除的长度。</li>
+<li>最后将终止 chunk 中末端的未删除内容，使用
+<code>ThreadSafeCopy</code> 向前移动到先前被删除内容的位置（“sliding the
+characters down”）。</li>
+<li>这里源码中还考虑了起始 chunk 和终止 chunk 是用一个 chunk
+的情况，这样终止 chunk
+中的未删除内容就不能直接移动到起始处，而是要移动到此 chunk
+中的原删除内容起始处了。</li>
+</ul>
+<h2 id="其他">其他</h2>
+<h3 id="基于-appendformat-的-string.format">基于 AppendFormat 的
+string.Format</h3>
+<p>见方法实现，实际依赖方法实现
+<code>StringBuilder.AppendFormat</code></p>
+<p>注意 <code>StringBuilderCache.Acquire</code> 方法中访问的静态变量
+<strong>CachedInstance</strong> 被标记为 [ThreadStatic]</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ndp\clr\src\BCL\system\String.cs:3054
+
+public static String Format(IFormatProvider provider, String format, params Object[] args) &#123;
+    if (format &#x3D;&#x3D; null || args &#x3D;&#x3D; null)
+        throw new ArgumentNullException((format &#x3D;&#x3D; null) ? &quot;format&quot; : &quot;args&quot;);
+    Contract.Ensures(Contract.Result&lt;String&gt;() !&#x3D; null);
+    Contract.EndContractBlock();
+
+    StringBuilder sb &#x3D; StringBuilderCache.Acquire(format.Length + args.Length * 8);
+    sb.AppendFormat(provider,format,args);
+    return StringBuilderCache.GetStringAndRelease(sb);
+&#125;
+
+&#x2F;&#x2F; ndp\clr\src\BCL\system\text\stringbuildercache.cs:50
+
+public static StringBuilder Acquire(int capacity &#x3D; StringBuilder.DefaultCapacity)
+&#123;
+    if(capacity &lt;&#x3D; MAX_BUILDER_SIZE)
+    &#123;
+        StringBuilder sb &#x3D; StringBuilderCache.CachedInstance;
+        if (sb !&#x3D; null)
+        &#123;
+            &#x2F;&#x2F; Avoid stringbuilder block fragmentation by getting a new StringBuilder
+            &#x2F;&#x2F; when the requested size is larger than the current capacity
+            if(capacity &lt;&#x3D; sb.Capacity)
+            &#123;
+                StringBuilderCache.CachedInstance &#x3D; null;
+                sb.Clear();
+                return sb;
+            &#125;
+        &#125;
+    &#125;
+    return new StringBuilder(capacity);
+&#125;</code></pre>
+<p>平时使用时容易忽视的一个细节是，实际进行字符串格式化时可传入
+IFormatProvider，这个参数会被一路传入到方法
+<code>StringBuilder.AppendForma</code>t
+内部，用于调整字符串格式化行为：</p>
+<ol type="1">
+<li>如果希望格式化行为不被地区文化影响，可以使用
+<code>CultureInfo.InvariantCulture</code>，相应的，使用当前地区文化格式输出是
+<code>CultureInfo.CurrentCulture</code>。不过对于需要考虑地区文化相关字符串输出格式的应用来说，一般会自己写一套相应地区对应输出格式，还得考虑用户的地区语言设置，也许
+CurrentCulture 不是那么常用。</li>
+<li>在 <code>AppendFormat</code> 中，若提供了 IFormatProvider
+参数，则会通过其获取 <strong>I</strong>CustomFormatter
+类型对象，并在解析格式占位符（如“{0}”）后，将占位符，参数，以及 provider
+一同传递给 <code>ICustomFormatter.Format</code> 获得结果字符串。</li>
+<li>否则，<code>AppendFormat</code> 中会尝试将每个格式化参数转换为
+IFormattable，并将占位符，provider 一同传递给格式
+<code>IFormattable.ToString</code>
+得到格式化结果字符串。常见的基元类型都实现了
+IFormattable，但一般我们定义的类型，能有一个输出需求信息的 ToString()
+就很好了。AppendFormat 在无法将参数转换为 IFormattable
+的情况下，也会回退到一般的 object.ToString() 方法。</li>
+</ol>
+<h2 id="一些收获">一些收获</h2>
+<ul>
+<li>StringBuilder
+的设计实现思路是把拼接过程中的字符串看作块（chunk）的组合，并使用将外部引用的
+StringBuilder 视作是最后一个块，前向块都通过内部 m_PreviousChunk
+引用，不暴露给外部。</li>
+<li>考虑到 AppendFormat 的较复杂实现和潜在内存开辟，在使用 StringBuilder
+时也许用普通的 Append 来替代 AppendFormat 可以更好地利用 StringBuilder
+的性能优势。当然可读性也很重要。</li>
+<li>高频使用类型自实现的 index 方法时，最好对 index
+方法的实现细节有一些了解；同时在实现自己类型的 index
+方法时，也要注意代码可读性。</li>
+<li>在通用类型的设计完成后，先围绕设计实现一系列基本操作的私有方法，或需求参数较多的公有方法，再考虑易用性，设计传参简单使用便捷的常用公用方法，尽可能少地暴露内部实现细节，减少外围代码使用此通用类型的心智负担。</li>
+<li>进行常见字符串操作时，留意输出结果是否需要时文化无关的（InvariantCulture）。</li>
+</ul>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>计算机科学</category>
+        <category>编程语言</category>
+        <category>C#</category>
+      </categories>
+      <tags>
+        <tag>C#</tag>
+        <tag>.NET</tag>
+        <tag>源码阅读</tag>
+      </tags>
+  </entry>
 </search>
