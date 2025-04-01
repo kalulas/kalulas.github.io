@@ -6,7 +6,7 @@
   <link href="https://www.threegates.net/atom.xml" rel="self"/>
   
   <link href="https://www.threegates.net/"/>
-  <updated>2025-03-31T16:08:19.442Z</updated>
+  <updated>2025-04-01T13:35:06.696Z</updated>
   <id>https://www.threegates.net/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://www.threegates.net/p/170a3913b9c4/"/>
     <id>https://www.threegates.net/p/170a3913b9c4/</id>
     <published>2025-03-31T15:45:56.000Z</published>
-    <updated>2025-03-31T16:08:19.442Z</updated>
+    <updated>2025-04-01T13:35:06.696Z</updated>
     
     
     <summary type="html">探究了 .net framework 4.8 下的 StringBuilder 及其常见操作实现。StringBuilder 对象代表一个可变字符串，有时我们需要对字符串进行移除，替换，插入字符等操作，但又不想每个操作都产生一个新的子串，在这样的情境下，StringBuilder 就特别有用。StringBuilder 中的完整字符串被表示为由块（Block）组成的链表，每个块都包含一个字符串块（Chunk）。 实际上完整的字符串也可以仅用一个块来表示，这就是 StringBuilder 的主要设计思路。</summary>

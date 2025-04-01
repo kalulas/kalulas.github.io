@@ -5265,7 +5265,7 @@ public static StringBuilder Acquire(int capacity &#x3D; StringBuilder.DefaultCap
 &#125;</code></pre>
 <p>平时使用时容易忽视的一个细节是，实际进行字符串格式化时可传入
 IFormatProvider，这个参数会被一路传入到方法
-<code>StringBuilder.AppendForma</code>t
+<code>StringBuilder.AppendFormat</code>
 内部，用于调整字符串格式化行为：</p>
 <ol type="1">
 <li>如果希望格式化行为不被地区文化影响，可以使用
