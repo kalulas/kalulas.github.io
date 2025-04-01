@@ -4317,91 +4317,6 @@ func (p *Person) Salary() float64 &#123;
       </tags>
   </entry>
   <entry>
-    <title>《The Way to Go》Chapter16 常见陷阱与错误</title>
-    <url>/p/c629bb3de01f/</url>
-    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="chapter16-常见陷阱与错误">Chapter16 常见陷阱与错误</h1>
-<p>前15章提及了一些错误使用方式，就不再赘述，<a
-href="https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/16.0.md">https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/16.0.md</a>
-中也都列出了，重要的是有以下最佳实践：</p>
-<ol type="1">
-<li>使用正确的方式初始化值是切片slice的一个映射map</li>
-<li>使用逗号ok模式进行类型断言</li>
-<li>使用一个工厂函数创建并实例化自己的定义的类型</li>
-<li>只有当想要改变结构体时，使用结构体指针作为方法接收者，否则都使用结构体值类型</li>
-</ol>
-<span id="more"></span>
-<h3 id="误用短声明导致变量覆盖">误用短声明导致变量覆盖</h3>
-<p>如果在语句块内使用了短声明<code>:=</code>，那么语句块内的同名变量仅在语句块内有效，退出语句块后仍然是外部的变量生效</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">var remember bool &#x3D; false
-if something &#123;
-    remember :&#x3D; true &#x2F;&#x2F;错误
-&#125;
-&#x2F;&#x2F; 使用remember，得到的仍然是false
-
-&#x2F;&#x2F; ------
-&#x2F;&#x2F; 正确做法
-if something &#123;
-    remember &#x3D; true
-&#125;</code></pre>
-<h3 id="误用字符串">误用字符串</h3>
-<p>字符串是不可变的，使用 <code>a+=b</code>
-会导致大量内存开销和拷贝，考虑使用字符数组代替字符串，将字符串内容写入到缓存中，即
-<code>bytes.Buffer</code></p>
-<h3 id="错误地使用defer">错误地使用defer</h3>
-<p><code>defer</code>仅在函数返回时执行，在循环的结尾或者有限范围的代码内不会执行</p>
-<h3 id="何时使用new和make">何时使用new()和make()</h3>
-<p>重复内容：</p>
-<ol type="1">
-<li>对切片slice、映射map、通道channel使用make()</li>
-<li>对数组、结构体和值类型，使用new()</li>
-</ol>
-<h3
-id="不要对接口使用指针类型减少对值类型使用指针">不要对接口使用指针类型，减少对值类型使用指针</h3>
-<p>如使用接口的指针类型函数参数，这会导致编译错误 →
-接口本身已是一个指针</p>
-<p>尽管值类型的拷贝似乎是对内存的滥用，但值类型内存的栈上分配快速且开销小；如果传递值类型的指针会导致对象的创建，且移动到了堆上。</p>
-<h3 id="闭包与协程的使用">闭包与协程的使用</h3>
-<p>注意在循环中对索引值（index）使用闭包时，可能指向的是同一个变量，在闭包逻辑执行时，可能循环已经结束，得到的都是索引的最终值；可选的方法是创建局部变量（值复制），让闭包指向这些变量，或者用这些值启动协程</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">var values &#x3D; [5]int&#123;10, 11, 12, 13, 14&#125;
-func main() &#123;
-        &#x2F;&#x2F; ...
-    &#x2F;&#x2F; 版本 B：和 A 版本类似，但是通过调用闭包作为一个协程
-    for ix :&#x3D; range values &#123;
-        go func() &#123;
-            fmt.Print(ix, &quot; &quot;)
-        &#125;()
-    &#125;
-    fmt.Println()
-    time.Sleep(5e9)
-        &#x2F;&#x2F; 4 4 4 4 4
-    &#x2F;&#x2F; 版本 C：正确的处理方式
-    for ix :&#x3D; range values &#123;
-        go func(ix interface&#123;&#125;) &#123;
-            fmt.Print(ix, &quot; &quot;)
-        &#125;(ix)
-    &#125;
-    fmt.Println()
-    time.Sleep(5e9)
-        &#x2F;&#x2F; 1 0 3 4 2
-&#125;
-</code></pre>
-</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
-        var options = {
-            selector: '.gallery-item'
-        };
-        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
-        }</script>]]></content>
-      <categories>
-        <category>计算机科学</category>
-        <category>编程语言</category>
-        <category>Go</category>
-      </categories>
-      <tags>
-        <tag>编程语言</tag>
-        <tag>Go</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《The Way to Go》阅读笔记</title>
     <url>/p/e842888b11eb/</url>
     <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="chapter1">Chapter1</h1>
@@ -5148,6 +5063,91 @@ OOP</a>
 <p><strong>封装</strong>：简化的访问层级，首字母小写的标识符包内可见，首字母大写的标识符包外可见</p>
 <p><strong>继承</strong>：用内嵌类型这样“组合”的方式来实现</p>
 <p><strong>多态</strong>：用接口来实现，实现了接口规定方法集的类型实例，可以赋给接口类型变量</p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>计算机科学</category>
+        <category>编程语言</category>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>编程语言</tag>
+        <tag>Go</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《The Way to Go》Chapter16 常见陷阱与错误</title>
+    <url>/p/c629bb3de01f/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="chapter16-常见陷阱与错误">Chapter16 常见陷阱与错误</h1>
+<p>前15章提及了一些错误使用方式，就不再赘述，<a
+href="https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/16.0.md">https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/16.0.md</a>
+中也都列出了，重要的是有以下最佳实践：</p>
+<ol type="1">
+<li>使用正确的方式初始化值是切片slice的一个映射map</li>
+<li>使用逗号ok模式进行类型断言</li>
+<li>使用一个工厂函数创建并实例化自己的定义的类型</li>
+<li>只有当想要改变结构体时，使用结构体指针作为方法接收者，否则都使用结构体值类型</li>
+</ol>
+<span id="more"></span>
+<h3 id="误用短声明导致变量覆盖">误用短声明导致变量覆盖</h3>
+<p>如果在语句块内使用了短声明<code>:=</code>，那么语句块内的同名变量仅在语句块内有效，退出语句块后仍然是外部的变量生效</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">var remember bool &#x3D; false
+if something &#123;
+    remember :&#x3D; true &#x2F;&#x2F;错误
+&#125;
+&#x2F;&#x2F; 使用remember，得到的仍然是false
+
+&#x2F;&#x2F; ------
+&#x2F;&#x2F; 正确做法
+if something &#123;
+    remember &#x3D; true
+&#125;</code></pre>
+<h3 id="误用字符串">误用字符串</h3>
+<p>字符串是不可变的，使用 <code>a+=b</code>
+会导致大量内存开销和拷贝，考虑使用字符数组代替字符串，将字符串内容写入到缓存中，即
+<code>bytes.Buffer</code></p>
+<h3 id="错误地使用defer">错误地使用defer</h3>
+<p><code>defer</code>仅在函数返回时执行，在循环的结尾或者有限范围的代码内不会执行</p>
+<h3 id="何时使用new和make">何时使用new()和make()</h3>
+<p>重复内容：</p>
+<ol type="1">
+<li>对切片slice、映射map、通道channel使用make()</li>
+<li>对数组、结构体和值类型，使用new()</li>
+</ol>
+<h3
+id="不要对接口使用指针类型减少对值类型使用指针">不要对接口使用指针类型，减少对值类型使用指针</h3>
+<p>如使用接口的指针类型函数参数，这会导致编译错误 →
+接口本身已是一个指针</p>
+<p>尽管值类型的拷贝似乎是对内存的滥用，但值类型内存的栈上分配快速且开销小；如果传递值类型的指针会导致对象的创建，且移动到了堆上。</p>
+<h3 id="闭包与协程的使用">闭包与协程的使用</h3>
+<p>注意在循环中对索引值（index）使用闭包时，可能指向的是同一个变量，在闭包逻辑执行时，可能循环已经结束，得到的都是索引的最终值；可选的方法是创建局部变量（值复制），让闭包指向这些变量，或者用这些值启动协程</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">var values &#x3D; [5]int&#123;10, 11, 12, 13, 14&#125;
+func main() &#123;
+        &#x2F;&#x2F; ...
+    &#x2F;&#x2F; 版本 B：和 A 版本类似，但是通过调用闭包作为一个协程
+    for ix :&#x3D; range values &#123;
+        go func() &#123;
+            fmt.Print(ix, &quot; &quot;)
+        &#125;()
+    &#125;
+    fmt.Println()
+    time.Sleep(5e9)
+        &#x2F;&#x2F; 4 4 4 4 4
+    &#x2F;&#x2F; 版本 C：正确的处理方式
+    for ix :&#x3D; range values &#123;
+        go func(ix interface&#123;&#125;) &#123;
+            fmt.Print(ix, &quot; &quot;)
+        &#125;(ix)
+    &#125;
+    fmt.Println()
+    time.Sleep(5e9)
+        &#x2F;&#x2F; 1 0 3 4 2
+&#125;
+</code></pre>
 </div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
