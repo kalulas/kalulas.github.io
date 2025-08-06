@@ -5316,4 +5316,144 @@ AssetBundle中的应用以及实现原理，而没有太多涉及游戏运行时
         <tag>Unity</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Go语言中Interface Nil检查的隐蔽陷阱</title>
+    <url>/p/f877058db6e7/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h2 id="背景">背景</h2>
+<p>在Go语言开发过程中，开发者经常会遇到一个看似简单但实际很容易踩坑的问题：interface变量的nil检查。这个问题的根源在于Go语言中interface的内部实现机制。</p>
+<h2 id="问题描述">问题描述</h2>
+<p>在开发过程中，我们可能会遇到这样的情况：对一个interface变量进行nil检查通过了，但是在调用其方法时却发生了nil
+pointer dereference panic。</p>
+<p>让我们看一个具体的例子：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">type IAnimal interface &#123;
+    GetName() string
+&#125;
+
+type Cat struct &#123;
+    Name string
+    Age  int
+&#125;
+
+func (c *Cat) GetName() string &#123;
+    return c.Name &#x2F;&#x2F; &lt;- 访问结构体成员变量
+&#125;
+
+func CreateAnimal(animalType string) IAnimal &#123;
+    switch animalType &#123;
+    case &quot;cat&quot;:
+        &#x2F;&#x2F; 在某些错误条件下，可能返回nil指针
+        var cat *Cat &#x3D; nil
+        return cat &#x2F;&#x2F; &lt;- nil指针被赋值给interface
+    default:
+        return &amp;Cat&#123;Name: &quot;Unknown&quot;&#125;
+    &#125;
+&#125;
+
+func main() &#123;
+    animal :&#x3D; CreateAnimal(&quot;cat&quot;)  &#x2F;&#x2F; 返回包含nil指针的interface
+    if animal &#x3D;&#x3D; nil &#123;
+        &#x2F;&#x2F; ...
+        return &#x2F;&#x2F; &lt;- 这里做了 nil-check 但无法捕获到问题
+    &#125;
+    &#x2F;&#x2F; ...
+    animalName :&#x3D; animal.GetName() &#x2F;&#x2F; &lt;- 这里在 *Cat.GetName() 方法内部发生 nil pointer dereference !!
+&#125;</code></pre>
+<p>在这个例子中：</p>
+<ol type="1">
+<li><code>CreateAnimal</code>方法在特定条件下返回一个nil的<code>*Cat</code>指针，但将其赋值给了<code>IAnimal</code>接口</li>
+<li>我们对返回的interface变量进行了nil检查，但检查通过了</li>
+<li>当调用<code>GetName()</code>方法时，由于实际的<code>*Cat</code>指针为nil，访问<code>c.Name</code>时发生panic</li>
+</ol>
+<h2 id="问题根源">问题根源</h2>
+<p>在Go语言的变量实现中，<strong>对象的类型和值是分开存储的</strong>。因此，对interface变量无法准确地进行nil判断，因为interface变量在有类型信息时就是非空的，即使其内部包含的值是nil。</p>
+<p>官方FAQ页面也对这个问题有相关解释：<a
+href="https://go.dev/doc/faq#nil_error">https://go.dev/doc/faq#nil_error</a></p>
+<h2 id="示例演示">示例演示</h2>
+<p>让我们通过一个完整的示例来理解这个问题：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">type IDog interface &#123;
+    Bark()
+&#125;
+
+type GoldenRetriever struct &#123;
+    Name string
+&#125;
+
+func (retriever *GoldenRetriever) Bark() &#123;
+    fmt.Println(&quot;Woof!&quot;)
+&#125;
+
+func interfaceVariableAssignedWithNilPointerTest() &#123;
+    var retriever *GoldenRetriever &#x2F;&#x2F; this is nil for sure
+    var dog IDog
+    dog &#x3D; retriever
+    fmt.Printf(&quot;dog(IDog) is nil: %t \n&quot;, dog &#x3D;&#x3D; nil) &#x2F;&#x2F; print: false
+    myRetriever, toMyRetrieverOK :&#x3D; dog.(*GoldenRetriever)
+    fmt.Printf(&quot;dog(IDog) to *GoldenRetriever OK: %t \n&quot;, toMyRetrieverOK) &#x2F;&#x2F; print: true
+    fmt.Printf(&quot;myRetriever(*GoldenRetriever) is nil: %t \n&quot;, myRetriever &#x3D;&#x3D; nil) &#x2F;&#x2F; print: true
+    myRetriever.Bark()
+&#125;</code></pre>
+<p>运行结果：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">dog(IDog) is nil: false 
+dog(IDog) to *GoldenRetriever OK: true 
+myRetriever(*GoldenRetriever) is nil: true 
+Woof!</code></pre>
+<p>注意到这里的方法因为没有访问结构体的成员，这个方法甚至能正常执行并退出。</p>
+<p>但若进行以下调整：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">func (retriever *GoldenRetriever) Bark() &#123;
+    fmt.Printf(&quot;%s: Woof!\n&quot;, retriever.Name)
+&#125;</code></pre>
+<p>便可以重现开发时遇到的问题，此时会发生panic：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">panic: runtime error: invalid memory address or nil pointer dereference</code></pre>
+<h2 id="解决方案">解决方案</h2>
+<h3 id="解决方案a预防性检查推荐">解决方案A：预防性检查（推荐）</h3>
+<p>最优的解决方案是始终保证不将值为nil的pointer变量赋值给interface变量：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">func interfaceVariableAssignedWithNilPointerTest() &#123;
+    var retriever *GoldenRetriever &#x2F;&#x2F; this is nil for sure
+    var dog IDog
+    if retriever !&#x3D; nil &#123; &#x2F;&#x2F; &lt;- 保证不将 nil 值赋值给 interface
+        dog &#x3D; retriever
+    &#125;
+    &#x2F;&#x2F; ...
+&#125;</code></pre>
+<h3 id="解决方案b运行时检测">解决方案B：运行时检测</h3>
+<p>使用reflect来获取interface变量的确切值：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">refValue :&#x3D; reflect.ValueOf(dog)
+if refValue.Kind() &#x3D;&#x3D; reflect.Ptr &amp;&amp; refValue.IsNil() &#123;
+    fmt.Printf(&quot;dog(IDog) has the value of nil(*GoldenRetriever)! \n&quot;)
+&#125;</code></pre>
+<p>输出结果：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">dog(IDog) has the value of nil(*GoldenRetriever)! </code></pre>
+<h2 id="最佳实践">最佳实践</h2>
+<ol type="1">
+<li><strong>源头控制</strong>：在将指针赋值给interface变量之前，先检查指针是否为nil</li>
+<li><strong>类型断言检查</strong>：如果必须处理可能为nil的interface，使用类型断言先转换为具体类型再检查</li>
+<li><strong>代码审查</strong>：在代码审查中特别关注interface变量的nil检查逻辑</li>
+</ol>
+<h2 id="总结">总结</h2>
+<p>Go语言中interface的nil检查陷阱是由其内部实现机制决定的。interface变量包含类型信息和值信息，即使值为nil，只要有类型信息，interface变量本身就不为nil。</p>
+<p>理解这个机制有助于我们：</p>
+<ul>
+<li>避免在生产环境中遇到意外的panic</li>
+<li>编写更健壮的代码</li>
+<li>更好地理解Go语言的类型系统</li>
+</ul>
+<p>这个问题提醒我们，在使用interface时要特别谨慎，确保在源头就避免将nil指针赋值给interface变量，从而从根本上避免这类问题的发生。</p>
+<hr />
+<p><em>本文基于实际开发经验总结，希望能帮助Go开发者避免这个常见陷阱。</em></p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>计算机科学</category>
+        <category>编程语言</category>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>编程语言</tag>
+        <tag>Go</tag>
+      </tags>
+  </entry>
 </search>

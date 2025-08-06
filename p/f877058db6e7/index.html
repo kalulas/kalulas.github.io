@@ -19,28 +19,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.23.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":4,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="需求 目前项目组的开发工作流中，读取表格配置需要重复较多机械性的工作：首先是字段的名称和类型规定上有一定的心智负担，在多种使用渠道（如client，server）下可能要认为进行多次同步，其次是完成读表代码也比较模式化，理论上这些工作都可以由工具提供辅助并最终由工具生成代码。 功能概览  将表格的所有字段在工具中显示，由用户来自定义表格属性：字段的类型，用途和默认值 工具能够将表格属性以json形">
+    <meta name="description" content="在Go语言开发过程中，开发者经常会遇到一个看似简单但实际很容易踩坑的问题：interface变量的nil检查。这个问题的根源在于Go语言中interface的内部实现机制。在开发过程中，我们可能会遇到这样的情况：对一个interface变量进行nil检查通过了，但是在调用其方法时却发生了nil pointer dereference panic。让我们看一个具体的例子...">
 <meta property="og:type" content="article">
-<meta property="og:title" content="关于配置代码生成器的构想">
-<meta property="og:url" content="https://www.threegates.net/p/ab7a58fcc8d2/index.html">
+<meta property="og:title" content="Go语言中Interface Nil检查的隐蔽陷阱">
+<meta property="og:url" content="https://www.threegates.net/p/f877058db6e7/index.html">
 <meta property="og:site_name" content="ThreeGates">
-<meta property="og:description" content="需求 目前项目组的开发工作流中，读取表格配置需要重复较多机械性的工作：首先是字段的名称和类型规定上有一定的心智负担，在多种使用渠道（如client，server）下可能要认为进行多次同步，其次是完成读表代码也比较模式化，理论上这些工作都可以由工具提供辅助并最终由工具生成代码。 功能概览  将表格的所有字段在工具中显示，由用户来自定义表格属性：字段的类型，用途和默认值 工具能够将表格属性以json形">
+<meta property="og:description" content="在Go语言开发过程中，开发者经常会遇到一个看似简单但实际很容易踩坑的问题：interface变量的nil检查。这个问题的根源在于Go语言中interface的内部实现机制。在开发过程中，我们可能会遇到这样的情况：对一个interface变量进行nil检查通过了，但是在调用其方法时却发生了nil pointer dereference panic。让我们看一个具体的例子...">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-12-11T06:15:36.000Z">
-<meta property="article:modified_time" content="2025-01-27T11:37:08.000Z">
+<meta property="article:published_time" content="2025-08-06T14:44:26.000Z">
+<meta property="article:modified_time" content="2025-08-06T14:53:09.317Z">
 <meta property="article:author" content="Edward Chen 陈柏铭">
-<meta property="article:tag" content="记录">
-<meta property="article:tag" content="游戏开发工具">
+<meta property="article:tag" content="编程语言">
+<meta property="article:tag" content="Go">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://www.threegates.net/p/ab7a58fcc8d2/">
+<link rel="canonical" href="https://www.threegates.net/p/f877058db6e7/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.threegates.net/p/ab7a58fcc8d2/","path":"p/ab7a58fcc8d2/","title":"关于配置代码生成器的构想"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.threegates.net/p/f877058db6e7/","path":"p/f877058db6e7/","title":"Go语言中Interface Nil检查的隐蔽陷阱"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>关于配置代码生成器的构想 | ThreeGates</title>
+<title>Go语言中Interface Nil检查的隐蔽陷阱 | ThreeGates</title>
   
 
 
@@ -171,7 +171,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82"><span class="nav-number">1.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E6%A6%82%E8%A7%88"><span class="nav-number">2.</span> <span class="nav-text">功能概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">3.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3"><span class="nav-number">4.</span> <span class="nav-text">工具需求文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95"><span class="nav-number">5.</span> <span class="nav-text">开发记录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#configcodegenlib"><span class="nav-number">5.1.</span> <span class="nav-text">ConfigCodeGenLib</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#configcodegenconsole"><span class="nav-number">5.2.</span> <span class="nav-text">ConfigCodeGenConsole</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#configeditor"><span class="nav-number">5.3.</span> <span class="nav-text">ConfigEditor</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%BD%A2%E5%BC%8F%E8%AF%B4%E6%98%8E"><span class="nav-number">5.4.</span> <span class="nav-text">配置形式说明</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">2.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%A0%B9%E6%BA%90"><span class="nav-number">3.</span> <span class="nav-text">问题根源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E6%BC%94%E7%A4%BA"><span class="nav-number">4.</span> <span class="nav-text">示例演示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">5.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88a%E9%A2%84%E9%98%B2%E6%80%A7%E6%A3%80%E6%9F%A5%E6%8E%A8%E8%8D%90"><span class="nav-number">5.1.</span> <span class="nav-text">解决方案A：预防性检查（推荐）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88b%E8%BF%90%E8%A1%8C%E6%97%B6%E6%A3%80%E6%B5%8B"><span class="nav-number">5.2.</span> <span class="nav-text">解决方案B：运行时检测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">6.</span> <span class="nav-text">最佳实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -238,7 +238,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.threegates.net/p/ab7a58fcc8d2/">
+    <link itemprop="mainEntityOfPage" href="https://www.threegates.net/p/f877058db6e7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/disney-burger.jpg">
@@ -251,12 +251,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="关于配置代码生成器的构想 | ThreeGates">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="Go语言中Interface Nil检查的隐蔽陷阱 | ThreeGates">
+      <meta itemprop="description" content="在Go语言开发过程中，开发者经常会遇到一个看似简单但实际很容易踩坑的问题：interface变量的nil检查。这个问题的根源在于Go语言中interface的内部实现机制。在开发过程中，我们可能会遇到这样的情况：对一个interface变量进行nil检查通过了，但是在调用其方法时却发生了nil pointer dereference panic。让我们看一个具体的例子...">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          关于配置代码生成器的构想
+          Go语言中Interface Nil检查的隐蔽陷阱
         </h1>
 
         <div class="post-meta-container">
@@ -266,15 +266,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2021-12-11 14:15:36" itemprop="dateCreated datePublished" datetime="2021-12-11T14:15:36+08:00">2021-12-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-01-27 19:37:08" itemprop="dateModified" datetime="2025-01-27T19:37:08+08:00">2025-01-27</time>
+      <time title="创建时间：2025-08-06 22:44:26 / 修改时间：22:53:09" itemprop="dateCreated datePublished" datetime="2025-08-06T22:44:26+08:00">2025-08-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -282,11 +276,15 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E7%A8%BF/" itemprop="url" rel="index"><span itemprop="name">开发设计稿</span></a>
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">计算机科学</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E7%A8%BF/%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">工具</span></a>
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">编程语言</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Go/" itemprop="url" rel="index"><span itemprop="name">Go</span></a>
         </span>
     </span>
 
@@ -304,115 +302,145 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>850</span>
+      <span>1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
+      <span>4 分钟</span>
     </span>
 </div>
 
+            <div class="post-description">在Go语言开发过程中，开发者经常会遇到一个看似简单但实际很容易踩坑的问题：interface变量的nil检查。这个问题的根源在于Go语言中interface的内部实现机制。在开发过程中，我们可能会遇到这样的情况：对一个interface变量进行nil检查通过了，但是在调用其方法时却发生了nil pointer dereference panic。让我们看一个具体的例子...</div>
         </div>
       </header>
 
     
     
     
-    <div class="post-body" itemprop="articleBody"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h3 id="需求">需求</h3>
-<p>目前项目组的开发工作流中，读取表格配置需要重复较多机械性的工作：首先是字段的名称和类型规定上有一定的心智负担，在多种使用渠道（如client，server）下可能要认为进行多次同步，其次是完成读表代码也比较模式化，理论上这些工作都可以由工具提供辅助并最终由工具生成代码。</p>
-<h3 id="功能概览">功能概览</h3>
-<ol type="1">
-<li>将表格的所有字段在工具中显示，由用户来自定义表格属性：字段的类型，用途和默认值</li>
-<li>工具能够将表格属性以json形式序列化，以json文件形式进行持久化存储</li>
-<li>工具能够依据表格属性以及用户自定义的代码模板来生成读表代码</li>
-</ol>
-<h3 id="定义">定义</h3>
-<p>表名：即配置文件的文件名</p>
-<p>字段：即配置表中有实际用途的一列</p>
-<p>读表代码：并不提供从资源文件中读取配置数据的功能，仅提供从配置数据解析出对应类型字段的功能</p>
-<span id="more"></span>
-<h3 id="工具需求文档">工具需求文档</h3>
-<p>csv只是配置的一种形式，希望能兼容所有表格类型的配置</p>
-<ol type="1">
-<li>ConfigCodeGenLib：以dll的形式提供基础功能，包括
-<ol type="1">
-<li>指定表格的字段可以有有哪些用途（usage）和类型（type），包括值类型与容器类型</li>
-<li>指定生成代码模板目录和生成代码目录，生成读表代码时从这些目录读取</li>
-<li>传入配置文件（csv等）路径，生成表名到字段的属性列表的映射</li>
-<li>在不提供json文件时，仅所有字段的属性都设置为初始值</li>
-<li>在提供json文件时，从json文件中读出字段的客制化属性</li>
-<li>提供表名可以获取字段属性列表，对字段属性进行读写（编辑器支持）</li>
-<li>可以将表格的配置属性以json形式持久化</li>
-</ol></li>
-<li>ConfigEditor：依赖ConfigCodeGenLib的图形化工具，提供功能包括
-<ol type="1">
-<li>提供配置目录（json索引），生成所有表格配置的选取列表</li>
-<li>选取表格后，显示字段的编辑界面</li>
-<li>保存字段属性的编辑结果，生成json配置文件</li>
-<li>生成特定用途（usage）下的生成代码（由 Visual Studio
-提供的<strong>TextTransform</strong>以及T4 Text Template支持）</li>
-</ol></li>
-</ol>
-<h3 id="开发记录">开发记录</h3>
-<p>github传送门：https://github.com/kalulas/ConfigCodeGen</p>
-<p>libenv.json用于初始化library，appsettings.json用于初始化应用</p>
-<h4 id="configcodegenlib">ConfigCodeGenLib</h4>
-<p>.Net Standard 2.0 Library</p>
-<ol type="1">
-<li>Configuration：静态类，用于根据json文件配置工具环境</li>
-<li>ConfigManager：单例模式，用于根据配置文件和json文件生成运行时数据</li>
-</ol>
-<h4 id="configcodegenconsole">ConfigCodeGenConsole</h4>
-<p>.Net 6.0 调试Library用的Console</p>
-<h4 id="configeditor">ConfigEditor</h4>
-<p>.Net 6.0 基于<a
-target="_blank" rel="noopener" href="https://docs.avaloniaui.net/">Avalonia</a>的图形化编辑器</p>
-<h4 id="配置形式说明">配置形式说明</h4>
-<p>config.json</p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;
-    &quot;DataValueType&quot;: [&quot;int&quot;, &quot;float&quot;, &quot;boolean&quot;, &quot;string&quot;], &#x2F;&#x2F; 支持的值类型
-    &quot;DataCollectionType&quot;: [&quot;none&quot;, &quot;array&quot;, &quot;list&quot;], &#x2F;&#x2F; 支持的容器类型
-    &quot;ConfigJsonPath&quot;: &quot;ConfigJson\\&quot;, &#x2F;&#x2F; 相对路径，在该目录下存放描述配置的json
-    &quot;CodeTemplatePath&quot;: &quot;CodeTemplate\\&quot;, &#x2F;&#x2F; 相对路径，在该目录下代码生成模板
-    &quot;ConfigUsageType&quot;:&#123; &#x2F;&#x2F; 用户的自定义生成类型
-        &quot;client&quot;:&#123; 
-            &quot;CodeTemplateName&quot;: &quot;csharp.txt&quot;, &#x2F;&#x2F; 代码模板名
-            &quot;TargetPath&quot;: &quot;Generated-C#\\&quot;, &#x2F;&#x2F; 生成代码目录
-            &quot;TargetFileType&quot;: &quot;.cs&quot; &#x2F;&#x2F; 生成后缀名
-        &#125;,
-        &quot;server&quot;:&#123;
-            &quot;CodeTemplateName&quot;: &quot;go.txt&quot;,
-            &quot;TargetPath&quot;: &quot;Generated-go\\&quot;,
-            &quot;TargetFileType&quot;: &quot;.go&quot;
-        &#125;
+    <div class="post-body" itemprop="articleBody"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h2 id="背景">背景</h2>
+<p>在Go语言开发过程中，开发者经常会遇到一个看似简单但实际很容易踩坑的问题：interface变量的nil检查。这个问题的根源在于Go语言中interface的内部实现机制。</p>
+<h2 id="问题描述">问题描述</h2>
+<p>在开发过程中，我们可能会遇到这样的情况：对一个interface变量进行nil检查通过了，但是在调用其方法时却发生了nil
+pointer dereference panic。</p>
+<p>让我们看一个具体的例子：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">type IAnimal interface &#123;
+    GetName() string
+&#125;
+
+type Cat struct &#123;
+    Name string
+    Age  int
+&#125;
+
+func (c *Cat) GetName() string &#123;
+    return c.Name &#x2F;&#x2F; &lt;- 访问结构体成员变量
+&#125;
+
+func CreateAnimal(animalType string) IAnimal &#123;
+    switch animalType &#123;
+    case &quot;cat&quot;:
+        &#x2F;&#x2F; 在某些错误条件下，可能返回nil指针
+        var cat *Cat &#x3D; nil
+        return cat &#x2F;&#x2F; &lt;- nil指针被赋值给interface
+    default:
+        return &amp;Cat&#123;Name: &quot;Unknown&quot;&#125;
     &#125;
-&#125;</code></pre>
-<p>table.json（配置文件对应json）</p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;
-    &quot;ConfigName&quot; : &quot;AutoPickupConfig&quot;,
-    &quot;Usage&quot;      : [
-    ],
-    &quot;Attributes&quot; : [
-        &#123;
-            &quot;AttributeName&quot; : &quot;Id&quot;,
-            &quot;ValueType&quot;     : &quot;&quot;,
-            &quot;CollectionType&quot; : &quot;&quot;,
-            &quot;Usage&quot;          : [
-            ]
-        &#125;,
-        &#123;
-            &quot;AttributeName&quot; : &quot;Desc&quot;,
-            &quot;ValueType&quot;     : &quot;&quot;,
-            &quot;CollectionType&quot; : &quot;&quot;,
-            &quot;Usage&quot;          : [
-            ]
-        &#125;,
+&#125;
+
+func main() &#123;
+    animal :&#x3D; CreateAnimal(&quot;cat&quot;)  &#x2F;&#x2F; 返回包含nil指针的interface
+    if animal &#x3D;&#x3D; nil &#123;
         &#x2F;&#x2F; ...
-    ]
+        return &#x2F;&#x2F; &lt;- 这里做了 nil-check 但无法捕获到问题
+    &#125;
+    &#x2F;&#x2F; ...
+    animalName :&#x3D; animal.GetName() &#x2F;&#x2F; &lt;- 这里在 *Cat.GetName() 方法内部发生 nil pointer dereference !!
 &#125;</code></pre>
+<p>在这个例子中：</p>
+<ol type="1">
+<li><code>CreateAnimal</code>方法在特定条件下返回一个nil的<code>*Cat</code>指针，但将其赋值给了<code>IAnimal</code>接口</li>
+<li>我们对返回的interface变量进行了nil检查，但检查通过了</li>
+<li>当调用<code>GetName()</code>方法时，由于实际的<code>*Cat</code>指针为nil，访问<code>c.Name</code>时发生panic</li>
+</ol>
+<h2 id="问题根源">问题根源</h2>
+<p>在Go语言的变量实现中，<strong>对象的类型和值是分开存储的</strong>。因此，对interface变量无法准确地进行nil判断，因为interface变量在有类型信息时就是非空的，即使其内部包含的值是nil。</p>
+<p>官方FAQ页面也对这个问题有相关解释：<a
+target="_blank" rel="noopener" href="https://go.dev/doc/faq#nil_error">https://go.dev/doc/faq#nil_error</a></p>
+<h2 id="示例演示">示例演示</h2>
+<p>让我们通过一个完整的示例来理解这个问题：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">type IDog interface &#123;
+    Bark()
+&#125;
+
+type GoldenRetriever struct &#123;
+    Name string
+&#125;
+
+func (retriever *GoldenRetriever) Bark() &#123;
+    fmt.Println(&quot;Woof!&quot;)
+&#125;
+
+func interfaceVariableAssignedWithNilPointerTest() &#123;
+    var retriever *GoldenRetriever &#x2F;&#x2F; this is nil for sure
+    var dog IDog
+    dog &#x3D; retriever
+    fmt.Printf(&quot;dog(IDog) is nil: %t \n&quot;, dog &#x3D;&#x3D; nil) &#x2F;&#x2F; print: false
+    myRetriever, toMyRetrieverOK :&#x3D; dog.(*GoldenRetriever)
+    fmt.Printf(&quot;dog(IDog) to *GoldenRetriever OK: %t \n&quot;, toMyRetrieverOK) &#x2F;&#x2F; print: true
+    fmt.Printf(&quot;myRetriever(*GoldenRetriever) is nil: %t \n&quot;, myRetriever &#x3D;&#x3D; nil) &#x2F;&#x2F; print: true
+    myRetriever.Bark()
+&#125;</code></pre>
+<p>运行结果：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">dog(IDog) is nil: false 
+dog(IDog) to *GoldenRetriever OK: true 
+myRetriever(*GoldenRetriever) is nil: true 
+Woof!</code></pre>
+<p>注意到这里的方法因为没有访问结构体的成员，这个方法甚至能正常执行并退出。</p>
+<p>但若进行以下调整：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">func (retriever *GoldenRetriever) Bark() &#123;
+    fmt.Printf(&quot;%s: Woof!\n&quot;, retriever.Name)
+&#125;</code></pre>
+<p>便可以重现开发时遇到的问题，此时会发生panic：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">panic: runtime error: invalid memory address or nil pointer dereference</code></pre>
+<h2 id="解决方案">解决方案</h2>
+<h3 id="解决方案a预防性检查推荐">解决方案A：预防性检查（推荐）</h3>
+<p>最优的解决方案是始终保证不将值为nil的pointer变量赋值给interface变量：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">func interfaceVariableAssignedWithNilPointerTest() &#123;
+    var retriever *GoldenRetriever &#x2F;&#x2F; this is nil for sure
+    var dog IDog
+    if retriever !&#x3D; nil &#123; &#x2F;&#x2F; &lt;- 保证不将 nil 值赋值给 interface
+        dog &#x3D; retriever
+    &#125;
+    &#x2F;&#x2F; ...
+&#125;</code></pre>
+<h3 id="解决方案b运行时检测">解决方案B：运行时检测</h3>
+<p>使用reflect来获取interface变量的确切值：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">refValue :&#x3D; reflect.ValueOf(dog)
+if refValue.Kind() &#x3D;&#x3D; reflect.Ptr &amp;&amp; refValue.IsNil() &#123;
+    fmt.Printf(&quot;dog(IDog) has the value of nil(*GoldenRetriever)! \n&quot;)
+&#125;</code></pre>
+<p>输出结果：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">dog(IDog) has the value of nil(*GoldenRetriever)! </code></pre>
+<h2 id="最佳实践">最佳实践</h2>
+<ol type="1">
+<li><strong>源头控制</strong>：在将指针赋值给interface变量之前，先检查指针是否为nil</li>
+<li><strong>类型断言检查</strong>：如果必须处理可能为nil的interface，使用类型断言先转换为具体类型再检查</li>
+<li><strong>代码审查</strong>：在代码审查中特别关注interface变量的nil检查逻辑</li>
+</ol>
+<h2 id="总结">总结</h2>
+<p>Go语言中interface的nil检查陷阱是由其内部实现机制决定的。interface变量包含类型信息和值信息，即使值为nil，只要有类型信息，interface变量本身就不为nil。</p>
+<p>理解这个机制有助于我们：</p>
+<ul>
+<li>避免在生产环境中遇到意外的panic</li>
+<li>编写更健壮的代码</li>
+<li>更好地理解Go语言的类型系统</li>
+</ul>
+<p>这个问题提醒我们，在使用interface时要特别谨慎，确保在源头就避免将nil指针赋值给interface变量，从而从根本上避免这类问题的发生。</p>
+<hr />
+<p><em>本文基于实际开发经验总结，希望能帮助Go开发者避免这个常见陷阱。</em></p>
 </div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
@@ -435,7 +463,7 @@ target="_blank" rel="noopener" href="https://docs.avaloniaui.net/">Avalonia</a>�
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://www.threegates.net/p/ab7a58fcc8d2/" title="关于配置代码生成器的构想">https://www.threegates.net/p/ab7a58fcc8d2/</a>
+      <a href="https://www.threegates.net/p/f877058db6e7/" title="Go语言中Interface Nil检查的隐蔽陷阱">https://www.threegates.net/p/f877058db6e7/</a>
   </li>
   <li class="post-copyright-license">
       <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-SA</a> 许可协议。转载请注明出处！
@@ -444,22 +472,19 @@ target="_blank" rel="noopener" href="https://docs.avaloniaui.net/">Avalonia</a>�
 </div>
 
           <div class="post-tags">
-              <a href="/tags/%E8%AE%B0%E5%BD%95/" rel="tag"># 记录</a>
-              <a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" rel="tag"># 游戏开发工具</a>
+              <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" rel="tag"># 编程语言</a>
+              <a href="/tags/Go/" rel="tag"># Go</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/p/c9e58284d744/" rel="prev" title="使用hexo快速进行博客搭建">
-                  <i class="fa fa-angle-left"></i> 使用hexo快速进行博客搭建
+                <a href="/p/170a3913b9c4/" rel="prev" title="探究 .NET 源码系列：System.Text.StringBuilder">
+                  <i class="fa fa-angle-left"></i> 探究 .NET 源码系列：System.Text.StringBuilder
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/27ad02cebc90/" rel="next" title="unity中的原生对象与托管对象">
-                  unity中的原生对象与托管对象 <i class="fa fa-angle-right"></i>
-                </a>
             </div>
           </div>
     </footer>

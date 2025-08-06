@@ -6,7 +6,7 @@
   <link href="https://www.threegates.net/atom.xml" rel="self"/>
   
   <link href="https://www.threegates.net/"/>
-  <updated>2025-04-01T13:35:06.696Z</updated>
+  <updated>2025-08-06T14:53:09.317Z</updated>
   <id>https://www.threegates.net/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Go语言中Interface Nil检查的隐蔽陷阱</title>
+    <link href="https://www.threegates.net/p/f877058db6e7/"/>
+    <id>https://www.threegates.net/p/f877058db6e7/</id>
+    <published>2025-08-06T14:44:26.000Z</published>
+    <updated>2025-08-06T14:53:09.317Z</updated>
+    
+    
+    <summary type="html">在Go语言开发过程中，开发者经常会遇到一个看似简单但实际很容易踩坑的问题：interface变量的nil检查。这个问题的根源在于Go语言中interface的内部实现机制。在开发过程中，我们可能会遇到这样的情况：对一个interface变量进行nil检查通过了，但是在调用其方法时却发生了nil pointer dereference panic。让我们看一个具体的例子...</summary>
+    
+    
+    
+    <category term="计算机科学" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/"/>
+    
+    <category term="编程语言" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="Go" scheme="https://www.threegates.net/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Go/"/>
+    
+    
+    <category term="编程语言" scheme="https://www.threegates.net/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    <category term="Go" scheme="https://www.threegates.net/tags/Go/"/>
+    
+  </entry>
   
   <entry>
     <title>探究 .NET 源码系列：System.Text.StringBuilder</title>
