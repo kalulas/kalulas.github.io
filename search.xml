@@ -1,6 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>如何在2DUI上生成3D模型的包围盒</title>
+    <url>/p/8d386e7b10e2/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="前言">前言</h1>
+<p>在实际开发中遇到了这个问题，需要判断一个3D模型在专用相机下的显示范围，将其展示在UI上。在这里记录一下实现步骤和代码。</p>
+<h1 id="实现方法">实现方法</h1>
+<ol type="1">
+<li>从需要渲染的对象上获取Renderer组件（对于复杂的3D模型，一般得到的是<code>MeshRenderer</code>）</li>
+<li>根据Renderer组件的bounds.center，bounds.extents计算出世界坐标的八个点</li>
+<li>使用拍摄渲染对象的Camera调用接口<code>UnityEngine.Camera.WorldToScreenPoint</code>，获取八个点的屏幕坐标</li>
+<li>遍历八个点，取出x方向与y方向的最大最小值，返回一个<code>Vector4(minX, minY, maxX, maxY)</code>，这个坐标即是3D模型在2DUI上的显示包围盒（bounds）</li>
+<li>最后在UI层调整包围矩形的位置和大小即可</li>
+</ol>
+<span id="more"></span>
+<h1 id="代码示例">代码示例</h1>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">     &#x2F;&#x2F; Static Toolkit Code
+     &#x2F;&#x2F;&#x2F; &lt;summary&gt;
+     &#x2F;&#x2F;&#x2F; calculate all worldCorners with bounds, and translate into screen point(minX, minY, maxX, maxY)
+     &#x2F;&#x2F;&#x2F; &lt;&#x2F;summary&gt;
+     &#x2F;&#x2F;&#x2F; &lt;param name&#x3D;&quot;target&quot;&gt;&lt;&#x2F;param&gt;
+     &#x2F;&#x2F;&#x2F; &lt;param name&#x3D;&quot;camera&quot;&gt;&lt;&#x2F;param&gt;
+     &#x2F;&#x2F;&#x2F; &lt;param name&#x3D;&quot;zTest&quot;&gt;if ture, x and y will be set to 0 if z less or equal than 0 if screen point&lt;&#x2F;param&gt;
+     &#x2F;&#x2F;&#x2F; &lt;returns&gt;&lt;&#x2F;returns&gt;
+     public static Vector4 GetScreenCorners(GameObject target, UnityEngine.Camera camera, bool zTest)
+     &#123;
+         var renderer &#x3D; target.GetComponentInChildren&lt;Renderer&gt;();
+         if (renderer &#x3D;&#x3D; null)
+         &#123;
+             return Vector4.zero;
+         &#125;
+
+         var bounds &#x3D; renderer.bounds;
+         var center &#x3D; bounds.center;
+         var extents &#x3D; bounds.extents;
+
+         var worldCorners &#x3D; new[]
+         &#123;
+             new Vector3(center.x - extents.x, center.y - extents.y, center.z - extents.z),
+             new Vector3(center.x - extents.x, center.y - extents.y, center.z + extents.z),
+             new Vector3(center.x - extents.x, center.y + extents.y, center.z - extents.z),
+             new Vector3(center.x - extents.x, center.y + extents.y, center.z + extents.z),
+             new Vector3(center.x + extents.x, center.y - extents.y, center.z - extents.z),
+             new Vector3(center.x + extents.x, center.y - extents.y, center.z + extents.z),
+             new Vector3(center.x + extents.x, center.y + extents.y, center.z - extents.z),
+             new Vector3(center.x + extents.x, center.y + extents.y, center.z + extents.z),
+         &#125;;
+
+         var screenCornerArray &#x3D; new Vector3[8];
+         for (int i &#x3D; 0; i &lt; 8; i++)
+         &#123;
+             screenCornerArray[i] &#x3D; camera.WorldToScreenPoint(worldCorners[i]);
+             if (zTest &amp;&amp; screenCornerArray[i].z &lt;&#x3D; 0)
+             &#123;
+                 screenCornerArray[i].x &#x3D; 0;
+                 screenCornerArray[i].y &#x3D; 0;
+             &#125;
+         &#125;
+         
+         var minX &#x3D; float.MaxValue;
+         var minY &#x3D; float.MaxValue;
+         var maxX &#x3D; float.MinValue;
+         var maxY &#x3D; float.MinValue;
+         for (int i &#x3D; 0; i &lt; screenCornerArray.Length; i++)
+         &#123;
+             var corner &#x3D; screenCornerArray[i];
+             if (corner.x &lt; minX)
+             &#123;
+                 minX &#x3D; corner.x;
+             &#125;
+
+             if (corner.x &gt; maxX)
+             &#123;
+                 maxX &#x3D; corner.x;
+             &#125;
+
+             if (corner.y &lt; minY)
+             &#123;
+                 minY &#x3D; corner.y;
+             &#125;
+
+             if (corner.y &gt; maxY)
+             &#123;
+                 maxY &#x3D; corner.y;
+             &#125;
+         &#125;
+         
+         return new Vector4(minX, minY, maxX, maxY);
+     &#125;
+
+     &#x2F;&#x2F; UI Controller Code: Size adjustment
+     private void OnTargetObjectScreenBoundsUpdate(object[] param)
+     &#123;
+         if (param.Length !&#x3D; 2)
+         &#123;
+             return;
+         &#125;
+
+         var targetName &#x3D; (string) param[0];
+         var vec4 &#x3D; (Vector4) param[1];
+         &#x2F;&#x2F; Debug.LogFormat(&quot;[ScreenCornerController.OnTargetObjectScreenBoundsUpdate] &#123;0&#125;&quot;, vec4);
+         var centerX &#x3D; (vec4[2] + vec4[0]) &#x2F; 2;
+         var centerY &#x3D; (vec4[3] + vec4[1]) &#x2F; 2;
+         var width &#x3D; vec4[2] - vec4[0];
+         var height &#x3D; vec4[3] - vec4[1];
+         
+         &#x2F;&#x2F; selectorImage&lt;UnityEngine.UI.Image&gt;
+         selectorImage.rectTransform.anchoredPosition &#x3D; new Vector2(centerX, centerY);
+         selectorImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
+         selectorImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+&#x2F;&#x2F; selectorText&lt;TMPro.TextMeshProUGUI&gt;
+         selectorText.text &#x3D; $&quot;&#123;targetName&#125;\nminX:&#123;vec4[0]&#125; minY:&#123;vec4[1]&#125;\nmaxX:&#123;vec4[2]&#125; maxY:&#123;vec4[3]&#125;&quot;;
+         selectorImage.gameObject.SetActive(width &gt; 0.001f &amp;&amp; height &gt; 0.001f);
+     &#125;</code></pre>
+<h1 id="效果示例">效果示例</h1>
+<a href="/p/8d386e7b10e2/3bounds2.gif" class="gallery-item"><img src="/p/8d386e7b10e2/3bounds2.gif" class="" title="UI包围盒的大小随着兔子模型绕z轴旋转而变化"></a>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>游戏开发</category>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>游戏开发</tag>
+        <tag>计算机图形学</tag>
+        <tag>Unity</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Godot引擎贡献最佳实践</title>
     <url>/p/13902132f155/</url>
     <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><p>翻译自Godot引擎贡献指南，原文：<a
@@ -262,137 +393,6 @@ alt="System.Type类型的类型对象" /></a>
         <tag>C#</tag>
         <tag>.NET</tag>
         <tag>CLR</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>如何在2DUI上生成3D模型的包围盒</title>
-    <url>/p/8d386e7b10e2/</url>
-    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="前言">前言</h1>
-<p>在实际开发中遇到了这个问题，需要判断一个3D模型在专用相机下的显示范围，将其展示在UI上。在这里记录一下实现步骤和代码。</p>
-<h1 id="实现方法">实现方法</h1>
-<ol type="1">
-<li>从需要渲染的对象上获取Renderer组件（对于复杂的3D模型，一般得到的是<code>MeshRenderer</code>）</li>
-<li>根据Renderer组件的bounds.center，bounds.extents计算出世界坐标的八个点</li>
-<li>使用拍摄渲染对象的Camera调用接口<code>UnityEngine.Camera.WorldToScreenPoint</code>，获取八个点的屏幕坐标</li>
-<li>遍历八个点，取出x方向与y方向的最大最小值，返回一个<code>Vector4(minX, minY, maxX, maxY)</code>，这个坐标即是3D模型在2DUI上的显示包围盒（bounds）</li>
-<li>最后在UI层调整包围矩形的位置和大小即可</li>
-</ol>
-<span id="more"></span>
-<h1 id="代码示例">代码示例</h1>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">     &#x2F;&#x2F; Static Toolkit Code
-     &#x2F;&#x2F;&#x2F; &lt;summary&gt;
-     &#x2F;&#x2F;&#x2F; calculate all worldCorners with bounds, and translate into screen point(minX, minY, maxX, maxY)
-     &#x2F;&#x2F;&#x2F; &lt;&#x2F;summary&gt;
-     &#x2F;&#x2F;&#x2F; &lt;param name&#x3D;&quot;target&quot;&gt;&lt;&#x2F;param&gt;
-     &#x2F;&#x2F;&#x2F; &lt;param name&#x3D;&quot;camera&quot;&gt;&lt;&#x2F;param&gt;
-     &#x2F;&#x2F;&#x2F; &lt;param name&#x3D;&quot;zTest&quot;&gt;if ture, x and y will be set to 0 if z less or equal than 0 if screen point&lt;&#x2F;param&gt;
-     &#x2F;&#x2F;&#x2F; &lt;returns&gt;&lt;&#x2F;returns&gt;
-     public static Vector4 GetScreenCorners(GameObject target, UnityEngine.Camera camera, bool zTest)
-     &#123;
-         var renderer &#x3D; target.GetComponentInChildren&lt;Renderer&gt;();
-         if (renderer &#x3D;&#x3D; null)
-         &#123;
-             return Vector4.zero;
-         &#125;
-
-         var bounds &#x3D; renderer.bounds;
-         var center &#x3D; bounds.center;
-         var extents &#x3D; bounds.extents;
-
-         var worldCorners &#x3D; new[]
-         &#123;
-             new Vector3(center.x - extents.x, center.y - extents.y, center.z - extents.z),
-             new Vector3(center.x - extents.x, center.y - extents.y, center.z + extents.z),
-             new Vector3(center.x - extents.x, center.y + extents.y, center.z - extents.z),
-             new Vector3(center.x - extents.x, center.y + extents.y, center.z + extents.z),
-             new Vector3(center.x + extents.x, center.y - extents.y, center.z - extents.z),
-             new Vector3(center.x + extents.x, center.y - extents.y, center.z + extents.z),
-             new Vector3(center.x + extents.x, center.y + extents.y, center.z - extents.z),
-             new Vector3(center.x + extents.x, center.y + extents.y, center.z + extents.z),
-         &#125;;
-
-         var screenCornerArray &#x3D; new Vector3[8];
-         for (int i &#x3D; 0; i &lt; 8; i++)
-         &#123;
-             screenCornerArray[i] &#x3D; camera.WorldToScreenPoint(worldCorners[i]);
-             if (zTest &amp;&amp; screenCornerArray[i].z &lt;&#x3D; 0)
-             &#123;
-                 screenCornerArray[i].x &#x3D; 0;
-                 screenCornerArray[i].y &#x3D; 0;
-             &#125;
-         &#125;
-         
-         var minX &#x3D; float.MaxValue;
-         var minY &#x3D; float.MaxValue;
-         var maxX &#x3D; float.MinValue;
-         var maxY &#x3D; float.MinValue;
-         for (int i &#x3D; 0; i &lt; screenCornerArray.Length; i++)
-         &#123;
-             var corner &#x3D; screenCornerArray[i];
-             if (corner.x &lt; minX)
-             &#123;
-                 minX &#x3D; corner.x;
-             &#125;
-
-             if (corner.x &gt; maxX)
-             &#123;
-                 maxX &#x3D; corner.x;
-             &#125;
-
-             if (corner.y &lt; minY)
-             &#123;
-                 minY &#x3D; corner.y;
-             &#125;
-
-             if (corner.y &gt; maxY)
-             &#123;
-                 maxY &#x3D; corner.y;
-             &#125;
-         &#125;
-         
-         return new Vector4(minX, minY, maxX, maxY);
-     &#125;
-
-     &#x2F;&#x2F; UI Controller Code: Size adjustment
-     private void OnTargetObjectScreenBoundsUpdate(object[] param)
-     &#123;
-         if (param.Length !&#x3D; 2)
-         &#123;
-             return;
-         &#125;
-
-         var targetName &#x3D; (string) param[0];
-         var vec4 &#x3D; (Vector4) param[1];
-         &#x2F;&#x2F; Debug.LogFormat(&quot;[ScreenCornerController.OnTargetObjectScreenBoundsUpdate] &#123;0&#125;&quot;, vec4);
-         var centerX &#x3D; (vec4[2] + vec4[0]) &#x2F; 2;
-         var centerY &#x3D; (vec4[3] + vec4[1]) &#x2F; 2;
-         var width &#x3D; vec4[2] - vec4[0];
-         var height &#x3D; vec4[3] - vec4[1];
-         
-         &#x2F;&#x2F; selectorImage&lt;UnityEngine.UI.Image&gt;
-         selectorImage.rectTransform.anchoredPosition &#x3D; new Vector2(centerX, centerY);
-         selectorImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
-         selectorImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
-&#x2F;&#x2F; selectorText&lt;TMPro.TextMeshProUGUI&gt;
-         selectorText.text &#x3D; $&quot;&#123;targetName&#125;\nminX:&#123;vec4[0]&#125; minY:&#123;vec4[1]&#125;\nmaxX:&#123;vec4[2]&#125; maxY:&#123;vec4[3]&#125;&quot;;
-         selectorImage.gameObject.SetActive(width &gt; 0.001f &amp;&amp; height &gt; 0.001f);
-     &#125;</code></pre>
-<h1 id="效果示例">效果示例</h1>
-<a href="/p/8d386e7b10e2/3bounds2.gif" class="gallery-item"><img src="/p/8d386e7b10e2/3bounds2.gif" class="" title="UI包围盒的大小随着兔子模型绕z轴旋转而变化"></a>
-</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
-        var options = {
-            selector: '.gallery-item'
-        };
-        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
-        }</script>]]></content>
-      <categories>
-        <category>游戏开发</category>
-        <category>解决方案</category>
-      </categories>
-      <tags>
-        <tag>游戏开发</tag>
-        <tag>计算机图形学</tag>
-        <tag>Unity</tag>
       </tags>
   </entry>
   <entry>
@@ -1385,841 +1385,6 @@ href="https://github.com/mono/mono/blob/mono-2-0/mcs/class/corlib/System.Collect
       </tags>
   </entry>
   <entry>
-    <title>使用hexo快速进行博客搭建</title>
-    <url>/p/c9e58284d744/</url>
-    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="使用hexo快速进行博客搭建">使用hexo快速进行博客搭建</h1>
-<p>之前用wordpress搭建的博客需要折腾的东西太多，编辑器支持也不太好，没有Notion里记笔记来的方便（该说写个笔记两头传本来就麻烦），所以这次用hexo来搭建看看。</p>
-<p>部署选择了一键同步生成的网站内容到github
-repo上，使用pages来进行网站部署，markdown源文件再自己使用github来同步。</p>
-<p>这篇文章主要记录一下搭建网站的过程，还有给搭建的时候看的几个文档链接留个档。</p>
-<h2 id="hexo官方文档">hexo官方文档</h2>
-<ol type="1">
-<li>https://hexo.io/docs/</li>
-<li>https://hexo.io/zh-cn/docs/ 中文</li>
-</ol>
-<h2 id="hexo-常用命令">hexo 常用命令</h2>
-<p><strong>hexo new [layout] &lt;title&gt;</strong></p>
-<p>创建新文章，使用默认的layout：post</p>
-<p><strong>hexo generate</strong></p>
-<p>一般会使用缩写<code>hexo g</code>，并且加上<code>-d</code>参数来一键部署到远端（我目前是部署到了github上），也可以加上<code>-w</code>来观察文件变化，或是加上<code>-f</code>来重新生成</p>
-<p><strong>hexo server</strong></p>
-<p>虽然是部署到远端上，但是也可以在真正提交前先在本地简单地生成部署一下，看下文章显示是否有问题，或者用这个命令来协助debug（带上<code>--log</code>，以及<code>--debug</code>参数）</p>
-<p>加上<code>-p</code>来指定部署的端口，以防在特定环境下收到安全组影响</p>
-<p><strong>hexo deploy</strong></p>
-<p>部署到远端，这个命令也可以加上<code>-g</code>从而在部署之前生成</p>
-<p><strong>hexo clean</strong></p>
-<p>清除本地生成文件，遇到奇怪显示问题可以考虑先执行一下，再重新generate</p>
-<h2 id="部署相关github-pages">部署相关（github-pages）</h2>
-<ol type="1">
-<li>https://segmentfault.com/a/1190000017986794 一键部署</li>
-<li>https://zhuanlan.zhihu.com/p/26625249
-自定义域名步骤参考，免去之前使用wordpress自己部署网站时解析的麻烦</li>
-<li>https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/about-custom-domains-and-github-pages</li>
-</ol>
-<p>自定义域名在参考了上述链接后做了一点尝试：</p>
-<ol type="1">
-<li><p>首先域名还是使用的之前搭建wordpress用的threegates.net</p></li>
-<li><p>这里开始需要做的是将域名重定向到github-pages，所以实际上<strong>需要参考的比较权威的文档是上面的链接3</strong></p>
-<span id="more"></span></li>
-<li><p>github
-pages建议的是使用www域，说明了使用www域使pages也会为你进行apex
-domain（即不带www的threegates.net）的重定向。</p>
-<blockquote>
-<p>We recommend always using a <code>www</code> subdomain, even if you
-also use an apex domain. When you create a new site with an apex domain,
-we automatically attempt to secure the <code>www</code> subdomain for
-use when serving your site's content. If you configure a
-<code>www</code> subdomain, we automatically attempt to secure the
-associated apex domain.</p>
-</blockquote></li>
-<li><p>参考“Managing a custom domain for your GitHub Pages
-site”，首先在gtihub repo的settings-&gt;pages目录下配置Custom
-Domain，这里使用<code>www.threegates.net</code></p></li>
-<li><p>在阿里云的DNS解析中配置，这里应该将<code>www.threegates.net</code>使用CNAME形式解析到我的<code>kalulas.github.io</code>，且通过dig工具和后续文档可以得知，如果配置了<code>threegates.net</code>到github
-pages提供的四个DNS（见下文），github
-pages会帮你重定向到网页内容，而<code>www.threegates.net</code>配置到<code>kalulas.github.io</code>之后，后面其实也是解析到github.pages的DNS</p></li>
-<li><p>配置如图：<a href="/p/c9e58284d744/aliyun-dns-config.png" class="gallery-item"><img src="/p/c9e58284d744/aliyun-dns-config.png" class="" title="aliyun dns configuration"></a></p></li>
-<li><p>dig命令解析结果如下（threegates.net的解析情况也一样）：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ dig kalulas.github.io +nostats +nocomments +nocmd
-; &lt;&lt;&gt;&gt; DiG 9.11.4-P2-RedHat-9.11.4-26.P2.el7_9.8 &lt;&lt;&gt;&gt; kalulas.github.io +nostats +nocomments +nocmd
-;; global options: +cmd
-;kalulas.github.io.             IN      A
-kalulas.github.io.      3600    IN      A       185.199.109.153
-kalulas.github.io.      3600    IN      A       185.199.111.153
-kalulas.github.io.      3600    IN      A       185.199.110.153
-kalulas.github.io.      3600    IN      A       185.199.108.153</code></pre>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ dig www.threegates.net +nostats +nocomment
-; &lt;&lt;&gt;&gt; DiG 9.11.4-P2-RedHat-9.11.4-26.P2.el7_9.8 &lt;&lt;&gt;&gt; www.threegates.net +nostats +nocomment
-;; global options: +cmd
-;www.threegates.net.            IN      A
-www.threegates.net.     600     IN      CNAME   kalulas.github.io.
-kalulas.github.io.      3600    IN      A       185.199.109.153
-kalulas.github.io.      3600    IN      A       185.199.111.153
-kalulas.github.io.      3600    IN      A       185.199.110.153
-kalulas.github.io.      3600    IN      A       185.199.108.153</code></pre></li>
-<li><p>最后，在第4步中修改Custom
-Domain会添加一个文件CNAME到repo的根目录下，但是由于使用了一键部署，实际上同步的目录是~/.../your_site/.deploy_git，可以在这个目录下同步，但是这个目录是由~/.../your_site/source生成而来的，所以得在source下也创建一个CNAME文件，内容就用github为你生成的<code>www.threegates.net</code>即可</p></li>
-<li><p>最后，文档提示了可以enforce
-HTTPS，这个在后续也加上了，工作正常</p></li>
-</ol>
-<h2 id="网站主题">网站主题</h2>
-<p>当前维护中的next主题传送门：</p>
-<ol type="1">
-<li>官方文档：https://theme-next.js.org/docs/</li>
-<li>github：https://github.com/next-theme/hexo-theme-next</li>
-</ol>
-<p>当前threegates的hexo是使用npm的方式安装主题并更新的，参考</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ cd hexo-site
-$ npm install hexo-theme-next</code></pre>
-<p>一次在给博客的本地搜索功能debug的时候发现了现在next其实同时存在着多个github项目，和这些项目中指向的多个文档，导致容易阅读到一些与当前版本的不匹配内容...这边还是留意下，以上文中提供的两个链接为参考（当前next版本v8.14.1）。</p>
-<figure>
-<a href="https://s2.loli.net/2023/01/22/b8hiH1C3gnxD2Yo.png" title="记录于NexT v8.14.1" class="gallery-item"><img src="https://s2.loli.net/2023/01/22/b8hiH1C3gnxD2Yo.png"
-alt="记录于NexT v8.14.1" /></a>
-<figcaption aria-hidden="true">记录于NexT v8.14.1</figcaption>
-</figure>
-<p>顺带一提，我发现的停止维护项目有：</p>
-<ol type="1">
-<li><a href="https://github.com/theme-next/hexo-theme-next" title="" target="">theme-next&#x2F;hexo-theme-next</a>
-注意这里用户名是<code>theme-next</code>而不是上文的<code>next-theme</code>...这个仓库release停留在了v7.8.0</li>
-<li><a href="https://github.com/iissnan/hexo-theme-next" title="" target="">iissnan&#x2F;hexo-theme-next</a>
-这个仓库中文内容很多，但是也已经停止维护，release停留在v5.1.4</li>
-</ol>
-<h3 id="next-主题配置">NexT 主题配置</h3>
-<p>以前我们会将主题的配置内容放在
-<code>themes/[theme_name]/_config.yml</code>，又或者放在
-<code>node_modules/[theme_module_name]/_config.yml</code>
-中，但是这样在升级主题时，我们的配置内容会被覆盖。实际上今年把博客的部署路径从
-alicloud 挪到我个人笔记本的尝试中，就遇到了一些相关的问题。</p>
-<p>从 hexo 5.0 起，hexo
-就提供了将主题配置也放在网站/博客根目录的选择，可以参考<a
-href="https://hexo.io/docs/configuration.html#Using-an-Alternate-Config">这篇文章</a>。现在，我们可以选择在根目录下创建一个
-<strong>_config.next.yml</strong>
-，并将原配置内容复制到这个新的配置文件中即可。</p>
-<p>当然 hexo 还提供了其他方案，如在 <strong>_config.yml</strong> 下新增
-theme_config 项，在这里为了更清晰的版本历史，我们选择了独立 yml
-文件的方式。</p>
-<p>当 hexo 在生成网站静态文件时，这些配置项会被合并。优先级顺序为：</p>
-<ol type="1">
-<li>网站根目录 <strong>_config.yml</strong> 中的 theme_config 项</li>
-<li>网站根目录下独立的 <strong>_config.[theme].yml</strong>
-配置文件</li>
-<li><strong>themes</strong> 目录下的配置文件</li>
-</ol>
-<h3 id="调整代码配色主题">调整代码配色主题</h3>
-<p>threegates 使用的代码配色/高亮引擎是 prism，在 hexo 配置文件
-<strong>_config.yml</strong> 中有如下配置</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"># hexo 7.0 起需要指定 highlighter
-syntax_highlighter: prismjs
-# highlight 部分也在这里，不同不重要
-prismjs:
-  preprocess: false
-  line_number: true
-  line_threshold: 0 # 可以配置超过多少行才显示行号
-  tab_replace: &#39;    &#39;</code></pre>
-<p>在主题配置文件 <strong>_config.next.yml</strong> 有如下配置</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">codeblock:
-  # Code Highlight theme
-  # All available themes: https:&#x2F;&#x2F;theme-next.js.org&#x2F;highlight&#x2F;
-  # theme 部分配置可以无视
-  # ...
-  # prism 块下设置不同颜色主题下的代码配色方案
-  prism:
-    light: prism-tomorrow
-    dark: prism-tomorrow
-  # Add copy button on codeblock
-  copy_button:
-    enable: true
-    # Available values: default | flat | mac
-    style: default
-  # Fold code block
-  # NexT 新版本提供的折叠过长代码功能，旧版本配置会在这里因为缺少配置触发一个 Error...
-  fold:
-    enable: true
-    height: 500</code></pre>
-<p>如果需要预览配色方案的效果，可以前往<a
-href="https://theme-next.js.org/highlight/">这个网站</a></p>
-<h3 id="调整内联代码布局">调整内联代码布局</h3>
-<p>由于内联代码的默认 style 为
-<code>overflow-wrap: break-word</code>，生成出的博客内容为了保证内联代码块内容在同一行，从而导致部分行的中文内容无法填充完整，且间隔被均等分，看着特别不舒服。</p>
-<p>最早的做法是直接修改
-<code>node_modules/hexo-theme-next/source/css/_mixins.styl</code>，但这样每次重新
-<code>npm install</code> 或者更新主题，修改都会被覆盖。2026
-年把博客的构建环境迁移到自己 Windows PC 上遇到这个问题，于是改为使用
-NexT 提供的 <code>custom_file_path</code> 注入一份自定义的 mixin
-文件，跟着博客仓库一起维护。</p>
-<p>在 <strong>_config.next.yml</strong> 中启用 mixin 注入：</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">custom_file_path:
-  mixin: source&#x2F;_data&#x2F;mixins.styl</code></pre>
-<p>然后在 <strong>source/_data/mixins.styl</strong> 中重新定义
-<code>word-wrap()</code>：</p>
-<pre class="line-numbers language-stylus" data-language="stylus"><code class="language-stylus">&#x2F;&#x2F; source&#x2F;_data&#x2F;mixins.styl
-word-wrap() &#123;
-  word-break: break-all;
-&#125;</code></pre>
-<p>NexT 的 <strong>main.styl</strong> 会先引入主题自带的
-<strong>_mixins.styl</strong>，再引入通过
-<code>custom_file_path.mixin</code> 注入的文件，之后才加载用到这些 mixin
-的样式，所以这里的定义会覆盖主题原有的定义。</p>
-<h3 id="样式layout自定义">样式（layout）自定义</h3>
-<p>阅读了hexo和NEXT的模板相关文章，简单看了下关联的njx，ejs文件，想通过is_post()或者is_home()的helper方法实现一下仅在文章页显示阅读进度条的效果，但是似乎返回结果不正确，现在在next的github页提了issue还在等回复。</p>
-<p>njx中的语法与ejs不完全相同，简单参考了非官方文档：</p>
-<ol type="1">
-<li>https://carrion.cc/20210201/85bc1840d3ea.html
-核对了一下njk中的helper语法</li>
-</ol>
-<h3 id="图片墙">图片墙</h3>
-<p>选用了hexo-light-gallery插件，传送门
-https://github.com/lzane/hexo-light-gallery</p>
-<p>插件本身会给每一篇文章都包上一层 gallery 的 div，并注入 lightgallery
-的 js 和 css，即使文章里一张图片都没有。最早我是直接修改
-<code>node_modules/hexo-light-gallery/src/renderer.js</code>，加了一个找不到图片就直接返回的判断，同样存在重装依赖后修改丢失的问题。</p>
-<p>（当时还修了一处 <code>'&gt;'</code> 和 <code>'"'</code>
-顺序写反导致的结构破坏，npm 上当前的 1.0.2
-版本里这处已经是正确的了。）</p>
-<p>现在的做法是利用 Hexo 的加载顺序：Hexo 会先加载 node_modules
-里的插件，再自动加载站点根目录 <strong>scripts/</strong>
-下的脚本。所以可以在脚本里先注销插件注册的
-<code>after_post_render</code> filter，再注册一个先检查文章里有没有
-<code>&lt;img&gt;</code> 的版本：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; scripts&#x2F;lightgallery-fix.js
-&#39;use strict&#39;;
-
-const &#123; render &#125; &#x3D; require(&#39;hexo-light-gallery&#x2F;src&#x2F;renderer&#39;);
-
-hexo.extend.filter.unregister(&#39;after_post_render&#39;, render);
-hexo.extend.filter.register(&#39;after_post_render&#39;, function(data) &#123;
-  &#x2F;&#x2F; 如果找不到图片标签，就不执行插件的逻辑，不会在不需要的地方增加多余内容
-  if (!&#x2F;&lt;img [^&gt;]+&gt;&#x2F;.test(data.content)) return;
-  return render.call(this, data);
-&#125;, 9);</code></pre>
-<p>在lightgallery提供的插件（插件的插件...）中补充了三个插件：</p>
-<ol type="1">
-<li>lg-thumbnail: 提供图片的缩略图</li>
-<li>lg-zoom: 提供图片缩放功能</li>
-<li>lg-fullscreen: 提供图片全屏预览功能</li>
-</ol>
-<p>三个插件都通过npm下载了.min.js文件，放置于/source/js/下，现在的<strong>_config.yml</strong>如下</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"># Plugin: lightgallery https:&#x2F;&#x2F;github.com&#x2F;lzane&#x2F;hexo-light-gallery
-lightgallery:
-# if you don&#39;t specify the css or js source, the default cdn will be used.
-# css: # css source url
-# js: #js source url
-# sorry that I can not find any cdn hosting following plugins,
-# please self-host the plugin js and add url here
-  plugins:
-    lg-thumbnail: &#x2F;js&#x2F;lg-thumbnail.min.js
-    lg-zoom: &#x2F;js&#x2F;lg-zoom.min.js
-#   lg-autoplay:
-    lg-fullscreen: &#x2F;js&#x2F;lg-fullscreen.min.js
-#   lg-pager:
-</code></pre>
-<h3 id="基于模板进行html生成">基于模板进行html生成</h3>
-<p>很在意html中的一些js代码资源标签&lt;script&gt;是怎么在生成时加上的，如图上的这种</p>
-<a href="/p/c9e58284d744/image-20211224175532445.png" class="gallery-item"><img src="/p/c9e58284d744/image-20211224175532445.png" class="" title="html中的代码标签示例"></a>
-<p>要知道它的生成机制才方便做一些js代码上传，还有cdn上的资源放到本地这样的操作，进行了一些排查大致定位下下面这些信息：</p>
-<ol type="1">
-<li><strong>index.njk</strong>文件里利用了<code>next_js()</code>这个方法来加载next提供的静态js文件，如
-comments.js，utils.js 等等</li>
-</ol>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; hexo-site-home&#x2F;node_modules&#x2F;hexo-theme-next&#x2F;layout&#x2F;_scripts&#x2F;index.njk
-
-&#123;%- include &#39;vendors.njk&#39; -%&#125;
-
-&#123;&#123;- next_js(&#39;comments.js&#39;) &#125;&#125;
-
-&#123;&#123;- next_js(&#39;utils.js&#39;) &#125;&#125;
-&#123;%- if theme.motion.enable %&#125;
-  &#123;&#123;- next_js(&#39;motion.js&#39;) &#125;&#125;
-&#123;%- endif %&#125;
-
-&#123;%- if theme.scheme &#x3D;&#x3D;&#x3D; &#39;Muse&#39; or theme.scheme &#x3D;&#x3D;&#x3D; &#39;Mist&#39; %&#125;
-  &#123;&#123;- next_js(&#39;schemes&#x2F;muse.js&#39;) &#125;&#125;
-&#123;%- endif %&#125;
-
-&#123;&#123;- next_js(&#39;next-boot.js&#39;) &#125;&#125;
-&#123;%- if theme.bookmark.enable %&#125;
-  &#123;&#123;- next_js(&#39;bookmark.js&#39;) &#125;&#125;
-&#123;%- endif %&#125;
-&#123;%- if theme.pjax %&#125;
-  &#123;&#123;- next_js(&#39;pjax.js&#39;) &#125;&#125;
-&#123;%- endif %&#125;
-</code></pre>
-<p>而在上面代码块的第一行看到了<code>&#123;%- include 'vendors.njk' -%&#125;</code>，找到对应的文件<strong>vendors.njk</strong>下可以看到</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; hexo-site-home&#x2F;node_modules&#x2F;hexo-theme-next&#x2F;layout&#x2F;_scripts&#x2F;vendors.njk
-
-&#123;%- if theme.canvas_ribbon.enable %&#125;
-  &lt;script size&#x3D;&quot;&#123;&#123; theme.canvas_ribbon.size &#125;&#125;&quot; alpha&#x3D;&quot;&#123;&#123; theme.canvas_ribbon.alpha &#125;&#125;&quot; zIndex&#x3D;&quot;&#123;&#123; theme.canvas_ribbon.zIndex &#125;&#125;&quot; src&#x3D;&quot;&#123;&#123; theme.vendors.canvas_ribbon.url     &#125;&#125;&quot;&gt;&lt;&#x2F;script&gt;
-&#123;%- endif %&#125;
-
-&#123;%- for name in js_vendors() %&#125;
-  &#123;&#123; next_vendors(name) &#125;&#125;
-&#123;%- endfor %&#125;
-</code></pre>
-<p><code>&#123;%- for name in js_vendors() %&#125;</code>遍历的就是<code>js_vendors()</code>方法返回的所有js资源标识符</p>
-<ol start="2" type="1">
-<li><code>js_vendors()</code>这个方法是在<strong>next-vendors.js</strong>中注册的，像prism-core的这些cdn上获取的js资源，先通过配置来决定是否push到返回的vendors列表中，逻辑如下</li>
-</ol>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; hexo-site-home&#x2F;node_modules&#x2F;hexo-theme-next&#x2F;scripts&#x2F;helpers&#x2F;next-vendors.js
-
-hexo.extend.helper.register(&#39;js_vendors&#39;, function() &#123;
-  const &#123; config, theme &#125; &#x3D; this;
-  const vendors &#x3D; [&#39;anime&#39;];
-  if (config.prismjs.enable &amp;&amp; !config.prismjs.preprocess) &#123;
-    vendors.push(&#39;prism&#39;, &#39;prism_autoloader&#39;);
-   if (config.prismjs.line_number) &#123;
-     vendors.push(&#39;prism_line_numbers&#39;);
-    &#125;
-  &#125;
-  if (theme.pjax) &#123;
-    vendors.push(&#39;pjax&#39;);
-  &#125;
-  if (theme.fancybox) &#123;
-    vendors.push(&#39;jquery&#39;, &#39;fancybox_js&#39;);
-  &#125;
-  if (theme.mediumzoom) &#123;
-    vendors.push(&#39;mediumzoom&#39;);
-  &#125;
-  if (theme.lazyload) &#123;
-    vendors.push(&#39;lazyload&#39;);
-  &#125;
-  if (theme.pangu) &#123;
-    vendors.push(&#39;pangu&#39;);
-  &#125;
-  return vendors;
-&#125;);
-</code></pre>
-<p>从上文可以看到<code>vendors.njk</code>会遍历js_vendors列表，并且用拿到的每一个vendor_name去调用方法<code>next_vendors</code>，而这个方法就是在<strong>engine.js</strong>中注册的。</p>
-<p><code>next_vendors</code>的逻辑就是查找vendor的相应配置，vendors字段中的内容是从主题目录下的<strong>_vendors.yml</strong>这个yaml配置文件中解析出来的。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; hexo-site-home&#x2F;node_modules&#x2F;hexo-theme-next&#x2F;scripts&#x2F;helpers&#x2F;engine.js
-&#x2F;&#x2F; ...
-hexo.extend.helper.register(&#39;next_vendors&#39;, function(name) &#123;
-  const &#123; url, integrity &#125; &#x3D; this.theme.vendors[name];
-  const type &#x3D; url.endsWith(&#39;css&#39;) ? &#39;css&#39; : &#39;js&#39;;
-  if (type &#x3D;&#x3D;&#x3D; &#39;css&#39;) &#123;
-    if (integrity) return &#96;&lt;link rel&#x3D;&quot;stylesheet&quot; href&#x3D;&quot;$&#123;url&#125;&quot; integrity&#x3D;&quot;$&#123;integrity&#125;&quot; crossorigin&#x3D;&quot;anonymous&quot;&gt;&#96;;
-    return &#96;&lt;link rel&#x3D;&quot;stylesheet&quot; href&#x3D;&quot;$&#123;url&#125;&quot;&gt;&#96;;
-  &#125;
-  if (integrity) return &#96;&lt;script src&#x3D;&quot;$&#123;url&#125;&quot; integrity&#x3D;&quot;$&#123;integrity&#125;&quot; crossorigin&#x3D;&quot;anonymous&quot;&gt;&lt;&#x2F;script&gt;&#96;;
-  return &#96;&lt;script src&#x3D;&quot;$&#123;url&#125;&quot;&gt;&lt;&#x2F;script&gt;&#96;;
-&#125;);
-</code></pre>
-<ol start="3" type="1">
-<li>所以如果想加一个js文件资源引用，可以考虑作为一个静态资源加入项目，并在<strong>index.njk</strong>就利用<code>next_js()</code>加载；也可以考虑在<strong>next-vendors.js</strong>代码中将这个js文件的标识符push到<code>vendors</code>里面，然后再到theme（也就是我这里使用的NexT）的<strong>_vendors.yml</strong>文件里面去注册这个标识符对应的文件路径，版本等，这样想要通过cdn加载js文件也方便。</li>
-<li>实际上针对上述方法二，这个<strong>_vendors.yml</strong>是可以使用这个项目
-<a href="https://github.com/next-theme/plugins" title="" target="">next-theme-plugins</a>
-生成的，我自己试过也成功了。不过对于一些小改动（比如为prism添加一个prism-download-button.js），自己做下<strong>_vendors.yml</strong>的修改，加入一个条目也是很简单的，不需要安装那么多依赖项。</li>
-</ol>
-<h2 id="资源文件夹">资源文件夹</h2>
-<p>网站需要显示一些像网站图标和用户画像，还有文章中的截图这样的资源，参考hexo文档，最后采用的方式是将配置项<code>post_asset_folder</code>设置为true，这会让hexo在新建post时为这个post新建一个同名资源文件夹。</p>
-<p>现在我的博文中更多是直接使用了 <code>&#123;% asset_img [img_name_in_asset_folder] description %&#125;</code>
-语法，已经不太信任外部图床了，时间一久总会挂的 ...</p>
-<p><strong>_config.yml</strong>配置形式如下：</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">post_asset_folder: true</code></pre>
-<h2 id="hexo以及next的更新">hexo以及next的更新</h2>
-<p>从各自的官方文档或者 npm 都能查看到当前的最新版本，据说 NexT
-是每个月都会发布新版本的，遇到问题都可以留意一下是不是最新版本（当然也要做好回退的准备）。</p>
-<p>执行 npm 命令来检查 packages 是否有新版本：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ npm outdated</code></pre>
-<p>使用 npm 进行 package 更新（当然，hexo 本身也是一个
-package），并使用参数 <code>--save</code> 将改动保存到
-package.json：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ npm update &lt;package-name&gt; --save</code></pre>
-<p>或者使用 npm-check-updates，来将 package.json
-更新到最新版本，再一次性全部安装最新版</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ npm i npm-check-updates -g # 全局安装 npm-check-updates
-$ ncu # 检查版本更新，类似 npm outdated，ncu 是 npm-check-updates 的别名
-$ ncu -u # 更新package.json
-$ ncu package_name [-u] # 仅检查单个&#x2F;多个包的更新，添加参数来应用到 package.json
-$ npm install # npm按照更新后的package.json进行安装</code></pre>
-<p>输出如下：</p>
-<figure>
-<a href="https://s2.loli.net/2023/01/22/eLjDP1XYNJ6o73t.png" title="使用npm-check-updates进行npm package更新" class="gallery-item"><img src="https://s2.loli.net/2023/01/22/eLjDP1XYNJ6o73t.png"
-alt="使用npm-check-updates进行npm package更新" /></a>
-<figcaption aria-hidden="true">使用npm-check-updates进行npm
-package更新</figcaption>
-</figure>
-</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
-        var options = {
-            selector: '.gallery-item'
-        };
-        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
-        }</script>]]></content>
-      <categories>
-        <category>博客搭建</category>
-        <category>hexo</category>
-      </categories>
-      <tags>
-        <tag>记录</tag>
-        <tag>博客搭建</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>games101-lecture14 笔记</title>
-    <url>/p/9f45e6ee4d77/</url>
-    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="today">Today</h1>
-<ul>
-<li>Acceleration 加速结构：使用AABB来加速光线追踪
-<ul>
-<li>Uniform grids</li>
-<li>Spatial partitions</li>
-</ul></li>
-<li>Basic radiometry（辐射度量学）
-<ul>
-<li>进阶：不同于Whitted-Style的光线追踪</li>
-</ul></li>
-</ul>
-<h1 id="光线追踪加速结构">光线追踪加速结构</h1>
-<h2 id="均匀网格方案uniform-grids">均匀网格方案：Uniform grids</h2>
-<p><strong>预处理：构建加速网格</strong></p>
-<p>找一个包围盒，在包围盒中构建均匀网格，记录每一个与物体相交的网格</p>
-<p><strong>光线与场景求交</strong></p>
-<p>射出一道光线，让光线与格子求交，若格子内存在物体，再让光线与物体求交：光线与格子求交是快速的，而与实际物体求交是很慢的，通过这样的理念来优化</p>
-<p><strong>经验告诉我们</strong></p>
-<p>当格子数等于C * 对象数时，结果会比较好；三维空间下常数C可以取27</p>
-<p><strong>缺陷</strong></p>
-<p>当细节物品在空间中分布不均匀时，存在大规模集中、大规模空白：”Teapot
-in a stadium” problem</p>
-<p>*在一些场景下还是好用的，仍有在使用</p>
-<h2 id="空间划分-spatial-partitions">空间划分 Spatial partitions</h2>
-<figure>
-<a href="https://s2.loli.net/2023/09/17/QPXy1Yma5cLDHVo.png" title="空间划分树结构" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/QPXy1Yma5cLDHVo.png"
-alt="空间划分树结构" /></a>
-<figcaption aria-hidden="true">空间划分树结构</figcaption>
-</figure>
-<span id="more"></span>
-<p><strong>Oct-Tree
-八叉树</strong>：三维空间划分为8份，在格子类数量足够少，或者划分次数足够多时不再划分。</p>
-<p>想让空间得到划分，但是不想随着维度不断提高子节点指数级增长，发明了KD-Tree。</p>
-<p><strong>KD-Tree（本次重点）</strong>：每次对格子只进行一次划分，划分为两个区域；每次进行划分时采取与上一次不同的轴向，可以得到尽可能均匀的划分结果。（Root:
-axis-x，layer1: axis-y，layer2: axis-z）</p>
-<p><strong>BSP-Tree</strong>：同样是空间二分方法，区别在于不是水平竖直地进行划分</p>
-<aside>
-⚠️
-同样像上文的Uniform-Grids，空间划分是在光线追踪前的预处理，先建立KD-tree
-</aside>
-<figure>
-<a href="https://s2.loli.net/2023/09/17/DXlbzgTZG3AHxYL.png" title="KD-tree划分结果" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/DXlbzgTZG3AHxYL.png"
-alt="KD-tree划分结果" /></a>
-<figcaption aria-hidden="true">KD-tree划分结果</figcaption>
-</figure>
-<h3 id="kd-trees-数据结构">KD-Trees 数据结构</h3>
-<p>中间节点存储（A，B，C）：</p>
-<ul>
-<li>划分使用的轴（x, y, z）</li>
-<li>划分的位置（在轴向上的什么地方划分）</li>
-<li>所有子节点指针</li>
-<li>注意中间节点不存储对象（objects）</li>
-</ul>
-<p>叶子节点存储（1，2，3）：</p>
-<ul>
-<li>对象的列表存储</li>
-</ul>
-<h2 id="遍历kd-tree进行求交">遍历KD-Tree进行求交</h2>
-<p>如果光线与中间节点代表的区域相交，就意味着光线也要与中间节点划分出的子节点判定相交；递归此过程，最后达到一个叶子节点，就和叶子节点中的所有对象求交。</p>
-<h3 id="进阶问题">进阶问题</h3>
-<p><strong>如何判定对象与包围盒的相交关系</strong></p>
-<p>需要考虑三角形与盒子的求交</p>
-<p>空间划分涉及的问题，如何判断对象是否在某个划分的格子内？</p>
-<p>或者，某个划分出来的各自内有哪些对象？</p>
-<p>虽然有现成的算法，但是不容易写对，在一些情境下容易犯错。</p>
-<p><strong>对象重复出现在不同的划分格子中</strong></p>
-<figure>
-<a href="https://s2.loli.net/2023/09/17/2mgejXkSHtpMG9s.png" title="重复出现在不同分区中的物体" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/2mgejXkSHtpMG9s.png"
-alt="重复出现在不同分区中的物体" /></a>
-<figcaption aria-hidden="true">重复出现在不同分区中的物体</figcaption>
-</figure>
-<p>如图中的这个圆，出现在分区3，4，5内，即这三个分区内会重复出现这个圆</p>
-<h2 id="object-partitions-bounding-volumn-hierarchybvh">Object
-Partitions &amp; Bounding Volumn Hierarchy(BVH)</h2>
-<p>解决了上述KD-Tree的两个问题，目前图形学更受欢迎的结构。</p>
-<p>划分的不是空间，而是把物体分为两个部分；如下例，把一个盒子内的三角形分成了两个部分（基于某种标准），之后再分别计算两个部分的包围盒。</p>
-<figure>
-<a href="https://s2.loli.net/2023/09/17/32mh5ERYDCQy4ZG.png" title="BVH示例" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/32mh5ERYDCQy4ZG.png"
-alt="BVH示例" /></a>
-<figcaption aria-hidden="true">BVH示例</figcaption>
-</figure>
-<p>特性：</p>
-<ul>
-<li>一个物体只可能出现在一个格子（分区）里</li>
-<li>求所有三角形包围盒算法也很简单，不用计算三角形和盒子的相交关系</li>
-<li>每个分区可能有相交：关于怎么将其划分为两个部分，很有讲究，有相关的研究</li>
-</ul>
-<p>详解做法：</p>
-<ol type="1">
-<li>找到一个包围盒</li>
-<li>递归地将其内部的对象分为两个子集</li>
-<li>重新计算子集地包围盒</li>
-<li>适当地停止（子集数量足够少，划分次数足够多）</li>
-<li>将物体存储在每一个叶子节点中</li>
-</ol>
-<p>如何划分一个节点/分区：</p>
-<ul>
-<li>选择一个划分的维度</li>
-<li>经验谈
-#1：沿着分区里最长的轴向划分，让它变短，更容易形成均匀分区</li>
-<li>经验谈
-#2：取”中间”的物体：在即将划分的轴向上，进行排序（若划分x轴，则对x坐标进行排序），取中位数序号（n/2）的物体进行划分，可以让两个子分区的数量接近，从而让树的深度更小，搜索更快
-<ul>
-<li><strong>无序数组中求第i大的数</strong>，实际上可以不需要排序<span
-class="math inline">\(O(nlgn)\)</span>：快速选择算法 <span
-class="math inline">\(O(n)\)</span> →
-快速排序算法的启发，算法中Partition做完后，只对其中一边进行操作</li>
-</ul></li>
-</ul>
-<h3 id="bvh的数据结构">BVH的数据结构</h3>
-<p>中间节点存储：</p>
-<ul>
-<li>包围盒</li>
-<li>子节点的指针</li>
-</ul>
-<p>叶子节点存储：</p>
-<ul>
-<li>包围盒</li>
-<li>包含对象的列表</li>
-</ul>
-<h2 id="两类划分的比较">两类划分的比较</h2>
-<h3 id="空间划分kd-tree">空间划分：KD-tree</h3>
-<ul>
-<li>将空间划分为不重叠的两个分区</li>
-<li>一个物体可能存在于多个分区内</li>
-</ul>
-<h3 id="物体划分bvh">物体划分：BVH</h3>
-<ul>
-<li>将对象划分为不相交的子集</li>
-<li>不同集合的包围盒可能在空间上重叠</li>
-</ul>
-<p>因为实现容易，效率也不错，BVH得到了更大的应用</p>
-<p>加速结构完成后，光线和场景的求交就能在很短的时间内完成</p>
-<h1 id="辐射度量学-radiometry">辐射度量学 Radiometry</h1>
-<h2 id="动机-motivation">动机 motivation</h2>
-<p>为什么需要辐射度量学？</p>
-<p>来自过去的疑问：</p>
-<ul>
-<li>Blinn-Phong模型中的光线强度 <span
-class="math inline">\(I=10\)</span>，单位是？</li>
-<li>Whitted style的光线追踪看起来是正确结果吗？</li>
-</ul>
-<p>Blinn-Phong模型有许多简化，人为设置的内容，而辐射度量学可以对光的行为提供精确描述</p>
-<h2 id="内容">内容</h2>
-<ul>
-<li>测度系统与光照的单位</li>
-<li>对光的空间属性的精确描述
-<ul>
-<li>光照的若干属性：Radiant flux, intensity, irradiance, radiance</li>
-</ul></li>
-<li>通过物理上正确的方式（a physically correct
-manner）来进行光照计算</li>
-</ul>
-<aside>
-ℹ️ 学习方式的分享：WHY, WHAT, then
-HOW。先是为什么学，再是学的是什么东西，最后是具体的原理，实现/应用方式
-</aside>
-<h3 id="radiant-energy-and-flux-power">Radiant Energy and Flux
-(Power)</h3>
-<p>Radiant energy：电磁辐射的能量，单位焦耳（J）</p>
-<p><span class="math display">\[\begin{equation}Q[\mathrm{~J}=\text {
-Joule }]\end{equation}\]</span></p>
-<p>Radiant flux(<strong>power</strong>)：单位时间的能量，energy per unit
-time，得到功率，单位瓦特（W），图形学使用的另一个单位（<strong>lumen
-流明</strong>）</p>
-<p><span class="math display">\[\begin{equation}\Phi =\frac{\mathrm{d}
-Q}{\mathrm{~d} t}[\mathrm{~W}=\mathrm{Watt}][\mathrm{lm}=\text { lumen
-}]^*\end{equation}\]</span></p>
-<p>另一种flux的理解：单位时间内通过感光平面的光子数量</p>
-<p><strong>其他的重要物理量</strong></p>
-<ul>
-<li>光源辐射出的能量：Radiant Intensity</li>
-<li>表面接收到的能量：Irradiance</li>
-<li>光线沿着射线的传输：Radiance</li>
-</ul>
-<h3 id="radiant-intensity">Radiant Intensity</h3>
-<p>定义：power per uint solid angle，每单位立体角的功率，单位
-<strong>candela</strong></p>
-<p><span
-class="math display">\[\begin{equation}\left[\frac{\mathrm{W}}{\mathrm{sr}}\right]\left[\frac{\mathrm{lm}}{\mathrm{sr}}=\mathrm{cd}=\text
-{ candela }\right]\end{equation}\]</span></p>
-<p><strong>什么是立体角？</strong></p>
-<figure>
-<a href="https://s2.loli.net/2023/09/17/wI8arSMgVsCc7Ll.png" title="单位立体角" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/wI8arSMgVsCc7Ll.png"
-alt="单位立体角" /></a>
-<figcaption aria-hidden="true">单位立体角</figcaption>
-</figure>
-<p>角度的定义，弧长除以半径，弧度制。</p>
-<p><strong>立体角</strong>：弧度在三维空间的延伸。在三维空间的球中找一个锥，这个锥在球上有一个球表面积，将这个面积除以球半径的平方。因为球表面积是
-<span class="math inline">\(4\pi{r}^2\)</span>，所以球有<span
-class="math inline">\(4\pi\)</span>立体角（steradians）</p>
-<p>单位立体角（Differential Solid Angles）：</p>
-<p><span
-class="math display">\[\begin{equation}\begin{aligned}\mathrm{d} A &amp;
-=(r \mathrm{~d} \theta)(r \sin \theta \mathrm{d} \phi) \\&amp; =r^2 \sin
-\theta \mathrm{d} \theta \mathrm{d}
-\phi\end{aligned}\end{equation}\]</span></p>
-<p><span class="math display">\[\begin{equation} \mathrm{d}
-\omega=\frac{\mathrm{d} A}{r^2}=\sin \theta \mathrm{d} \theta \mathrm{d}
-\phi \end{equation}\]</span></p>
-<p>为什么是面积微分<span class="math inline">\(\mathrm{d} A\)</span>
-的一个因数是 <span class="math inline">\(r \sin \theta \mathrm{d}
-\phi\)</span>，可以看蓝线这个圆上的弧</p>
-<figure>
-<a href="https://s2.loli.net/2023/09/17/2oKzTQVYgqm5ilL.png" title="球表面面积微分" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/2oKzTQVYgqm5ilL.png"
-alt="球表面面积微分" /></a>
-<figcaption aria-hidden="true">球表面面积微分</figcaption>
-</figure>
-<p><strong>回头看Intensity的定义</strong></p>
-<p>intensity，即为power在某一个方向的微分。所以如果对于均匀的点光源，有以下：</p>
-<p><span class="math display">\[\begin{equation} I =
-\frac{\Phi}{4\pi}\end{equation}\]</span></p>
-</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
-        var options = {
-            selector: '.gallery-item'
-        };
-        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
-        }</script>]]></content>
-      <categories>
-        <category>计算机图形学</category>
-        <category>RayTracing</category>
-      </categories>
-      <tags>
-        <tag>计算机图形学</tag>
-        <tag>RayTracing</tag>
-        <tag>空间划分</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用SSH进行远端仓库身份验证</title>
-    <url>/p/6f279d447649/</url>
-    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h2 id="使用ssh进行github身份验证">使用ssh进行GitHub身份验证</h2>
-<h3 id="生成ssh-key">生成ssh key</h3>
-<p>使用ssh
-key进行连接/身份校验，需要先生成公私密钥，将公钥放到对应代码托管平台上，并在连接时使用相应的私钥。github目前推荐的keygen签名算法，以及<a
-href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">密钥对生成方式</a>：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh-keygen -t ed25519 -C &quot;your_email@example.com&quot;
-&gt; ...</code></pre>
-<p>生成公私密钥对后，将公钥放到对应代码托管平台上看起来像是下面这样。在进行ssh连接时，默认会使用唯一的私钥进行校验</p>
-<a href="/p/6f279d447649/github-ssh-example.png" class="gallery-item"><img src="/p/6f279d447649/github-ssh-example.png" class="" title="github用户信息页的Authentication Keys"></a>
-<p>同时，可以将github的public
-key存放到自己设备的<code>~/.ssh/known_hosts</code>下，就不会在初次使用ssh连接github时需要手动校验</p>
-<p><a
-href="https://docs.github.com/cn/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints">GitHub
-的 SSH 密钥指纹 - GitHub Docs</a></p>
-<div class="note info"><p>😅 手动校验时会输出下述类似内容，你可能已经见过了…</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">&gt; The authenticity of host &#39;[ssh.github.com]:443 ([140.82.112.36]:443)&#39; can&#39;t be established.&gt; ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF&#x2F;zLDA0zPMSvHdkr4UvCOqU...</code></pre>
-</div>
-<span id="more"></span>
-<h3 id="ssh-config-配置">ssh config 配置</h3>
-<p>在一台设备上使用ssh-keygen生成多个公私密钥，将公钥放到对应代码托管平台上，再通过编辑<code>~/.ssh/config</code>来决定什么情况下使用哪一个私钥进行校验。</p>
-<p>在一些情况下，还需要编辑.git目录下的config文件，来指定fetch /
-push时使用的url。</p>
-<p>生成多个公私钥对之后，使用config如此配置</p>
-<pre class="line-numbers language-text" data-language="text"><code class="language-text"># Default GitHub
-Host github.com # 使用&#96;ssh -T username@host&#96;中匹配的&#96;host&#96;会被解析为下面的HostName
- HostName github.com
- User git
- PreferredAuthentications publickey
- IdentityFile ~&#x2F;.ssh&#x2F;id_ed25519 # 对应的私钥
-
-# Work GitHub 第二个账号
-Host work.github.com # 同理，这里用&#96;work.github.com&#96;匹配此规则，会被解析为github.com
- HostName github.com
- User git
- PreferredAuthentications publickey
- IdentityFile ~&#x2F;.ssh&#x2F;id_rsa_work # 指定对应的私钥</code></pre>
-<p>测试配置是否成功</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T git@github.com
-Hi stefano! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
-
-$ ssh -T git@work.github.com
-Hi stefano! You&#39;ve successfully authenticated, but GitHub does not provide shell access.</code></pre>
-<p>参考：</p>
-<p><a
-href="https://stackoverflow.com/questions/3225862/multiple-github-accounts-ssh-config">https://stackoverflow.com/questions/3225862/multiple-github-accounts-ssh-config</a></p>
-<h2 id="问题解决通过https的ssh连接">问题解决：通过HTTPS的SSH连接</h2>
-<p>在命令行执行<code>ssh -T git@github.com</code>时可能得到下述的输出结果</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ssh: connect to host github.com port 22: Connection timed out</code></pre>
-<p>这个问题可能是由于所在设备防火墙禁用了ssh连接（我也怀疑可能是因为墙导致github.com解析失败，因为同样使用port22的我自己的gitea是可以使用ssh连接/验证的，而我使用的clash只设置了http
-/ https的代理）。</p>
-<p>这个问题可以参考stackoverflow或者官方的解决方案：</p>
-<p><a
-href="https://stackoverflow.com/questions/15589682/ssh-connect-to-host-github-com-port-22-connection-timed-out">ssh:
-connect to host github.com port 22: Connection timed out</a></p>
-<p><a
-href="https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port">Using
-SSH over the HTTPS port - GitHub Docs</a></p>
-<div class="note info"><p>💡 443是https使用的端口，顺带一提，http使用的端口是80。</p>
-<p>核心思路是github也部署了<code>ssh.github.com</code>这个域名，并借用443端口来建立ssh连接，因为大多数设备环境是不会禁用443端口的。</p>
-</div>
-<p>在命令行执行以下命令来测试是否可以使用此解决方案：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T -p 443 git@ssh.github.com
-&gt; Hi USERNAME! You&#39;ve successfully authenticated, but GitHub does not
-&gt; provide shell access.</code></pre>
-<p>如果得到了上述输出，现在你可以通过以下命令来clone你的仓库了：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ git clone ssh:&#x2F;&#x2F;git@ssh.github.com:443&#x2F;YOUR-USERNAME&#x2F;YOUR-REPOSITORY.git
-&gt; ...</code></pre>
-<h3 id="通过ssh-config建立基于https的ssh连接">通过ssh
-config建立基于https的ssh连接</h3>
-<p>想要更便利地使用443端口来建立与github的ssh连接，可以使用编辑<code>~/.ssh/config</code>的方式，在配置文件中加入/调整下述内容</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">Host github.com
- Hostname ssh.github.com # 注意这里是另一个github域名
- Port 443 # 使用443端口
- User git</code></pre>
-<p>现在，你可以像之前一样使用ssh连接GitHub.com了</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T git@github.com
-&gt; Hi USERNAME! You&#39;ve successfully authenticated, but GitHub does not
-&gt; provide shell access.</code></pre>
-<p>P.S. gitlab也有类似的解决方案，可以参考：<a
-href="https://about.gitlab.com/blog/2016/02/18/gitlab-dot-com-now-supports-an-alternate-git-plus-ssh-port/">gitlab使用https建立ssh连接</a></p>
-</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
-        var options = {
-            selector: '.gallery-item'
-        };
-        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
-        }</script>]]></content>
-      <categories>
-        <category>工具使用指南</category>
-        <category>git</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
-        <tag>github</tag>
-        <tag>ssh</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Go语言中Interface Nil检查的隐蔽陷阱</title>
-    <url>/p/f877058db6e7/</url>
-    <content><![CDATA[<h2 id="背景">背景</h2>
-<p>在Go语言开发过程中，开发者经常会遇到一个看似简单但实际很容易踩坑的问题：interface变量的nil检查。这个问题的根源在于Go语言中interface的内部实现机制。</p>
-<h2 id="问题描述">问题描述</h2>
-<p>在开发过程中，我们可能会遇到这样的情况：对一个interface变量进行nil检查通过了，但是在调用其方法时却发生了nil
-pointer dereference panic。</p>
-<p>让我们看一个具体的例子：</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">type IAnimal interface &#123;
-    GetName() string
-&#125;
-
-type Cat struct &#123;
-    Name string
-    Age  int
-&#125;
-
-func (c *Cat) GetName() string &#123;
-    return c.Name &#x2F;&#x2F; &lt;- 访问结构体成员变量
-&#125;
-
-func CreateAnimal(animalType string) IAnimal &#123;
-    switch animalType &#123;
-    case &quot;cat&quot;:
-        &#x2F;&#x2F; 在某些错误条件下，可能返回nil指针
-        var cat *Cat &#x3D; nil
-        return cat &#x2F;&#x2F; &lt;- nil指针被赋值给interface
-    default:
-        return &amp;Cat&#123;Name: &quot;Unknown&quot;&#125;
-    &#125;
-&#125;
-
-func main() &#123;
-    animal :&#x3D; CreateAnimal(&quot;cat&quot;)  &#x2F;&#x2F; 返回包含nil指针的interface
-    if animal &#x3D;&#x3D; nil &#123;
-        &#x2F;&#x2F; ...
-        return &#x2F;&#x2F; &lt;- 这里做了 nil-check 但无法捕获到问题
-    &#125;
-    &#x2F;&#x2F; ...
-    animalName :&#x3D; animal.GetName() &#x2F;&#x2F; &lt;- 这里在 *Cat.GetName() 方法内部发生 nil pointer dereference !!
-&#125;</code></pre>
-<p>在这个例子中：</p>
-<ol type="1">
-<li><code>CreateAnimal</code>方法在特定条件下返回一个nil的<code>*Cat</code>指针，但将其赋值给了<code>IAnimal</code>接口</li>
-<li>我们对返回的interface变量进行了nil检查，但检查通过了</li>
-<li>当调用<code>GetName()</code>方法时，由于实际的<code>*Cat</code>指针为nil，访问<code>c.Name</code>时发生panic</li>
-</ol>
-<h2 id="问题根源">问题根源</h2>
-<p>在Go语言的变量实现中，<strong>对象的类型和值是分开存储的</strong>。因此，对interface变量无法准确地进行nil判断，因为interface变量在有类型信息时就是非空的，即使其内部包含的值是nil。</p>
-<p>官方FAQ页面也对这个问题有相关解释：<a
-href="https://go.dev/doc/faq#nil_error">https://go.dev/doc/faq#nil_error</a></p>
-<h2 id="示例演示">示例演示</h2>
-<p>让我们通过一个完整的示例来理解这个问题：</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">type IDog interface &#123;
-    Bark()
-&#125;
-
-type GoldenRetriever struct &#123;
-    Name string
-&#125;
-
-func (retriever *GoldenRetriever) Bark() &#123;
-    fmt.Println(&quot;Woof!&quot;)
-&#125;
-
-func interfaceVariableAssignedWithNilPointerTest() &#123;
-    var retriever *GoldenRetriever &#x2F;&#x2F; this is nil for sure
-    var dog IDog
-    dog &#x3D; retriever
-    fmt.Printf(&quot;dog(IDog) is nil: %t \n&quot;, dog &#x3D;&#x3D; nil) &#x2F;&#x2F; print: false
-    myRetriever, toMyRetrieverOK :&#x3D; dog.(*GoldenRetriever)
-    fmt.Printf(&quot;dog(IDog) to *GoldenRetriever OK: %t \n&quot;, toMyRetrieverOK) &#x2F;&#x2F; print: true
-    fmt.Printf(&quot;myRetriever(*GoldenRetriever) is nil: %t \n&quot;, myRetriever &#x3D;&#x3D; nil) &#x2F;&#x2F; print: true
-    myRetriever.Bark()
-&#125;</code></pre>
-<p>运行结果：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">dog(IDog) is nil: false 
-dog(IDog) to *GoldenRetriever OK: true 
-myRetriever(*GoldenRetriever) is nil: true 
-Woof!</code></pre>
-<p>注意到这里的方法因为没有访问结构体的成员，这个方法甚至能正常执行并退出。</p>
-<p>但若进行以下调整：</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">func (retriever *GoldenRetriever) Bark() &#123;
-    fmt.Printf(&quot;%s: Woof!\n&quot;, retriever.Name)
-&#125;</code></pre>
-<p>便可以重现开发时遇到的问题，此时会发生panic：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">panic: runtime error: invalid memory address or nil pointer dereference</code></pre>
-<h2 id="解决方案">解决方案</h2>
-<h3 id="解决方案a预防性检查推荐">解决方案A：预防性检查（推荐）</h3>
-<p>最优的解决方案是始终保证不将值为nil的pointer变量赋值给interface变量：</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">func interfaceVariableAssignedWithNilPointerTest() &#123;
-    var retriever *GoldenRetriever &#x2F;&#x2F; this is nil for sure
-    var dog IDog
-    if retriever !&#x3D; nil &#123; &#x2F;&#x2F; &lt;- 保证不将 nil 值赋值给 interface
-        dog &#x3D; retriever
-    &#125;
-    &#x2F;&#x2F; ...
-&#125;</code></pre>
-<h3 id="解决方案b运行时检测">解决方案B：运行时检测</h3>
-<p>使用reflect来获取interface变量的确切值：</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">refValue :&#x3D; reflect.ValueOf(dog)
-if refValue.Kind() &#x3D;&#x3D; reflect.Ptr &amp;&amp; refValue.IsNil() &#123;
-    fmt.Printf(&quot;dog(IDog) has the value of nil(*GoldenRetriever)! \n&quot;)
-&#125;</code></pre>
-<p>输出结果：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">dog(IDog) has the value of nil(*GoldenRetriever)! </code></pre>
-<h2 id="最佳实践">最佳实践</h2>
-<ol type="1">
-<li><strong>源头控制</strong>：在将指针赋值给interface变量之前，先检查指针是否为nil</li>
-<li><strong>类型断言检查</strong>：如果必须处理可能为nil的interface，使用类型断言先转换为具体类型再检查</li>
-<li><strong>代码审查</strong>：在代码审查中特别关注interface变量的nil检查逻辑</li>
-</ol>
-<h2 id="总结">总结</h2>
-<p>Go语言中interface的nil检查陷阱是由其内部实现机制决定的。interface变量包含类型信息和值信息，即使值为nil，只要有类型信息，interface变量本身就不为nil。</p>
-<p>理解这个机制有助于我们：</p>
-<ul>
-<li>避免在生产环境中遇到意外的panic</li>
-<li>编写更健壮的代码</li>
-<li>更好地理解Go语言的类型系统</li>
-</ul>
-<p>这个问题提醒我们，在使用interface时要特别谨慎，确保在源头就避免将nil指针赋值给interface变量，从而从根本上避免这类问题的发生。</p>
-<hr />
-<p><em>本文基于实际开发经验总结，希望能帮助Go开发者避免这个常见陷阱。</em></p>
-]]></content>
-      <categories>
-        <category>计算机科学</category>
-        <category>编程语言</category>
-        <category>Go</category>
-      </categories>
-      <tags>
-        <tag>编程语言</tag>
-        <tag>Go</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>探究 .NET 源码系列：System.Text.StringBuilder</title>
     <url>/p/170a3913b9c4/</url>
     <content><![CDATA[<h1 id="net-source-stringbuilder">[.NET source] StringBuilder</h1>
@@ -2828,6 +1993,841 @@ StringBuilder 视作是最后一个块，前向块都通过内部 m_PreviousChun
         <tag>C#</tag>
         <tag>.NET</tag>
         <tag>源码阅读</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用hexo快速进行博客搭建</title>
+    <url>/p/c9e58284d744/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="使用hexo快速进行博客搭建">使用hexo快速进行博客搭建</h1>
+<p>之前用wordpress搭建的博客需要折腾的东西太多，编辑器支持也不太好，没有Notion里记笔记来的方便（该说写个笔记两头传本来就麻烦），所以这次用hexo来搭建看看。</p>
+<p>部署选择了一键同步生成的网站内容到github
+repo上，使用pages来进行网站部署，markdown源文件再自己使用github来同步。</p>
+<p>这篇文章主要记录一下搭建网站的过程，还有给搭建的时候看的几个文档链接留个档。</p>
+<h2 id="hexo官方文档">hexo官方文档</h2>
+<ol type="1">
+<li>https://hexo.io/docs/</li>
+<li>https://hexo.io/zh-cn/docs/ 中文</li>
+</ol>
+<h2 id="hexo-常用命令">hexo 常用命令</h2>
+<p><strong>hexo new [layout] &lt;title&gt;</strong></p>
+<p>创建新文章，使用默认的layout：post</p>
+<p><strong>hexo generate</strong></p>
+<p>一般会使用缩写<code>hexo g</code>，并且加上<code>-d</code>参数来一键部署到远端（我目前是部署到了github上），也可以加上<code>-w</code>来观察文件变化，或是加上<code>-f</code>来重新生成</p>
+<p><strong>hexo server</strong></p>
+<p>虽然是部署到远端上，但是也可以在真正提交前先在本地简单地生成部署一下，看下文章显示是否有问题，或者用这个命令来协助debug（带上<code>--log</code>，以及<code>--debug</code>参数）</p>
+<p>加上<code>-p</code>来指定部署的端口，以防在特定环境下收到安全组影响</p>
+<p><strong>hexo deploy</strong></p>
+<p>部署到远端，这个命令也可以加上<code>-g</code>从而在部署之前生成</p>
+<p><strong>hexo clean</strong></p>
+<p>清除本地生成文件，遇到奇怪显示问题可以考虑先执行一下，再重新generate</p>
+<h2 id="部署相关github-pages">部署相关（github-pages）</h2>
+<ol type="1">
+<li>https://segmentfault.com/a/1190000017986794 一键部署</li>
+<li>https://zhuanlan.zhihu.com/p/26625249
+自定义域名步骤参考，免去之前使用wordpress自己部署网站时解析的麻烦</li>
+<li>https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/about-custom-domains-and-github-pages</li>
+</ol>
+<p>自定义域名在参考了上述链接后做了一点尝试：</p>
+<ol type="1">
+<li><p>首先域名还是使用的之前搭建wordpress用的threegates.net</p></li>
+<li><p>这里开始需要做的是将域名重定向到github-pages，所以实际上<strong>需要参考的比较权威的文档是上面的链接3</strong></p>
+<span id="more"></span></li>
+<li><p>github
+pages建议的是使用www域，说明了使用www域使pages也会为你进行apex
+domain（即不带www的threegates.net）的重定向。</p>
+<blockquote>
+<p>We recommend always using a <code>www</code> subdomain, even if you
+also use an apex domain. When you create a new site with an apex domain,
+we automatically attempt to secure the <code>www</code> subdomain for
+use when serving your site's content. If you configure a
+<code>www</code> subdomain, we automatically attempt to secure the
+associated apex domain.</p>
+</blockquote></li>
+<li><p>参考“Managing a custom domain for your GitHub Pages
+site”，首先在gtihub repo的settings-&gt;pages目录下配置Custom
+Domain，这里使用<code>www.threegates.net</code></p></li>
+<li><p>在阿里云的DNS解析中配置，这里应该将<code>www.threegates.net</code>使用CNAME形式解析到我的<code>kalulas.github.io</code>，且通过dig工具和后续文档可以得知，如果配置了<code>threegates.net</code>到github
+pages提供的四个DNS（见下文），github
+pages会帮你重定向到网页内容，而<code>www.threegates.net</code>配置到<code>kalulas.github.io</code>之后，后面其实也是解析到github.pages的DNS</p></li>
+<li><p>配置如图：<a href="/p/c9e58284d744/aliyun-dns-config.png" class="gallery-item"><img src="/p/c9e58284d744/aliyun-dns-config.png" class="" title="aliyun dns configuration"></a></p></li>
+<li><p>dig命令解析结果如下（threegates.net的解析情况也一样）：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ dig kalulas.github.io +nostats +nocomments +nocmd
+; &lt;&lt;&gt;&gt; DiG 9.11.4-P2-RedHat-9.11.4-26.P2.el7_9.8 &lt;&lt;&gt;&gt; kalulas.github.io +nostats +nocomments +nocmd
+;; global options: +cmd
+;kalulas.github.io.             IN      A
+kalulas.github.io.      3600    IN      A       185.199.109.153
+kalulas.github.io.      3600    IN      A       185.199.111.153
+kalulas.github.io.      3600    IN      A       185.199.110.153
+kalulas.github.io.      3600    IN      A       185.199.108.153</code></pre>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ dig www.threegates.net +nostats +nocomment
+; &lt;&lt;&gt;&gt; DiG 9.11.4-P2-RedHat-9.11.4-26.P2.el7_9.8 &lt;&lt;&gt;&gt; www.threegates.net +nostats +nocomment
+;; global options: +cmd
+;www.threegates.net.            IN      A
+www.threegates.net.     600     IN      CNAME   kalulas.github.io.
+kalulas.github.io.      3600    IN      A       185.199.109.153
+kalulas.github.io.      3600    IN      A       185.199.111.153
+kalulas.github.io.      3600    IN      A       185.199.110.153
+kalulas.github.io.      3600    IN      A       185.199.108.153</code></pre></li>
+<li><p>最后，在第4步中修改Custom
+Domain会添加一个文件CNAME到repo的根目录下，但是由于使用了一键部署，实际上同步的目录是~/.../your_site/.deploy_git，可以在这个目录下同步，但是这个目录是由~/.../your_site/source生成而来的，所以得在source下也创建一个CNAME文件，内容就用github为你生成的<code>www.threegates.net</code>即可</p></li>
+<li><p>最后，文档提示了可以enforce
+HTTPS，这个在后续也加上了，工作正常</p></li>
+</ol>
+<h2 id="网站主题">网站主题</h2>
+<p>当前维护中的next主题传送门：</p>
+<ol type="1">
+<li>官方文档：https://theme-next.js.org/docs/</li>
+<li>github：https://github.com/next-theme/hexo-theme-next</li>
+</ol>
+<p>当前threegates的hexo是使用npm的方式安装主题并更新的，参考</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ cd hexo-site
+$ npm install hexo-theme-next</code></pre>
+<p>一次在给博客的本地搜索功能debug的时候发现了现在next其实同时存在着多个github项目，和这些项目中指向的多个文档，导致容易阅读到一些与当前版本的不匹配内容...这边还是留意下，以上文中提供的两个链接为参考（当前next版本v8.14.1）。</p>
+<figure>
+<a href="https://s2.loli.net/2023/01/22/b8hiH1C3gnxD2Yo.png" title="记录于NexT v8.14.1" class="gallery-item"><img src="https://s2.loli.net/2023/01/22/b8hiH1C3gnxD2Yo.png"
+alt="记录于NexT v8.14.1" /></a>
+<figcaption aria-hidden="true">记录于NexT v8.14.1</figcaption>
+</figure>
+<p>顺带一提，我发现的停止维护项目有：</p>
+<ol type="1">
+<li><a href="https://github.com/theme-next/hexo-theme-next" title="" target="">theme-next&#x2F;hexo-theme-next</a>
+注意这里用户名是<code>theme-next</code>而不是上文的<code>next-theme</code>...这个仓库release停留在了v7.8.0</li>
+<li><a href="https://github.com/iissnan/hexo-theme-next" title="" target="">iissnan&#x2F;hexo-theme-next</a>
+这个仓库中文内容很多，但是也已经停止维护，release停留在v5.1.4</li>
+</ol>
+<h3 id="next-主题配置">NexT 主题配置</h3>
+<p>以前我们会将主题的配置内容放在
+<code>themes/[theme_name]/_config.yml</code>，又或者放在
+<code>node_modules/[theme_module_name]/_config.yml</code>
+中，但是这样在升级主题时，我们的配置内容会被覆盖。实际上今年把博客的部署路径从
+alicloud 挪到我个人笔记本的尝试中，就遇到了一些相关的问题。</p>
+<p>从 hexo 5.0 起，hexo
+就提供了将主题配置也放在网站/博客根目录的选择，可以参考<a
+href="https://hexo.io/docs/configuration.html#Using-an-Alternate-Config">这篇文章</a>。现在，我们可以选择在根目录下创建一个
+<strong>_config.next.yml</strong>
+，并将原配置内容复制到这个新的配置文件中即可。</p>
+<p>当然 hexo 还提供了其他方案，如在 <strong>_config.yml</strong> 下新增
+theme_config 项，在这里为了更清晰的版本历史，我们选择了独立 yml
+文件的方式。</p>
+<p>当 hexo 在生成网站静态文件时，这些配置项会被合并。优先级顺序为：</p>
+<ol type="1">
+<li>网站根目录 <strong>_config.yml</strong> 中的 theme_config 项</li>
+<li>网站根目录下独立的 <strong>_config.[theme].yml</strong>
+配置文件</li>
+<li><strong>themes</strong> 目录下的配置文件</li>
+</ol>
+<h3 id="调整代码配色主题">调整代码配色主题</h3>
+<p>threegates 使用的代码配色/高亮引擎是 prism，在 hexo 配置文件
+<strong>_config.yml</strong> 中有如下配置</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"># hexo 7.0 起需要指定 highlighter
+syntax_highlighter: prismjs
+# highlight 部分也在这里，不同不重要
+prismjs:
+  preprocess: false
+  line_number: true
+  line_threshold: 0 # 可以配置超过多少行才显示行号
+  tab_replace: &#39;    &#39;</code></pre>
+<p>在主题配置文件 <strong>_config.next.yml</strong> 有如下配置</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">codeblock:
+  # Code Highlight theme
+  # All available themes: https:&#x2F;&#x2F;theme-next.js.org&#x2F;highlight&#x2F;
+  # theme 部分配置可以无视
+  # ...
+  # prism 块下设置不同颜色主题下的代码配色方案
+  prism:
+    light: prism-tomorrow
+    dark: prism-tomorrow
+  # Add copy button on codeblock
+  copy_button:
+    enable: true
+    # Available values: default | flat | mac
+    style: default
+  # Fold code block
+  # NexT 新版本提供的折叠过长代码功能，旧版本配置会在这里因为缺少配置触发一个 Error...
+  fold:
+    enable: true
+    height: 500</code></pre>
+<p>如果需要预览配色方案的效果，可以前往<a
+href="https://theme-next.js.org/highlight/">这个网站</a></p>
+<h3 id="调整内联代码布局">调整内联代码布局</h3>
+<p>由于内联代码的默认 style 为
+<code>overflow-wrap: break-word</code>，生成出的博客内容为了保证内联代码块内容在同一行，从而导致部分行的中文内容无法填充完整，且间隔被均等分，看着特别不舒服。</p>
+<p>最早的做法是直接修改
+<code>node_modules/hexo-theme-next/source/css/_mixins.styl</code>，但这样每次重新
+<code>npm install</code> 或者更新主题，修改都会被覆盖。2026
+年把博客的构建环境迁移到自己 Windows PC 上遇到这个问题，于是改为使用
+NexT 提供的 <code>custom_file_path</code> 注入一份自定义的 mixin
+文件，跟着博客仓库一起维护。</p>
+<p>在 <strong>_config.next.yml</strong> 中启用 mixin 注入：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">custom_file_path:
+  mixin: source&#x2F;_data&#x2F;mixins.styl</code></pre>
+<p>然后在 <strong>source/_data/mixins.styl</strong> 中重新定义
+<code>word-wrap()</code>：</p>
+<pre class="line-numbers language-stylus" data-language="stylus"><code class="language-stylus">&#x2F;&#x2F; source&#x2F;_data&#x2F;mixins.styl
+word-wrap() &#123;
+  word-break: break-all;
+&#125;</code></pre>
+<p>NexT 的 <strong>main.styl</strong> 会先引入主题自带的
+<strong>_mixins.styl</strong>，再引入通过
+<code>custom_file_path.mixin</code> 注入的文件，之后才加载用到这些 mixin
+的样式，所以这里的定义会覆盖主题原有的定义。</p>
+<h3 id="样式layout自定义">样式（layout）自定义</h3>
+<p>阅读了hexo和NEXT的模板相关文章，简单看了下关联的njx，ejs文件，想通过is_post()或者is_home()的helper方法实现一下仅在文章页显示阅读进度条的效果，但是似乎返回结果不正确，现在在next的github页提了issue还在等回复。</p>
+<p>njx中的语法与ejs不完全相同，简单参考了非官方文档：</p>
+<ol type="1">
+<li>https://carrion.cc/20210201/85bc1840d3ea.html
+核对了一下njk中的helper语法</li>
+</ol>
+<h3 id="图片墙">图片墙</h3>
+<p>选用了hexo-light-gallery插件，传送门
+https://github.com/lzane/hexo-light-gallery</p>
+<p>插件本身会给每一篇文章都包上一层 gallery 的 div，并注入 lightgallery
+的 js 和 css，即使文章里一张图片都没有。最早我是直接修改
+<code>node_modules/hexo-light-gallery/src/renderer.js</code>，加了一个找不到图片就直接返回的判断，同样存在重装依赖后修改丢失的问题。</p>
+<p>（当时还修了一处 <code>'&gt;'</code> 和 <code>'"'</code>
+顺序写反导致的结构破坏，npm 上当前的 1.0.2
+版本里这处已经是正确的了。）</p>
+<p>现在的做法是利用 Hexo 的加载顺序：Hexo 会先加载 node_modules
+里的插件，再自动加载站点根目录 <strong>scripts/</strong>
+下的脚本。所以可以在脚本里先注销插件注册的
+<code>after_post_render</code> filter，再注册一个先检查文章里有没有
+<code>&lt;img&gt;</code> 的版本：</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; scripts&#x2F;lightgallery-fix.js
+&#39;use strict&#39;;
+
+const &#123; render &#125; &#x3D; require(&#39;hexo-light-gallery&#x2F;src&#x2F;renderer&#39;);
+
+hexo.extend.filter.unregister(&#39;after_post_render&#39;, render);
+hexo.extend.filter.register(&#39;after_post_render&#39;, function(data) &#123;
+  &#x2F;&#x2F; 如果找不到图片标签，就不执行插件的逻辑，不会在不需要的地方增加多余内容
+  if (!&#x2F;&lt;img [^&gt;]+&gt;&#x2F;.test(data.content)) return;
+  return render.call(this, data);
+&#125;, 9);</code></pre>
+<p>在lightgallery提供的插件（插件的插件...）中补充了三个插件：</p>
+<ol type="1">
+<li>lg-thumbnail: 提供图片的缩略图</li>
+<li>lg-zoom: 提供图片缩放功能</li>
+<li>lg-fullscreen: 提供图片全屏预览功能</li>
+</ol>
+<p>三个插件都通过npm下载了.min.js文件，放置于/source/js/下，现在的<strong>_config.yml</strong>如下</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"># Plugin: lightgallery https:&#x2F;&#x2F;github.com&#x2F;lzane&#x2F;hexo-light-gallery
+lightgallery:
+# if you don&#39;t specify the css or js source, the default cdn will be used.
+# css: # css source url
+# js: #js source url
+# sorry that I can not find any cdn hosting following plugins,
+# please self-host the plugin js and add url here
+  plugins:
+    lg-thumbnail: &#x2F;js&#x2F;lg-thumbnail.min.js
+    lg-zoom: &#x2F;js&#x2F;lg-zoom.min.js
+#   lg-autoplay:
+    lg-fullscreen: &#x2F;js&#x2F;lg-fullscreen.min.js
+#   lg-pager:
+</code></pre>
+<h3 id="基于模板进行html生成">基于模板进行html生成</h3>
+<p>很在意html中的一些js代码资源标签&lt;script&gt;是怎么在生成时加上的，如图上的这种</p>
+<a href="/p/c9e58284d744/image-20211224175532445.png" class="gallery-item"><img src="/p/c9e58284d744/image-20211224175532445.png" class="" title="html中的代码标签示例"></a>
+<p>要知道它的生成机制才方便做一些js代码上传，还有cdn上的资源放到本地这样的操作，进行了一些排查大致定位下下面这些信息：</p>
+<ol type="1">
+<li><strong>index.njk</strong>文件里利用了<code>next_js()</code>这个方法来加载next提供的静态js文件，如
+comments.js，utils.js 等等</li>
+</ol>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; hexo-site-home&#x2F;node_modules&#x2F;hexo-theme-next&#x2F;layout&#x2F;_scripts&#x2F;index.njk
+
+&#123;%- include &#39;vendors.njk&#39; -%&#125;
+
+&#123;&#123;- next_js(&#39;comments.js&#39;) &#125;&#125;
+
+&#123;&#123;- next_js(&#39;utils.js&#39;) &#125;&#125;
+&#123;%- if theme.motion.enable %&#125;
+  &#123;&#123;- next_js(&#39;motion.js&#39;) &#125;&#125;
+&#123;%- endif %&#125;
+
+&#123;%- if theme.scheme &#x3D;&#x3D;&#x3D; &#39;Muse&#39; or theme.scheme &#x3D;&#x3D;&#x3D; &#39;Mist&#39; %&#125;
+  &#123;&#123;- next_js(&#39;schemes&#x2F;muse.js&#39;) &#125;&#125;
+&#123;%- endif %&#125;
+
+&#123;&#123;- next_js(&#39;next-boot.js&#39;) &#125;&#125;
+&#123;%- if theme.bookmark.enable %&#125;
+  &#123;&#123;- next_js(&#39;bookmark.js&#39;) &#125;&#125;
+&#123;%- endif %&#125;
+&#123;%- if theme.pjax %&#125;
+  &#123;&#123;- next_js(&#39;pjax.js&#39;) &#125;&#125;
+&#123;%- endif %&#125;
+</code></pre>
+<p>而在上面代码块的第一行看到了<code>&#123;%- include 'vendors.njk' -%&#125;</code>，找到对应的文件<strong>vendors.njk</strong>下可以看到</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; hexo-site-home&#x2F;node_modules&#x2F;hexo-theme-next&#x2F;layout&#x2F;_scripts&#x2F;vendors.njk
+
+&#123;%- if theme.canvas_ribbon.enable %&#125;
+  &lt;script size&#x3D;&quot;&#123;&#123; theme.canvas_ribbon.size &#125;&#125;&quot; alpha&#x3D;&quot;&#123;&#123; theme.canvas_ribbon.alpha &#125;&#125;&quot; zIndex&#x3D;&quot;&#123;&#123; theme.canvas_ribbon.zIndex &#125;&#125;&quot; src&#x3D;&quot;&#123;&#123; theme.vendors.canvas_ribbon.url     &#125;&#125;&quot;&gt;&lt;&#x2F;script&gt;
+&#123;%- endif %&#125;
+
+&#123;%- for name in js_vendors() %&#125;
+  &#123;&#123; next_vendors(name) &#125;&#125;
+&#123;%- endfor %&#125;
+</code></pre>
+<p><code>&#123;%- for name in js_vendors() %&#125;</code>遍历的就是<code>js_vendors()</code>方法返回的所有js资源标识符</p>
+<ol start="2" type="1">
+<li><code>js_vendors()</code>这个方法是在<strong>next-vendors.js</strong>中注册的，像prism-core的这些cdn上获取的js资源，先通过配置来决定是否push到返回的vendors列表中，逻辑如下</li>
+</ol>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; hexo-site-home&#x2F;node_modules&#x2F;hexo-theme-next&#x2F;scripts&#x2F;helpers&#x2F;next-vendors.js
+
+hexo.extend.helper.register(&#39;js_vendors&#39;, function() &#123;
+  const &#123; config, theme &#125; &#x3D; this;
+  const vendors &#x3D; [&#39;anime&#39;];
+  if (config.prismjs.enable &amp;&amp; !config.prismjs.preprocess) &#123;
+    vendors.push(&#39;prism&#39;, &#39;prism_autoloader&#39;);
+   if (config.prismjs.line_number) &#123;
+     vendors.push(&#39;prism_line_numbers&#39;);
+    &#125;
+  &#125;
+  if (theme.pjax) &#123;
+    vendors.push(&#39;pjax&#39;);
+  &#125;
+  if (theme.fancybox) &#123;
+    vendors.push(&#39;jquery&#39;, &#39;fancybox_js&#39;);
+  &#125;
+  if (theme.mediumzoom) &#123;
+    vendors.push(&#39;mediumzoom&#39;);
+  &#125;
+  if (theme.lazyload) &#123;
+    vendors.push(&#39;lazyload&#39;);
+  &#125;
+  if (theme.pangu) &#123;
+    vendors.push(&#39;pangu&#39;);
+  &#125;
+  return vendors;
+&#125;);
+</code></pre>
+<p>从上文可以看到<code>vendors.njk</code>会遍历js_vendors列表，并且用拿到的每一个vendor_name去调用方法<code>next_vendors</code>，而这个方法就是在<strong>engine.js</strong>中注册的。</p>
+<p><code>next_vendors</code>的逻辑就是查找vendor的相应配置，vendors字段中的内容是从主题目录下的<strong>_vendors.yml</strong>这个yaml配置文件中解析出来的。</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; hexo-site-home&#x2F;node_modules&#x2F;hexo-theme-next&#x2F;scripts&#x2F;helpers&#x2F;engine.js
+&#x2F;&#x2F; ...
+hexo.extend.helper.register(&#39;next_vendors&#39;, function(name) &#123;
+  const &#123; url, integrity &#125; &#x3D; this.theme.vendors[name];
+  const type &#x3D; url.endsWith(&#39;css&#39;) ? &#39;css&#39; : &#39;js&#39;;
+  if (type &#x3D;&#x3D;&#x3D; &#39;css&#39;) &#123;
+    if (integrity) return &#96;&lt;link rel&#x3D;&quot;stylesheet&quot; href&#x3D;&quot;$&#123;url&#125;&quot; integrity&#x3D;&quot;$&#123;integrity&#125;&quot; crossorigin&#x3D;&quot;anonymous&quot;&gt;&#96;;
+    return &#96;&lt;link rel&#x3D;&quot;stylesheet&quot; href&#x3D;&quot;$&#123;url&#125;&quot;&gt;&#96;;
+  &#125;
+  if (integrity) return &#96;&lt;script src&#x3D;&quot;$&#123;url&#125;&quot; integrity&#x3D;&quot;$&#123;integrity&#125;&quot; crossorigin&#x3D;&quot;anonymous&quot;&gt;&lt;&#x2F;script&gt;&#96;;
+  return &#96;&lt;script src&#x3D;&quot;$&#123;url&#125;&quot;&gt;&lt;&#x2F;script&gt;&#96;;
+&#125;);
+</code></pre>
+<ol start="3" type="1">
+<li>所以如果想加一个js文件资源引用，可以考虑作为一个静态资源加入项目，并在<strong>index.njk</strong>就利用<code>next_js()</code>加载；也可以考虑在<strong>next-vendors.js</strong>代码中将这个js文件的标识符push到<code>vendors</code>里面，然后再到theme（也就是我这里使用的NexT）的<strong>_vendors.yml</strong>文件里面去注册这个标识符对应的文件路径，版本等，这样想要通过cdn加载js文件也方便。</li>
+<li>实际上针对上述方法二，这个<strong>_vendors.yml</strong>是可以使用这个项目
+<a href="https://github.com/next-theme/plugins" title="" target="">next-theme-plugins</a>
+生成的，我自己试过也成功了。不过对于一些小改动（比如为prism添加一个prism-download-button.js），自己做下<strong>_vendors.yml</strong>的修改，加入一个条目也是很简单的，不需要安装那么多依赖项。</li>
+</ol>
+<h2 id="资源文件夹">资源文件夹</h2>
+<p>网站需要显示一些像网站图标和用户画像，还有文章中的截图这样的资源，参考hexo文档，最后采用的方式是将配置项<code>post_asset_folder</code>设置为true，这会让hexo在新建post时为这个post新建一个同名资源文件夹。</p>
+<p>现在我的博文中更多是直接使用了 <code>&#123;% asset_img [img_name_in_asset_folder] description %&#125;</code>
+语法，已经不太信任外部图床了，时间一久总会挂的 ...</p>
+<p><strong>_config.yml</strong>配置形式如下：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">post_asset_folder: true</code></pre>
+<h2 id="hexo以及next的更新">hexo以及next的更新</h2>
+<p>从各自的官方文档或者 npm 都能查看到当前的最新版本，据说 NexT
+是每个月都会发布新版本的，遇到问题都可以留意一下是不是最新版本（当然也要做好回退的准备）。</p>
+<p>执行 npm 命令来检查 packages 是否有新版本：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ npm outdated</code></pre>
+<p>使用 npm 进行 package 更新（当然，hexo 本身也是一个
+package），并使用参数 <code>--save</code> 将改动保存到
+package.json：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ npm update &lt;package-name&gt; --save</code></pre>
+<p>或者使用 npm-check-updates，来将 package.json
+更新到最新版本，再一次性全部安装最新版</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ npm i npm-check-updates -g # 全局安装 npm-check-updates
+$ ncu # 检查版本更新，类似 npm outdated，ncu 是 npm-check-updates 的别名
+$ ncu -u # 更新package.json
+$ ncu package_name [-u] # 仅检查单个&#x2F;多个包的更新，添加参数来应用到 package.json
+$ npm install # npm按照更新后的package.json进行安装</code></pre>
+<p>输出如下：</p>
+<figure>
+<a href="https://s2.loli.net/2023/01/22/eLjDP1XYNJ6o73t.png" title="使用npm-check-updates进行npm package更新" class="gallery-item"><img src="https://s2.loli.net/2023/01/22/eLjDP1XYNJ6o73t.png"
+alt="使用npm-check-updates进行npm package更新" /></a>
+<figcaption aria-hidden="true">使用npm-check-updates进行npm
+package更新</figcaption>
+</figure>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>博客搭建</category>
+        <category>hexo</category>
+      </categories>
+      <tags>
+        <tag>记录</tag>
+        <tag>博客搭建</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>games101-lecture14 笔记</title>
+    <url>/p/9f45e6ee4d77/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h1 id="today">Today</h1>
+<ul>
+<li>Acceleration 加速结构：使用AABB来加速光线追踪
+<ul>
+<li>Uniform grids</li>
+<li>Spatial partitions</li>
+</ul></li>
+<li>Basic radiometry（辐射度量学）
+<ul>
+<li>进阶：不同于Whitted-Style的光线追踪</li>
+</ul></li>
+</ul>
+<h1 id="光线追踪加速结构">光线追踪加速结构</h1>
+<h2 id="均匀网格方案uniform-grids">均匀网格方案：Uniform grids</h2>
+<p><strong>预处理：构建加速网格</strong></p>
+<p>找一个包围盒，在包围盒中构建均匀网格，记录每一个与物体相交的网格</p>
+<p><strong>光线与场景求交</strong></p>
+<p>射出一道光线，让光线与格子求交，若格子内存在物体，再让光线与物体求交：光线与格子求交是快速的，而与实际物体求交是很慢的，通过这样的理念来优化</p>
+<p><strong>经验告诉我们</strong></p>
+<p>当格子数等于C * 对象数时，结果会比较好；三维空间下常数C可以取27</p>
+<p><strong>缺陷</strong></p>
+<p>当细节物品在空间中分布不均匀时，存在大规模集中、大规模空白：”Teapot
+in a stadium” problem</p>
+<p>*在一些场景下还是好用的，仍有在使用</p>
+<h2 id="空间划分-spatial-partitions">空间划分 Spatial partitions</h2>
+<figure>
+<a href="https://s2.loli.net/2023/09/17/QPXy1Yma5cLDHVo.png" title="空间划分树结构" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/QPXy1Yma5cLDHVo.png"
+alt="空间划分树结构" /></a>
+<figcaption aria-hidden="true">空间划分树结构</figcaption>
+</figure>
+<span id="more"></span>
+<p><strong>Oct-Tree
+八叉树</strong>：三维空间划分为8份，在格子类数量足够少，或者划分次数足够多时不再划分。</p>
+<p>想让空间得到划分，但是不想随着维度不断提高子节点指数级增长，发明了KD-Tree。</p>
+<p><strong>KD-Tree（本次重点）</strong>：每次对格子只进行一次划分，划分为两个区域；每次进行划分时采取与上一次不同的轴向，可以得到尽可能均匀的划分结果。（Root:
+axis-x，layer1: axis-y，layer2: axis-z）</p>
+<p><strong>BSP-Tree</strong>：同样是空间二分方法，区别在于不是水平竖直地进行划分</p>
+<aside>
+⚠️
+同样像上文的Uniform-Grids，空间划分是在光线追踪前的预处理，先建立KD-tree
+</aside>
+<figure>
+<a href="https://s2.loli.net/2023/09/17/DXlbzgTZG3AHxYL.png" title="KD-tree划分结果" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/DXlbzgTZG3AHxYL.png"
+alt="KD-tree划分结果" /></a>
+<figcaption aria-hidden="true">KD-tree划分结果</figcaption>
+</figure>
+<h3 id="kd-trees-数据结构">KD-Trees 数据结构</h3>
+<p>中间节点存储（A，B，C）：</p>
+<ul>
+<li>划分使用的轴（x, y, z）</li>
+<li>划分的位置（在轴向上的什么地方划分）</li>
+<li>所有子节点指针</li>
+<li>注意中间节点不存储对象（objects）</li>
+</ul>
+<p>叶子节点存储（1，2，3）：</p>
+<ul>
+<li>对象的列表存储</li>
+</ul>
+<h2 id="遍历kd-tree进行求交">遍历KD-Tree进行求交</h2>
+<p>如果光线与中间节点代表的区域相交，就意味着光线也要与中间节点划分出的子节点判定相交；递归此过程，最后达到一个叶子节点，就和叶子节点中的所有对象求交。</p>
+<h3 id="进阶问题">进阶问题</h3>
+<p><strong>如何判定对象与包围盒的相交关系</strong></p>
+<p>需要考虑三角形与盒子的求交</p>
+<p>空间划分涉及的问题，如何判断对象是否在某个划分的格子内？</p>
+<p>或者，某个划分出来的各自内有哪些对象？</p>
+<p>虽然有现成的算法，但是不容易写对，在一些情境下容易犯错。</p>
+<p><strong>对象重复出现在不同的划分格子中</strong></p>
+<figure>
+<a href="https://s2.loli.net/2023/09/17/2mgejXkSHtpMG9s.png" title="重复出现在不同分区中的物体" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/2mgejXkSHtpMG9s.png"
+alt="重复出现在不同分区中的物体" /></a>
+<figcaption aria-hidden="true">重复出现在不同分区中的物体</figcaption>
+</figure>
+<p>如图中的这个圆，出现在分区3，4，5内，即这三个分区内会重复出现这个圆</p>
+<h2 id="object-partitions-bounding-volumn-hierarchybvh">Object
+Partitions &amp; Bounding Volumn Hierarchy(BVH)</h2>
+<p>解决了上述KD-Tree的两个问题，目前图形学更受欢迎的结构。</p>
+<p>划分的不是空间，而是把物体分为两个部分；如下例，把一个盒子内的三角形分成了两个部分（基于某种标准），之后再分别计算两个部分的包围盒。</p>
+<figure>
+<a href="https://s2.loli.net/2023/09/17/32mh5ERYDCQy4ZG.png" title="BVH示例" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/32mh5ERYDCQy4ZG.png"
+alt="BVH示例" /></a>
+<figcaption aria-hidden="true">BVH示例</figcaption>
+</figure>
+<p>特性：</p>
+<ul>
+<li>一个物体只可能出现在一个格子（分区）里</li>
+<li>求所有三角形包围盒算法也很简单，不用计算三角形和盒子的相交关系</li>
+<li>每个分区可能有相交：关于怎么将其划分为两个部分，很有讲究，有相关的研究</li>
+</ul>
+<p>详解做法：</p>
+<ol type="1">
+<li>找到一个包围盒</li>
+<li>递归地将其内部的对象分为两个子集</li>
+<li>重新计算子集地包围盒</li>
+<li>适当地停止（子集数量足够少，划分次数足够多）</li>
+<li>将物体存储在每一个叶子节点中</li>
+</ol>
+<p>如何划分一个节点/分区：</p>
+<ul>
+<li>选择一个划分的维度</li>
+<li>经验谈
+#1：沿着分区里最长的轴向划分，让它变短，更容易形成均匀分区</li>
+<li>经验谈
+#2：取”中间”的物体：在即将划分的轴向上，进行排序（若划分x轴，则对x坐标进行排序），取中位数序号（n/2）的物体进行划分，可以让两个子分区的数量接近，从而让树的深度更小，搜索更快
+<ul>
+<li><strong>无序数组中求第i大的数</strong>，实际上可以不需要排序<span
+class="math inline">\(O(nlgn)\)</span>：快速选择算法 <span
+class="math inline">\(O(n)\)</span> →
+快速排序算法的启发，算法中Partition做完后，只对其中一边进行操作</li>
+</ul></li>
+</ul>
+<h3 id="bvh的数据结构">BVH的数据结构</h3>
+<p>中间节点存储：</p>
+<ul>
+<li>包围盒</li>
+<li>子节点的指针</li>
+</ul>
+<p>叶子节点存储：</p>
+<ul>
+<li>包围盒</li>
+<li>包含对象的列表</li>
+</ul>
+<h2 id="两类划分的比较">两类划分的比较</h2>
+<h3 id="空间划分kd-tree">空间划分：KD-tree</h3>
+<ul>
+<li>将空间划分为不重叠的两个分区</li>
+<li>一个物体可能存在于多个分区内</li>
+</ul>
+<h3 id="物体划分bvh">物体划分：BVH</h3>
+<ul>
+<li>将对象划分为不相交的子集</li>
+<li>不同集合的包围盒可能在空间上重叠</li>
+</ul>
+<p>因为实现容易，效率也不错，BVH得到了更大的应用</p>
+<p>加速结构完成后，光线和场景的求交就能在很短的时间内完成</p>
+<h1 id="辐射度量学-radiometry">辐射度量学 Radiometry</h1>
+<h2 id="动机-motivation">动机 motivation</h2>
+<p>为什么需要辐射度量学？</p>
+<p>来自过去的疑问：</p>
+<ul>
+<li>Blinn-Phong模型中的光线强度 <span
+class="math inline">\(I=10\)</span>，单位是？</li>
+<li>Whitted style的光线追踪看起来是正确结果吗？</li>
+</ul>
+<p>Blinn-Phong模型有许多简化，人为设置的内容，而辐射度量学可以对光的行为提供精确描述</p>
+<h2 id="内容">内容</h2>
+<ul>
+<li>测度系统与光照的单位</li>
+<li>对光的空间属性的精确描述
+<ul>
+<li>光照的若干属性：Radiant flux, intensity, irradiance, radiance</li>
+</ul></li>
+<li>通过物理上正确的方式（a physically correct
+manner）来进行光照计算</li>
+</ul>
+<aside>
+ℹ️ 学习方式的分享：WHY, WHAT, then
+HOW。先是为什么学，再是学的是什么东西，最后是具体的原理，实现/应用方式
+</aside>
+<h3 id="radiant-energy-and-flux-power">Radiant Energy and Flux
+(Power)</h3>
+<p>Radiant energy：电磁辐射的能量，单位焦耳（J）</p>
+<p><span class="math display">\[\begin{equation}Q[\mathrm{~J}=\text {
+Joule }]\end{equation}\]</span></p>
+<p>Radiant flux(<strong>power</strong>)：单位时间的能量，energy per unit
+time，得到功率，单位瓦特（W），图形学使用的另一个单位（<strong>lumen
+流明</strong>）</p>
+<p><span class="math display">\[\begin{equation}\Phi =\frac{\mathrm{d}
+Q}{\mathrm{~d} t}[\mathrm{~W}=\mathrm{Watt}][\mathrm{lm}=\text { lumen
+}]^*\end{equation}\]</span></p>
+<p>另一种flux的理解：单位时间内通过感光平面的光子数量</p>
+<p><strong>其他的重要物理量</strong></p>
+<ul>
+<li>光源辐射出的能量：Radiant Intensity</li>
+<li>表面接收到的能量：Irradiance</li>
+<li>光线沿着射线的传输：Radiance</li>
+</ul>
+<h3 id="radiant-intensity">Radiant Intensity</h3>
+<p>定义：power per uint solid angle，每单位立体角的功率，单位
+<strong>candela</strong></p>
+<p><span
+class="math display">\[\begin{equation}\left[\frac{\mathrm{W}}{\mathrm{sr}}\right]\left[\frac{\mathrm{lm}}{\mathrm{sr}}=\mathrm{cd}=\text
+{ candela }\right]\end{equation}\]</span></p>
+<p><strong>什么是立体角？</strong></p>
+<figure>
+<a href="https://s2.loli.net/2023/09/17/wI8arSMgVsCc7Ll.png" title="单位立体角" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/wI8arSMgVsCc7Ll.png"
+alt="单位立体角" /></a>
+<figcaption aria-hidden="true">单位立体角</figcaption>
+</figure>
+<p>角度的定义，弧长除以半径，弧度制。</p>
+<p><strong>立体角</strong>：弧度在三维空间的延伸。在三维空间的球中找一个锥，这个锥在球上有一个球表面积，将这个面积除以球半径的平方。因为球表面积是
+<span class="math inline">\(4\pi{r}^2\)</span>，所以球有<span
+class="math inline">\(4\pi\)</span>立体角（steradians）</p>
+<p>单位立体角（Differential Solid Angles）：</p>
+<p><span
+class="math display">\[\begin{equation}\begin{aligned}\mathrm{d} A &amp;
+=(r \mathrm{~d} \theta)(r \sin \theta \mathrm{d} \phi) \\&amp; =r^2 \sin
+\theta \mathrm{d} \theta \mathrm{d}
+\phi\end{aligned}\end{equation}\]</span></p>
+<p><span class="math display">\[\begin{equation} \mathrm{d}
+\omega=\frac{\mathrm{d} A}{r^2}=\sin \theta \mathrm{d} \theta \mathrm{d}
+\phi \end{equation}\]</span></p>
+<p>为什么是面积微分<span class="math inline">\(\mathrm{d} A\)</span>
+的一个因数是 <span class="math inline">\(r \sin \theta \mathrm{d}
+\phi\)</span>，可以看蓝线这个圆上的弧</p>
+<figure>
+<a href="https://s2.loli.net/2023/09/17/2oKzTQVYgqm5ilL.png" title="球表面面积微分" class="gallery-item"><img src="https://s2.loli.net/2023/09/17/2oKzTQVYgqm5ilL.png"
+alt="球表面面积微分" /></a>
+<figcaption aria-hidden="true">球表面面积微分</figcaption>
+</figure>
+<p><strong>回头看Intensity的定义</strong></p>
+<p>intensity，即为power在某一个方向的微分。所以如果对于均匀的点光源，有以下：</p>
+<p><span class="math display">\[\begin{equation} I =
+\frac{\Phi}{4\pi}\end{equation}\]</span></p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>计算机图形学</category>
+        <category>RayTracing</category>
+      </categories>
+      <tags>
+        <tag>计算机图形学</tag>
+        <tag>RayTracing</tag>
+        <tag>空间划分</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go语言中Interface Nil检查的隐蔽陷阱</title>
+    <url>/p/f877058db6e7/</url>
+    <content><![CDATA[<h2 id="背景">背景</h2>
+<p>在Go语言开发过程中，开发者经常会遇到一个看似简单但实际很容易踩坑的问题：interface变量的nil检查。这个问题的根源在于Go语言中interface的内部实现机制。</p>
+<h2 id="问题描述">问题描述</h2>
+<p>在开发过程中，我们可能会遇到这样的情况：对一个interface变量进行nil检查通过了，但是在调用其方法时却发生了nil
+pointer dereference panic。</p>
+<p>让我们看一个具体的例子：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">type IAnimal interface &#123;
+    GetName() string
+&#125;
+
+type Cat struct &#123;
+    Name string
+    Age  int
+&#125;
+
+func (c *Cat) GetName() string &#123;
+    return c.Name &#x2F;&#x2F; &lt;- 访问结构体成员变量
+&#125;
+
+func CreateAnimal(animalType string) IAnimal &#123;
+    switch animalType &#123;
+    case &quot;cat&quot;:
+        &#x2F;&#x2F; 在某些错误条件下，可能返回nil指针
+        var cat *Cat &#x3D; nil
+        return cat &#x2F;&#x2F; &lt;- nil指针被赋值给interface
+    default:
+        return &amp;Cat&#123;Name: &quot;Unknown&quot;&#125;
+    &#125;
+&#125;
+
+func main() &#123;
+    animal :&#x3D; CreateAnimal(&quot;cat&quot;)  &#x2F;&#x2F; 返回包含nil指针的interface
+    if animal &#x3D;&#x3D; nil &#123;
+        &#x2F;&#x2F; ...
+        return &#x2F;&#x2F; &lt;- 这里做了 nil-check 但无法捕获到问题
+    &#125;
+    &#x2F;&#x2F; ...
+    animalName :&#x3D; animal.GetName() &#x2F;&#x2F; &lt;- 这里在 *Cat.GetName() 方法内部发生 nil pointer dereference !!
+&#125;</code></pre>
+<p>在这个例子中：</p>
+<ol type="1">
+<li><code>CreateAnimal</code>方法在特定条件下返回一个nil的<code>*Cat</code>指针，但将其赋值给了<code>IAnimal</code>接口</li>
+<li>我们对返回的interface变量进行了nil检查，但检查通过了</li>
+<li>当调用<code>GetName()</code>方法时，由于实际的<code>*Cat</code>指针为nil，访问<code>c.Name</code>时发生panic</li>
+</ol>
+<h2 id="问题根源">问题根源</h2>
+<p>在Go语言的变量实现中，<strong>对象的类型和值是分开存储的</strong>。因此，对interface变量无法准确地进行nil判断，因为interface变量在有类型信息时就是非空的，即使其内部包含的值是nil。</p>
+<p>官方FAQ页面也对这个问题有相关解释：<a
+href="https://go.dev/doc/faq#nil_error">https://go.dev/doc/faq#nil_error</a></p>
+<h2 id="示例演示">示例演示</h2>
+<p>让我们通过一个完整的示例来理解这个问题：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">type IDog interface &#123;
+    Bark()
+&#125;
+
+type GoldenRetriever struct &#123;
+    Name string
+&#125;
+
+func (retriever *GoldenRetriever) Bark() &#123;
+    fmt.Println(&quot;Woof!&quot;)
+&#125;
+
+func interfaceVariableAssignedWithNilPointerTest() &#123;
+    var retriever *GoldenRetriever &#x2F;&#x2F; this is nil for sure
+    var dog IDog
+    dog &#x3D; retriever
+    fmt.Printf(&quot;dog(IDog) is nil: %t \n&quot;, dog &#x3D;&#x3D; nil) &#x2F;&#x2F; print: false
+    myRetriever, toMyRetrieverOK :&#x3D; dog.(*GoldenRetriever)
+    fmt.Printf(&quot;dog(IDog) to *GoldenRetriever OK: %t \n&quot;, toMyRetrieverOK) &#x2F;&#x2F; print: true
+    fmt.Printf(&quot;myRetriever(*GoldenRetriever) is nil: %t \n&quot;, myRetriever &#x3D;&#x3D; nil) &#x2F;&#x2F; print: true
+    myRetriever.Bark()
+&#125;</code></pre>
+<p>运行结果：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">dog(IDog) is nil: false 
+dog(IDog) to *GoldenRetriever OK: true 
+myRetriever(*GoldenRetriever) is nil: true 
+Woof!</code></pre>
+<p>注意到这里的方法因为没有访问结构体的成员，这个方法甚至能正常执行并退出。</p>
+<p>但若进行以下调整：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">func (retriever *GoldenRetriever) Bark() &#123;
+    fmt.Printf(&quot;%s: Woof!\n&quot;, retriever.Name)
+&#125;</code></pre>
+<p>便可以重现开发时遇到的问题，此时会发生panic：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">panic: runtime error: invalid memory address or nil pointer dereference</code></pre>
+<h2 id="解决方案">解决方案</h2>
+<h3 id="解决方案a预防性检查推荐">解决方案A：预防性检查（推荐）</h3>
+<p>最优的解决方案是始终保证不将值为nil的pointer变量赋值给interface变量：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">func interfaceVariableAssignedWithNilPointerTest() &#123;
+    var retriever *GoldenRetriever &#x2F;&#x2F; this is nil for sure
+    var dog IDog
+    if retriever !&#x3D; nil &#123; &#x2F;&#x2F; &lt;- 保证不将 nil 值赋值给 interface
+        dog &#x3D; retriever
+    &#125;
+    &#x2F;&#x2F; ...
+&#125;</code></pre>
+<h3 id="解决方案b运行时检测">解决方案B：运行时检测</h3>
+<p>使用reflect来获取interface变量的确切值：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">refValue :&#x3D; reflect.ValueOf(dog)
+if refValue.Kind() &#x3D;&#x3D; reflect.Ptr &amp;&amp; refValue.IsNil() &#123;
+    fmt.Printf(&quot;dog(IDog) has the value of nil(*GoldenRetriever)! \n&quot;)
+&#125;</code></pre>
+<p>输出结果：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">dog(IDog) has the value of nil(*GoldenRetriever)! </code></pre>
+<h2 id="最佳实践">最佳实践</h2>
+<ol type="1">
+<li><strong>源头控制</strong>：在将指针赋值给interface变量之前，先检查指针是否为nil</li>
+<li><strong>类型断言检查</strong>：如果必须处理可能为nil的interface，使用类型断言先转换为具体类型再检查</li>
+<li><strong>代码审查</strong>：在代码审查中特别关注interface变量的nil检查逻辑</li>
+</ol>
+<h2 id="总结">总结</h2>
+<p>Go语言中interface的nil检查陷阱是由其内部实现机制决定的。interface变量包含类型信息和值信息，即使值为nil，只要有类型信息，interface变量本身就不为nil。</p>
+<p>理解这个机制有助于我们：</p>
+<ul>
+<li>避免在生产环境中遇到意外的panic</li>
+<li>编写更健壮的代码</li>
+<li>更好地理解Go语言的类型系统</li>
+</ul>
+<p>这个问题提醒我们，在使用interface时要特别谨慎，确保在源头就避免将nil指针赋值给interface变量，从而从根本上避免这类问题的发生。</p>
+<hr />
+<p><em>本文基于实际开发经验总结，希望能帮助Go开发者避免这个常见陷阱。</em></p>
+]]></content>
+      <categories>
+        <category>计算机科学</category>
+        <category>编程语言</category>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>编程语言</tag>
+        <tag>Go</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用SSH进行远端仓库身份验证</title>
+    <url>/p/6f279d447649/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"><h2 id="使用ssh进行github身份验证">使用ssh进行GitHub身份验证</h2>
+<h3 id="生成ssh-key">生成ssh key</h3>
+<p>使用ssh
+key进行连接/身份校验，需要先生成公私密钥，将公钥放到对应代码托管平台上，并在连接时使用相应的私钥。github目前推荐的keygen签名算法，以及<a
+href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">密钥对生成方式</a>：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh-keygen -t ed25519 -C &quot;your_email@example.com&quot;
+&gt; ...</code></pre>
+<p>生成公私密钥对后，将公钥放到对应代码托管平台上看起来像是下面这样。在进行ssh连接时，默认会使用唯一的私钥进行校验</p>
+<a href="/p/6f279d447649/github-ssh-example.png" class="gallery-item"><img src="/p/6f279d447649/github-ssh-example.png" class="" title="github用户信息页的Authentication Keys"></a>
+<p>同时，可以将github的public
+key存放到自己设备的<code>~/.ssh/known_hosts</code>下，就不会在初次使用ssh连接github时需要手动校验</p>
+<p><a
+href="https://docs.github.com/cn/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints">GitHub
+的 SSH 密钥指纹 - GitHub Docs</a></p>
+<div class="note info"><p>😅 手动校验时会输出下述类似内容，你可能已经见过了…</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">&gt; The authenticity of host &#39;[ssh.github.com]:443 ([140.82.112.36]:443)&#39; can&#39;t be established.&gt; ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF&#x2F;zLDA0zPMSvHdkr4UvCOqU...</code></pre>
+</div>
+<span id="more"></span>
+<h3 id="ssh-config-配置">ssh config 配置</h3>
+<p>在一台设备上使用ssh-keygen生成多个公私密钥，将公钥放到对应代码托管平台上，再通过编辑<code>~/.ssh/config</code>来决定什么情况下使用哪一个私钥进行校验。</p>
+<p>在一些情况下，还需要编辑.git目录下的config文件，来指定fetch /
+push时使用的url。</p>
+<p>生成多个公私钥对之后，使用config如此配置</p>
+<pre class="line-numbers language-text" data-language="text"><code class="language-text"># Default GitHub
+Host github.com # 使用&#96;ssh -T username@host&#96;中匹配的&#96;host&#96;会被解析为下面的HostName
+ HostName github.com
+ User git
+ PreferredAuthentications publickey
+ IdentityFile ~&#x2F;.ssh&#x2F;id_ed25519 # 对应的私钥
+
+# Work GitHub 第二个账号
+Host work.github.com # 同理，这里用&#96;work.github.com&#96;匹配此规则，会被解析为github.com
+ HostName github.com
+ User git
+ PreferredAuthentications publickey
+ IdentityFile ~&#x2F;.ssh&#x2F;id_rsa_work # 指定对应的私钥</code></pre>
+<p>测试配置是否成功</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T git@github.com
+Hi stefano! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
+
+$ ssh -T git@work.github.com
+Hi stefano! You&#39;ve successfully authenticated, but GitHub does not provide shell access.</code></pre>
+<p>参考：</p>
+<p><a
+href="https://stackoverflow.com/questions/3225862/multiple-github-accounts-ssh-config">https://stackoverflow.com/questions/3225862/multiple-github-accounts-ssh-config</a></p>
+<h2 id="问题解决通过https的ssh连接">问题解决：通过HTTPS的SSH连接</h2>
+<p>在命令行执行<code>ssh -T git@github.com</code>时可能得到下述的输出结果</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ssh: connect to host github.com port 22: Connection timed out</code></pre>
+<p>这个问题可能是由于所在设备防火墙禁用了ssh连接（我也怀疑可能是因为墙导致github.com解析失败，因为同样使用port22的我自己的gitea是可以使用ssh连接/验证的，而我使用的clash只设置了http
+/ https的代理）。</p>
+<p>这个问题可以参考stackoverflow或者官方的解决方案：</p>
+<p><a
+href="https://stackoverflow.com/questions/15589682/ssh-connect-to-host-github-com-port-22-connection-timed-out">ssh:
+connect to host github.com port 22: Connection timed out</a></p>
+<p><a
+href="https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port">Using
+SSH over the HTTPS port - GitHub Docs</a></p>
+<div class="note info"><p>💡 443是https使用的端口，顺带一提，http使用的端口是80。</p>
+<p>核心思路是github也部署了<code>ssh.github.com</code>这个域名，并借用443端口来建立ssh连接，因为大多数设备环境是不会禁用443端口的。</p>
+</div>
+<p>在命令行执行以下命令来测试是否可以使用此解决方案：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T -p 443 git@ssh.github.com
+&gt; Hi USERNAME! You&#39;ve successfully authenticated, but GitHub does not
+&gt; provide shell access.</code></pre>
+<p>如果得到了上述输出，现在你可以通过以下命令来clone你的仓库了：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ git clone ssh:&#x2F;&#x2F;git@ssh.github.com:443&#x2F;YOUR-USERNAME&#x2F;YOUR-REPOSITORY.git
+&gt; ...</code></pre>
+<h3 id="通过ssh-config建立基于https的ssh连接">通过ssh
+config建立基于https的ssh连接</h3>
+<p>想要更便利地使用443端口来建立与github的ssh连接，可以使用编辑<code>~/.ssh/config</code>的方式，在配置文件中加入/调整下述内容</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">Host github.com
+ Hostname ssh.github.com # 注意这里是另一个github域名
+ Port 443 # 使用443端口
+ User git</code></pre>
+<p>现在，你可以像之前一样使用ssh连接GitHub.com了</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ ssh -T git@github.com
+&gt; Hi USERNAME! You&#39;ve successfully authenticated, but GitHub does not
+&gt; provide shell access.</code></pre>
+<p>P.S. gitlab也有类似的解决方案，可以参考：<a
+href="https://about.gitlab.com/blog/2016/02/18/gitlab-dot-com-now-supports-an-alternate-git-plus-ssh-port/">gitlab使用https建立ssh连接</a></p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="/js/lg-thumbnail.min.js"></script><script src="/js/lg-zoom.min.js"></script><script src="/js/lg-fullscreen.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>]]></content>
+      <categories>
+        <category>工具使用指南</category>
+        <category>git</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+        <tag>github</tag>
+        <tag>ssh</tag>
       </tags>
   </entry>
   <entry>
@@ -3898,269 +3898,6 @@ href="https://ziyuan.baidu.com/linksubmit/index">搜索资源平台</a>
       </tags>
   </entry>
   <entry>
-    <title>《The Way to Go》Chapter14 协程</title>
-    <url>/p/4aa7a9cb350b/</url>
-    <content><![CDATA[<h1 id="chapter-14">Chapter 14</h1>
-<h2
-id="协程goroutine与通道channel">协程（goroutine）与通道（channel）</h2>
-<p>Go为构建并发程序的基本代码块是协程与通道，需要语言、编译器和runtime支持。Go语言提供的垃圾回收器对并发编程至关重要（？）。</p>
-<p>原则：<strong>不要通过共享内存来通信，而通过通信来共享内存。</strong></p>
-<span id="more"></span>
-<h2 id="并发并行和协程">并发、并行和协程</h2>
-<ol type="1">
-<li>复习：进程的复数线程是共享同一地址空间的一起工作的执行体，只有在多核、多处理器上并发程序才能做到并行。</li>
-<li>Go中，并发处理的部分被称为
-<code>goroutines（go协程）</code>，在协程与操作系统线程之间无一对一的关系；协程是根据一个/多个线程的可用性，映射在它们之上的。“协程调度器”在<strong>Go运行时</strong>完成这个工作。</li>
-<li>协程是轻量的，比线程更轻。在堆中创建协程，且协程对栈进行了分割，从而动态增加缩减内存的使用。</li>
-<li>协程通过关键字go调用（执行一个函数或方法）来实现，调用后即会分配出独立的栈，开始同时进行的计算过程（并发
-/ 并行）；协程的栈会根据需要进行伸缩，不会出现栈溢出（？）</li>
-<li>main函数也被看作是一个go协程</li>
-<li>当main函数返回的时候，程序退出，不会等待任何非main协程的结束，所以在服务器程序中，一般会给每个请求启动一个协程，而server函数使用一个无限循环来保持运行状态</li>
-</ol>
-<h3 id="使用-gomaxprocs">使用 GOMAXPROCS</h3>
-<ol type="1">
-<li>设置环境变量，或者使用<code>runtime.GOMAXPROCS(n)</code>
-来设置允许运行时使用多少个操作系统线程，如果未设置<code>GOMAXPROCS</code>，则所有协程会共享同一个线程。</li>
-<li>经验：对n个核心的情况设置GOMAXPROCS为n-1来获得最佳性能</li>
-<li>可以遵循的规则：协程的数量 &gt; 1 + GOMAXPROCS &gt; 1</li>
-</ol>
-<h3 id="go协程与协程">Go协程与协程</h3>
-<p>Go协程与其他语言中的协程有两点不同：</p>
-<ol type="1">
-<li>Go协程意味着并行，但协程一般来说不是这样的</li>
-<li>Go协程通过通道channel来通信；协程通过让出（await）和恢复（async）操作来通信</li>
-</ol>
-<h2 id="协程间的信道">协程间的信道</h2>
-<ol type="1">
-<li><p>Go将<strong>通道(channel)</strong>作为一种特殊的类型，用于发送类型化数据的管道，由其负责协程之间的通信。在<strong>任何给定时间</strong>，一个数据被设计为<strong>只有一个协程可以对其访问</strong>，所以不会发生数据竞争</p></li>
-<li><p>通道也是<strong>引用类型</strong>，通道的声明与实例化方式</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">var ch1 chan string
-ch1 &#x3D; make(chan string)
-&#x2F;&#x2F; 精简形式
-ch1 :&#x3D; make(chan string)</code></pre></p></li>
-<li><p>使用操作符<code>&lt;-</code>
-来表示数据的传输，<code>ch &lt;- int1</code>
-表示用通道<code>ch</code>发送变量<code>int1</code>，<code>int2 = ← ch</code>
-表示，从通道<code>ch</code>中取出数据，赋值给<code>int2</code></p></li>
-<li><p>通道的发送和接收都是<strong>原子操作</strong>，它们互不干扰地完成</p></li>
-</ol>
-<h3 id="通道阻塞">通道阻塞</h3>
-<p>默认情况下通道是<strong>同步</strong>且<strong>无缓冲</strong>的 →
-发送/接收操作在对方处理完之前是阻塞的：</p>
-<ol type="1">
-<li>如果通道中的数据无人接收，就无法再给通道传入其他数据，发送者阻塞；发送操作会等待到通道重新变为可用状态，即通道中没有数据
-/ 通道为空的情况 →
-即发完之后如果通道没有被接收者处理清空，发送操作阻塞</li>
-<li>如果通道中没有数据，接收者阻塞；接收操作会等待到通道重新变为可用状态，即通道中有数据
-/ 通道已满的情况 →
-即接收完之后如果通道没有被发送者塞满，读取操作阻塞</li>
-</ol>
-<p>不带缓冲的通道传递有点像两个人传递东西，如果传出去没有对方接走，人就离开了（不阻塞），东西就会掉下去。传出去必须要等到对方接走，自己才能继续做其他事情，所以是同步的。</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">func f1(in chan int) &#123;
-    fmt.Println(&lt;-in)
-&#125;
-
-func main() &#123;
-    out :&#x3D; make(chan int)
-    out &lt;- 2
-    go f1(out) &#x2F;&#x2F; out 中的 2 无人接收，main协程中的&#39;go f1(out)&#39;被阻塞
-&#125;</code></pre>
-<h3 id="同步通道-使用带缓冲的通道">同步通道-使用带缓冲的通道</h3>
-<p>不带缓冲的通道容量是0，通信要双方都准备好了才能进行，容量1和无缓冲绝对是不一样的。</p>
-<p>拓展make命令来设置通道容量，用于提供缓存</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">buf :&#x3D; 100
-ch1 :&#x3D; make(chan string, buf) &#x2F;&#x2F; buf 是通道可以容纳元素的个数</code></pre>
-<p>容量大于0的通道就是异步的了，对于发送操作来说，在发送到通道满载之前不会阻塞；对于接收操作来说，在接收到通道变空之前也不会阻塞；</p>
-<h3 id="信号量模式">信号量模式</h3>
-<p>可以在协程结束时往通道中放置一个值作为处理结束的信号，而在<code>main()</code>协程中等待从这个通道中取得值，来保证<code>main</code>不会提前结束</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">type Empty interface &#123;&#125;
-var empty Empty
-...
-data :&#x3D; make([]float64, N)
-res :&#x3D; make([]float64, N)
-sem :&#x3D; make(chan Empty, N)
-...
-&#x2F;&#x2F; 开始N个协程
-for i, xi :&#x3D; range data &#123;
-    go func (i int, xi float64) &#123;
-        res[i] &#x3D; doSomething(i, xi)
-        sem &lt;- empty
-    &#125; (i, xi)
-&#125;
-&#x2F;&#x2F; 等待所有的协程结束
-for i :&#x3D; 0; i &lt; N; i++ &#123; &lt;-sem &#125;</code></pre>
-<h3 id="使用带缓冲通道实现信号量">使用带缓冲通道实现信号量</h3>
-<p>声明空接口类型，并声明信号量</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">type Empty interface &#123;&#125;
-type semaphore chan Empty</code></pre>
-<p>将可用资源的数量 <code>N</code>来初始化信号量 <code>semaphore</code>：<code>sem = make(semaphore, N)</code></p>
-<p>便可定义P操作与V操作</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; acquire n resources
-func (s semaphore) P(n int) &#123;
-    e :&#x3D; new(Empty)
-    for i :&#x3D; 0; i &lt; n; i++ &#123;
-        s &lt;- e
-    &#125;
-&#125;
-
-&#x2F;&#x2F; release n resources
-func (s semaphore) V(n int) &#123;
-    for i:&#x3D; 0; i &lt; n; i++&#123;
-        &lt;- s
-    &#125;
-&#125;</code></pre>
-<h3 id="通道的方向">通道的方向</h3>
-<p>可以通过注解来表示通道只发送或者只接收数据，如下</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">func source(ch chan&lt;- int)&#123;
-    for &#123; ch &lt;- 1 &#125;
-&#125;
-
-func sink(ch &lt;-chan int) &#123;
-    for &#123; &lt;-ch &#125;
-&#125;</code></pre>
-<p>通道在创建时都是双向的，它们创建后被用于分配给有方向的通道变量</p>
-<h2 id="关闭通道">关闭通道</h2>
-<ol type="1">
-<li><p>通道可以被显式地关闭，只有接收者确定不会提供新的值才需要关闭通道</p></li>
-<li><p>只有发送者需要关闭通道，对于接收者来说关闭通道没有意义</p></li>
-<li><p>通过逗号ok模式来检测通道是否被关闭</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">v, ok :&#x3D; &lt;-ch
-if !ok &#123;
-  break
-&#125;
-process(v)</code></pre></p></li>
-<li><p>使用for-range来读取通道，会自动检测通道是否关闭</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">for input :&#x3D; range ch &#123;
-    process(input)
-&#125;</code></pre></p></li>
-</ol>
-<h2 id="使用select切换协程">使用select切换协程</h2>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">select &#123;
-case u:&#x3D; &lt;- ch1:
-        ...
-case v:&#x3D; &lt;- ch2:
-        ...
-        ...
-default: &#x2F;&#x2F; no value ready to be received
-        ...
-&#125;</code></pre>
-<ol type="1">
-<li>从不同并发执行的协程中获取值可以通过<code>select</code>完成，它选择处理列出的多个通道其中一个：
-<ul>
-<li>如果通道都阻塞了，会等待直到其中一个可以处理</li>
-<li>如果有多个通道可以处理，会随机选择出一个</li>
-<li>如果没有通道可以处理并且有<code>default</code>语句，那么<code>default</code>语句将执行</li>
-</ul></li>
-<li>在无限循环中使用一个<code>select</code>语句，来实现一种监听模式。在此模式下，使用<code>break</code>来使循环退出</li>
-</ol>
-<h2 id="通道超时和计时器ticker">通道、超时和计时器（Ticker）</h2>
-<ol type="1">
-<li><p>在工厂函数 <code>time.NewTicker</code>中以 <code>Duration</code> 类型的参数传入：<code>func NewTicker(dur) *Ticker</code>，时间间隔单位纳秒</p></li>
-<li><p>使用<code>time.Tick()</code>来返回一个指定时间间隔发送时间的通道</p></li>
-<li><p>定时器<code>Timer</code>和计时器<code>Ticker</code>类似，但定时器只发送一次时间，使用<code>time.After(d Duration)</code>
-来返回一个通道</p></li>
-<li><p>场景：从多个数据库同时读取，只需要接收首先到达的答案：这个场景也演示了一个发送数据而不是接收数据的<code>select</code></p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">func Query(conns []Conn, query string) Result &#123;
-    ch :&#x3D; make(chan Result, 1) 
-    for _, conn :&#x3D; range conns &#123; &#x2F;&#x2F; 向多个数据库发起请求
-        go func(c Conn) &#123;
-            select &#123;
-            case ch &lt;- c.DoQuery(query): &#x2F;&#x2F; 如果还没有到达的答案，结果会被放入通道
-            default: &#x2F;&#x2F; 否则进入到default语句退出
-            &#125;
-        &#125;(conn)
-    &#125;
-    return &lt;- ch &#x2F;&#x2F; 接收者，仅返回第一个到达通道的结果
-&#125;</code></pre></p>
-<p>注意：使用容量为1的通道ch，这样不会导致第一个结果到达时由于接收者
-<code>← ch</code>没有准备好而无法被接收</p></li>
-<li></li>
-</ol>
-<h2 id="新旧模型对比任务和worker">新旧模型对比：任务和worker</h2>
-<p>对于任何可以建模为 Master-Worker 范例的问题，一个类似于 worker
-使用通道进行通信和交互、Master 进行整体协调的方案都能完美解决。</p>
-<p>怎么选择是该使用锁还是通道？</p>
-<p>下面列出一个普遍的经验法则：</p>
-<ul>
-<li>使用锁的情景：
-<ul>
-<li>访问共享数据结构中的缓存信息</li>
-<li>保存应用程序上下文和状态信息数据</li>
-</ul></li>
-<li>使用通道的情景：
-<ul>
-<li>与异步操作的结果进行交互</li>
-<li>分发任务</li>
-<li>传递数据所有权</li>
-</ul></li>
-</ul>
-<p>当你发现你的锁使用规则变得很复杂时，可以反省使用通道会不会使问题变得简单些。</p>
-<h2 id="惰性生成器的实现">惰性生成器的实现</h2>
-<p>生成器是指被调用时返回一个序列中下一个值的函数，生成器只在需要的时候求值，同时保留相关变量资源，是一项在需要时对表达式进行求值的技术。</p>
-<p>可以通过传入匿名函数，将函数的计算结果输出到通道，再返回另一个函数作为生成器，用于将通道中的内容输出。需要生成器结果时调用函数即可。</p>
-<h2 id="限制同时处理的请求数">限制同时处理的请求数</h2>
-<p>使用带缓冲区的通道可以很容易地实现，其缓冲区容量就是同时处理请求的最大数量。</p>
-<p>下述示例当信号通道表示缓冲区已满时，handle()
-函数会阻塞且不再处理其他请求。</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">package main
-
-const MAXREQS &#x3D; 50
-
-var sem &#x3D; make(chan int, MAXREQS)
-
-func process(r *Request) &#123;
-    &#x2F;&#x2F; do something
-&#125;
-
-func handle(r *Request) &#123;
-    sem &lt;- 1 &#x2F;&#x2F; doesn&#39;t matter what we put in it
-    process(r)
-    &lt;-sem &#x2F;&#x2F; one empty place in the buffer: the next request can start
-&#125;</code></pre>
-<h2 id="链式协程">链式协程</h2>
-<p>这样的通道表达式也是可行的：</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">func f(left, right chan int) &#123; left &lt;- 1 + &lt;-right &#125;</code></pre>
-<h2 id="在多核心上并行计算">在多核心上并行计算</h2>
-<p>如果需要把计算量分配到每一个处理器上，让每一部分与其他部分并行，可以先用带缓冲区的通道，在每一个计算部分完成后发送信号；同时还要通过runtime.GOMAXPROCS(N)限定使用的处理器个数。</p>
-<h2 id="使用通道并发访问对象">使用通道并发访问对象</h2>
-<p>可以使用协程在后台顺序执行匿名函数来替代使用同步互斥锁。比如在构造函数中启动一个后台协程，然后把对象的读写都实现为匿名函数，让其按顺序处理，有效地将它们序列化从而提供了安全的并发访问。</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; 构造时开启协程
-func NewPerson(name string, salary float64) *Person &#123;
-    p :&#x3D; &amp;Person&#123;name, salary, make(chan func())&#125;
-    go p.backend()
-    return p
-&#125;
-
-func (p *Person) backend() &#123;
-    for f :&#x3D; range p.chF &#123;
-        f()
-    &#125;
-&#125;
-
-&#x2F;&#x2F; 读写func()
-&#x2F;&#x2F; Set salary.
-func (p *Person) SetSalary(sal float64) &#123;
-    p.chF &lt;- func() &#123; p.salary &#x3D; sal &#125;
-&#125;
-
-&#x2F;&#x2F; Retrieve salary.
-func (p *Person) Salary() float64 &#123;
-    fChan :&#x3D; make(chan float64)
-    p.chF &lt;- func() &#123; fChan &lt;- p.salary &#125;
-    return &lt;-fChan
-&#125;</code></pre>
-]]></content>
-      <categories>
-        <category>计算机科学</category>
-        <category>编程语言</category>
-        <category>Go</category>
-      </categories>
-      <tags>
-        <tag>编程语言</tag>
-        <tag>Go</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>TableCraft is finally here!</title>
     <url>/p/fc631eddaa53/</url>
     <content><![CDATA[<h1 id="tablecraft-is-finally-here">TableCraft is finally here!</h1>
@@ -4427,6 +4164,269 @@ func main() &#123;
         &#x2F;&#x2F; 1 0 3 4 2
 &#125;
 </code></pre>
+]]></content>
+      <categories>
+        <category>计算机科学</category>
+        <category>编程语言</category>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>编程语言</tag>
+        <tag>Go</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《The Way to Go》Chapter14 协程</title>
+    <url>/p/4aa7a9cb350b/</url>
+    <content><![CDATA[<h1 id="chapter-14">Chapter 14</h1>
+<h2
+id="协程goroutine与通道channel">协程（goroutine）与通道（channel）</h2>
+<p>Go为构建并发程序的基本代码块是协程与通道，需要语言、编译器和runtime支持。Go语言提供的垃圾回收器对并发编程至关重要（？）。</p>
+<p>原则：<strong>不要通过共享内存来通信，而通过通信来共享内存。</strong></p>
+<span id="more"></span>
+<h2 id="并发并行和协程">并发、并行和协程</h2>
+<ol type="1">
+<li>复习：进程的复数线程是共享同一地址空间的一起工作的执行体，只有在多核、多处理器上并发程序才能做到并行。</li>
+<li>Go中，并发处理的部分被称为
+<code>goroutines（go协程）</code>，在协程与操作系统线程之间无一对一的关系；协程是根据一个/多个线程的可用性，映射在它们之上的。“协程调度器”在<strong>Go运行时</strong>完成这个工作。</li>
+<li>协程是轻量的，比线程更轻。在堆中创建协程，且协程对栈进行了分割，从而动态增加缩减内存的使用。</li>
+<li>协程通过关键字go调用（执行一个函数或方法）来实现，调用后即会分配出独立的栈，开始同时进行的计算过程（并发
+/ 并行）；协程的栈会根据需要进行伸缩，不会出现栈溢出（？）</li>
+<li>main函数也被看作是一个go协程</li>
+<li>当main函数返回的时候，程序退出，不会等待任何非main协程的结束，所以在服务器程序中，一般会给每个请求启动一个协程，而server函数使用一个无限循环来保持运行状态</li>
+</ol>
+<h3 id="使用-gomaxprocs">使用 GOMAXPROCS</h3>
+<ol type="1">
+<li>设置环境变量，或者使用<code>runtime.GOMAXPROCS(n)</code>
+来设置允许运行时使用多少个操作系统线程，如果未设置<code>GOMAXPROCS</code>，则所有协程会共享同一个线程。</li>
+<li>经验：对n个核心的情况设置GOMAXPROCS为n-1来获得最佳性能</li>
+<li>可以遵循的规则：协程的数量 &gt; 1 + GOMAXPROCS &gt; 1</li>
+</ol>
+<h3 id="go协程与协程">Go协程与协程</h3>
+<p>Go协程与其他语言中的协程有两点不同：</p>
+<ol type="1">
+<li>Go协程意味着并行，但协程一般来说不是这样的</li>
+<li>Go协程通过通道channel来通信；协程通过让出（await）和恢复（async）操作来通信</li>
+</ol>
+<h2 id="协程间的信道">协程间的信道</h2>
+<ol type="1">
+<li><p>Go将<strong>通道(channel)</strong>作为一种特殊的类型，用于发送类型化数据的管道，由其负责协程之间的通信。在<strong>任何给定时间</strong>，一个数据被设计为<strong>只有一个协程可以对其访问</strong>，所以不会发生数据竞争</p></li>
+<li><p>通道也是<strong>引用类型</strong>，通道的声明与实例化方式</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">var ch1 chan string
+ch1 &#x3D; make(chan string)
+&#x2F;&#x2F; 精简形式
+ch1 :&#x3D; make(chan string)</code></pre></p></li>
+<li><p>使用操作符<code>&lt;-</code>
+来表示数据的传输，<code>ch &lt;- int1</code>
+表示用通道<code>ch</code>发送变量<code>int1</code>，<code>int2 = ← ch</code>
+表示，从通道<code>ch</code>中取出数据，赋值给<code>int2</code></p></li>
+<li><p>通道的发送和接收都是<strong>原子操作</strong>，它们互不干扰地完成</p></li>
+</ol>
+<h3 id="通道阻塞">通道阻塞</h3>
+<p>默认情况下通道是<strong>同步</strong>且<strong>无缓冲</strong>的 →
+发送/接收操作在对方处理完之前是阻塞的：</p>
+<ol type="1">
+<li>如果通道中的数据无人接收，就无法再给通道传入其他数据，发送者阻塞；发送操作会等待到通道重新变为可用状态，即通道中没有数据
+/ 通道为空的情况 →
+即发完之后如果通道没有被接收者处理清空，发送操作阻塞</li>
+<li>如果通道中没有数据，接收者阻塞；接收操作会等待到通道重新变为可用状态，即通道中有数据
+/ 通道已满的情况 →
+即接收完之后如果通道没有被发送者塞满，读取操作阻塞</li>
+</ol>
+<p>不带缓冲的通道传递有点像两个人传递东西，如果传出去没有对方接走，人就离开了（不阻塞），东西就会掉下去。传出去必须要等到对方接走，自己才能继续做其他事情，所以是同步的。</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">func f1(in chan int) &#123;
+    fmt.Println(&lt;-in)
+&#125;
+
+func main() &#123;
+    out :&#x3D; make(chan int)
+    out &lt;- 2
+    go f1(out) &#x2F;&#x2F; out 中的 2 无人接收，main协程中的&#39;go f1(out)&#39;被阻塞
+&#125;</code></pre>
+<h3 id="同步通道-使用带缓冲的通道">同步通道-使用带缓冲的通道</h3>
+<p>不带缓冲的通道容量是0，通信要双方都准备好了才能进行，容量1和无缓冲绝对是不一样的。</p>
+<p>拓展make命令来设置通道容量，用于提供缓存</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">buf :&#x3D; 100
+ch1 :&#x3D; make(chan string, buf) &#x2F;&#x2F; buf 是通道可以容纳元素的个数</code></pre>
+<p>容量大于0的通道就是异步的了，对于发送操作来说，在发送到通道满载之前不会阻塞；对于接收操作来说，在接收到通道变空之前也不会阻塞；</p>
+<h3 id="信号量模式">信号量模式</h3>
+<p>可以在协程结束时往通道中放置一个值作为处理结束的信号，而在<code>main()</code>协程中等待从这个通道中取得值，来保证<code>main</code>不会提前结束</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">type Empty interface &#123;&#125;
+var empty Empty
+...
+data :&#x3D; make([]float64, N)
+res :&#x3D; make([]float64, N)
+sem :&#x3D; make(chan Empty, N)
+...
+&#x2F;&#x2F; 开始N个协程
+for i, xi :&#x3D; range data &#123;
+    go func (i int, xi float64) &#123;
+        res[i] &#x3D; doSomething(i, xi)
+        sem &lt;- empty
+    &#125; (i, xi)
+&#125;
+&#x2F;&#x2F; 等待所有的协程结束
+for i :&#x3D; 0; i &lt; N; i++ &#123; &lt;-sem &#125;</code></pre>
+<h3 id="使用带缓冲通道实现信号量">使用带缓冲通道实现信号量</h3>
+<p>声明空接口类型，并声明信号量</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">type Empty interface &#123;&#125;
+type semaphore chan Empty</code></pre>
+<p>将可用资源的数量 <code>N</code>来初始化信号量 <code>semaphore</code>：<code>sem = make(semaphore, N)</code></p>
+<p>便可定义P操作与V操作</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; acquire n resources
+func (s semaphore) P(n int) &#123;
+    e :&#x3D; new(Empty)
+    for i :&#x3D; 0; i &lt; n; i++ &#123;
+        s &lt;- e
+    &#125;
+&#125;
+
+&#x2F;&#x2F; release n resources
+func (s semaphore) V(n int) &#123;
+    for i:&#x3D; 0; i &lt; n; i++&#123;
+        &lt;- s
+    &#125;
+&#125;</code></pre>
+<h3 id="通道的方向">通道的方向</h3>
+<p>可以通过注解来表示通道只发送或者只接收数据，如下</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">func source(ch chan&lt;- int)&#123;
+    for &#123; ch &lt;- 1 &#125;
+&#125;
+
+func sink(ch &lt;-chan int) &#123;
+    for &#123; &lt;-ch &#125;
+&#125;</code></pre>
+<p>通道在创建时都是双向的，它们创建后被用于分配给有方向的通道变量</p>
+<h2 id="关闭通道">关闭通道</h2>
+<ol type="1">
+<li><p>通道可以被显式地关闭，只有接收者确定不会提供新的值才需要关闭通道</p></li>
+<li><p>只有发送者需要关闭通道，对于接收者来说关闭通道没有意义</p></li>
+<li><p>通过逗号ok模式来检测通道是否被关闭</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">v, ok :&#x3D; &lt;-ch
+if !ok &#123;
+  break
+&#125;
+process(v)</code></pre></p></li>
+<li><p>使用for-range来读取通道，会自动检测通道是否关闭</p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">for input :&#x3D; range ch &#123;
+    process(input)
+&#125;</code></pre></p></li>
+</ol>
+<h2 id="使用select切换协程">使用select切换协程</h2>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">select &#123;
+case u:&#x3D; &lt;- ch1:
+        ...
+case v:&#x3D; &lt;- ch2:
+        ...
+        ...
+default: &#x2F;&#x2F; no value ready to be received
+        ...
+&#125;</code></pre>
+<ol type="1">
+<li>从不同并发执行的协程中获取值可以通过<code>select</code>完成，它选择处理列出的多个通道其中一个：
+<ul>
+<li>如果通道都阻塞了，会等待直到其中一个可以处理</li>
+<li>如果有多个通道可以处理，会随机选择出一个</li>
+<li>如果没有通道可以处理并且有<code>default</code>语句，那么<code>default</code>语句将执行</li>
+</ul></li>
+<li>在无限循环中使用一个<code>select</code>语句，来实现一种监听模式。在此模式下，使用<code>break</code>来使循环退出</li>
+</ol>
+<h2 id="通道超时和计时器ticker">通道、超时和计时器（Ticker）</h2>
+<ol type="1">
+<li><p>在工厂函数 <code>time.NewTicker</code>中以 <code>Duration</code> 类型的参数传入：<code>func NewTicker(dur) *Ticker</code>，时间间隔单位纳秒</p></li>
+<li><p>使用<code>time.Tick()</code>来返回一个指定时间间隔发送时间的通道</p></li>
+<li><p>定时器<code>Timer</code>和计时器<code>Ticker</code>类似，但定时器只发送一次时间，使用<code>time.After(d Duration)</code>
+来返回一个通道</p></li>
+<li><p>场景：从多个数据库同时读取，只需要接收首先到达的答案：这个场景也演示了一个发送数据而不是接收数据的<code>select</code></p>
+<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">func Query(conns []Conn, query string) Result &#123;
+    ch :&#x3D; make(chan Result, 1) 
+    for _, conn :&#x3D; range conns &#123; &#x2F;&#x2F; 向多个数据库发起请求
+        go func(c Conn) &#123;
+            select &#123;
+            case ch &lt;- c.DoQuery(query): &#x2F;&#x2F; 如果还没有到达的答案，结果会被放入通道
+            default: &#x2F;&#x2F; 否则进入到default语句退出
+            &#125;
+        &#125;(conn)
+    &#125;
+    return &lt;- ch &#x2F;&#x2F; 接收者，仅返回第一个到达通道的结果
+&#125;</code></pre></p>
+<p>注意：使用容量为1的通道ch，这样不会导致第一个结果到达时由于接收者
+<code>← ch</code>没有准备好而无法被接收</p></li>
+<li></li>
+</ol>
+<h2 id="新旧模型对比任务和worker">新旧模型对比：任务和worker</h2>
+<p>对于任何可以建模为 Master-Worker 范例的问题，一个类似于 worker
+使用通道进行通信和交互、Master 进行整体协调的方案都能完美解决。</p>
+<p>怎么选择是该使用锁还是通道？</p>
+<p>下面列出一个普遍的经验法则：</p>
+<ul>
+<li>使用锁的情景：
+<ul>
+<li>访问共享数据结构中的缓存信息</li>
+<li>保存应用程序上下文和状态信息数据</li>
+</ul></li>
+<li>使用通道的情景：
+<ul>
+<li>与异步操作的结果进行交互</li>
+<li>分发任务</li>
+<li>传递数据所有权</li>
+</ul></li>
+</ul>
+<p>当你发现你的锁使用规则变得很复杂时，可以反省使用通道会不会使问题变得简单些。</p>
+<h2 id="惰性生成器的实现">惰性生成器的实现</h2>
+<p>生成器是指被调用时返回一个序列中下一个值的函数，生成器只在需要的时候求值，同时保留相关变量资源，是一项在需要时对表达式进行求值的技术。</p>
+<p>可以通过传入匿名函数，将函数的计算结果输出到通道，再返回另一个函数作为生成器，用于将通道中的内容输出。需要生成器结果时调用函数即可。</p>
+<h2 id="限制同时处理的请求数">限制同时处理的请求数</h2>
+<p>使用带缓冲区的通道可以很容易地实现，其缓冲区容量就是同时处理请求的最大数量。</p>
+<p>下述示例当信号通道表示缓冲区已满时，handle()
+函数会阻塞且不再处理其他请求。</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">package main
+
+const MAXREQS &#x3D; 50
+
+var sem &#x3D; make(chan int, MAXREQS)
+
+func process(r *Request) &#123;
+    &#x2F;&#x2F; do something
+&#125;
+
+func handle(r *Request) &#123;
+    sem &lt;- 1 &#x2F;&#x2F; doesn&#39;t matter what we put in it
+    process(r)
+    &lt;-sem &#x2F;&#x2F; one empty place in the buffer: the next request can start
+&#125;</code></pre>
+<h2 id="链式协程">链式协程</h2>
+<p>这样的通道表达式也是可行的：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">func f(left, right chan int) &#123; left &lt;- 1 + &lt;-right &#125;</code></pre>
+<h2 id="在多核心上并行计算">在多核心上并行计算</h2>
+<p>如果需要把计算量分配到每一个处理器上，让每一部分与其他部分并行，可以先用带缓冲区的通道，在每一个计算部分完成后发送信号；同时还要通过runtime.GOMAXPROCS(N)限定使用的处理器个数。</p>
+<h2 id="使用通道并发访问对象">使用通道并发访问对象</h2>
+<p>可以使用协程在后台顺序执行匿名函数来替代使用同步互斥锁。比如在构造函数中启动一个后台协程，然后把对象的读写都实现为匿名函数，让其按顺序处理，有效地将它们序列化从而提供了安全的并发访问。</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; 构造时开启协程
+func NewPerson(name string, salary float64) *Person &#123;
+    p :&#x3D; &amp;Person&#123;name, salary, make(chan func())&#125;
+    go p.backend()
+    return p
+&#125;
+
+func (p *Person) backend() &#123;
+    for f :&#x3D; range p.chF &#123;
+        f()
+    &#125;
+&#125;
+
+&#x2F;&#x2F; 读写func()
+&#x2F;&#x2F; Set salary.
+func (p *Person) SetSalary(sal float64) &#123;
+    p.chF &lt;- func() &#123; p.salary &#x3D; sal &#125;
+&#125;
+
+&#x2F;&#x2F; Retrieve salary.
+func (p *Person) Salary() float64 &#123;
+    fChan :&#x3D; make(chan float64)
+    p.chF &lt;- func() &#123; fChan &lt;- p.salary &#125;
+    return &lt;-fChan
+&#125;</code></pre>
 ]]></content>
       <categories>
         <category>计算机科学</category>
