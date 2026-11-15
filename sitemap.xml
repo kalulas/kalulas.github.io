@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.threegates.net/about/index.html</loc>
+    
+    <lastmod>2026-11-15</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.threegates.net/p/c9e58284d744/</loc>
     
     <lastmod>2026-11-15</lastmod>
@@ -93,15 +102,6 @@
   
   <url>
     <loc>https://www.threegates.net/p/e842888b11eb/</loc>
-    
-    <lastmod>2026-11-15</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.threegates.net/about/index.html</loc>
     
     <lastmod>2026-11-15</lastmod>
     
