@@ -1539,16 +1539,27 @@ prismjs:
 <p>如果需要预览配色方案的效果，可以前往<a
 href="https://theme-next.js.org/highlight/">这个网站</a></p>
 <h3 id="调整内联代码布局">调整内联代码布局</h3>
-<p>由于内联代码的 style 为
-<code>overflow-wrap: break-word</code>，生成出的博客内容必须保证内联代码块内容在同一行，从而导致部分行的中文内容无法填充完整，且间隔被均等分，看着特别不舒服。</p>
-<p>目前的修改方式是手动调整了 next 主题的 css 生成规则文件
-<strong>_mixins.styl</strong>，可能会由于后续的 next
-主题更新被覆盖，需要注意。</p>
-<pre class="line-numbers language-stylus" data-language="stylus"><code class="language-stylus">&#x2F;&#x2F; node_nodules&#x2F;hexo-theme-next&#x2F;source&#x2F;css&#x2F;_mixins.styl
+<p>由于内联代码的默认 style 为
+<code>overflow-wrap: break-word</code>，生成出的博客内容为了保证内联代码块内容在同一行，从而导致部分行的中文内容无法填充完整，且间隔被均等分，看着特别不舒服。</p>
+<p>最早的做法是直接修改
+<code>node_modules/hexo-theme-next/source/css/_mixins.styl</code>，但这样每次重新
+<code>npm install</code> 或者更新主题，修改都会被覆盖。2026
+年把博客的构建环境迁移到自己 Windows PC 上遇到这个问题，于是改为使用
+NexT 提供的 <code>custom_file_path</code> 注入一份自定义的 mixin
+文件，跟着博客仓库一起维护。</p>
+<p>在 <strong>_config.next.yml</strong> 中启用 mixin 注入：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">custom_file_path:
+  mixin: source&#x2F;_data&#x2F;mixins.styl</code></pre>
+<p>然后在 <strong>source/_data/mixins.styl</strong> 中重新定义
+<code>word-wrap()</code>：</p>
+<pre class="line-numbers language-stylus" data-language="stylus"><code class="language-stylus">&#x2F;&#x2F; source&#x2F;_data&#x2F;mixins.styl
 word-wrap() &#123;
-    &#x2F;&#x2F; overflow-wrap: break-word; &#x2F;&#x2F; &lt;- 移除
-    word-break: break-all; &#x2F;&#x2F; &lt;- 新增
+  word-break: break-all;
 &#125;</code></pre>
+<p>NexT 的 <strong>main.styl</strong> 会先引入主题自带的
+<strong>_mixins.styl</strong>，再引入通过
+<code>custom_file_path.mixin</code> 注入的文件，之后才加载用到这些 mixin
+的样式，所以这里的定义会覆盖主题原有的定义。</p>
 <h3 id="样式layout自定义">样式（layout）自定义</h3>
 <p>阅读了hexo和NEXT的模板相关文章，简单看了下关联的njx，ejs文件，想通过is_post()或者is_home()的helper方法实现一下仅在文章页显示阅读进度条的效果，但是似乎返回结果不正确，现在在next的github页提了issue还在等回复。</p>
 <p>njx中的语法与ejs不完全相同，简单参考了非官方文档：</p>
@@ -1558,49 +1569,29 @@ word-wrap() &#123;
 </ol>
 <h3 id="图片墙">图片墙</h3>
 <p>选用了hexo-light-gallery插件，传送门
-https://github.com/lzane/hexo-light-gallery
-按照教程安装了hexo-light-gallery，对<code>node_modules/hexo-light-gallery/src/renderer.js</code>
-做了一点修改</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; node_modules&#x2F;hexo-light-gallery&#x2F;src&#x2F;renderer.js 
-function addTag(data)&#123;
-    var config &#x3D; this.config.lightgallery;
-    if(!config)&#123;
-        return;
-    &#125;
+https://github.com/lzane/hexo-light-gallery</p>
+<p>插件本身会给每一篇文章都包上一层 gallery 的 div，并注入 lightgallery
+的 js 和 css，即使文章里一张图片都没有。最早我是直接修改
+<code>node_modules/hexo-light-gallery/src/renderer.js</code>，加了一个找不到图片就直接返回的判断，同样存在重装依赖后修改丢失的问题。</p>
+<p>（当时还修了一处 <code>'&gt;'</code> 和 <code>'"'</code>
+顺序写反导致的结构破坏，npm 上当前的 1.0.2
+版本里这处已经是正确的了。）</p>
+<p>现在的做法是利用 Hexo 的加载顺序：Hexo 会先加载 node_modules
+里的插件，再自动加载站点根目录 <strong>scripts/</strong>
+下的脚本。所以可以在脚本里先注销插件注册的
+<code>after_post_render</code> filter，再注册一个先检查文章里有没有
+<code>&lt;img&gt;</code> 的版本：</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; scripts&#x2F;lightgallery-fix.js
+&#39;use strict&#39;;
 
-    &#x2F;&#x2F; add js
-    &#x2F;&#x2F; 这里本来 &#39;&gt;&#39; 在 &#39;&quot;&#39; 前面，会造成结构破坏
-    data.content &#x3D; &#39;&lt;div class&#x3D;&quot;.article-gallery&quot;&gt;&#39;+data.content+&#39;&lt;&#x2F;div&gt;&#39;;
-    data.content+&#x3D;&#39;&lt;script src&#x3D;&quot;&#39;+config.js+&#39;&quot;&gt;&lt;&#x2F;script&gt;&#39;;
+const &#123; render &#125; &#x3D; require(&#39;hexo-light-gallery&#x2F;src&#x2F;renderer&#39;);
 
-    &#x2F;&#x2F; add css
-    var css &#x3D; &#39;&lt;link rel&#x3D;&quot;stylesheet&quot; type&#x3D;&quot;text&#x2F;css&quot; href&#x3D;&quot;&#39;+config.css+&#39;&quot; &#x2F;&gt;&#39;;
-    data.content &#x3D; css + data.content;
-
-    &#x2F;&#x2F; add plugins
-    var plugins &#x3D; Object.keys(config.plugins);
-    for (var plugin of plugins)&#123;
-        var jsTag &#x3D; &#39;&lt;script src&#x3D;&quot;&#39;+config.plugins[plugin]+&#39;&quot;&gt;&lt;&#x2F;script&gt;&#39;;
-        data.content +&#x3D; jsTag;
-    &#125;
-&#125;
-
-&#x2F;&#x2F; ...
-function render(data)&#123;
-    if (ignore(data))&#123;
-        return;
-    &#125;
-    &#x2F;&#x2F; 如果找不到图片标签，就不执行下面的代码，就不会在不需要的地方增加多余内容
-    if (!imgRgr.exec(data.content))&#123;
-        return;
-    &#125;
-
-    wrapImage.call(this,data);
-    addTag.call(this,data);
-    addRunnableTag.call(this,data);
-&#125;;
-
-</code></pre>
+hexo.extend.filter.unregister(&#39;after_post_render&#39;, render);
+hexo.extend.filter.register(&#39;after_post_render&#39;, function(data) &#123;
+  &#x2F;&#x2F; 如果找不到图片标签，就不执行插件的逻辑，不会在不需要的地方增加多余内容
+  if (!&#x2F;&lt;img [^&gt;]+&gt;&#x2F;.test(data.content)) return;
+  return render.call(this, data);
+&#125;, 9);</code></pre>
 <p>在lightgallery提供的插件（插件的插件...）中补充了三个插件：</p>
 <ol type="1">
 <li>lg-thumbnail: 提供图片的缩略图</li>
@@ -1719,16 +1710,11 @@ hexo.extend.helper.register(&#39;next_vendors&#39;, function(name) &#123;
 生成的，我自己试过也成功了。不过对于一些小改动（比如为prism添加一个prism-download-button.js），自己做下<strong>_vendors.yml</strong>的修改，加入一个条目也是很简单的，不需要安装那么多依赖项。</li>
 </ol>
 <h2 id="资源文件夹">资源文件夹</h2>
-<p>网站需要显示一些像网站图标和用户画像，还有文章中的截图这样的资源，参考hexo文档，最后采用的方式是将配置项<code>post_asset_folder</code>设置为true，这会让hexo在新建post时为这个post新建一个同名资源文件夹。然后使用<a
-href="https://github.com/hexojs/hexo-renderer-marked">hexo-renderer-marked</a>
-3.1.0
-的特性，在文章中直接使用markdown图片格式，图片链接直接填写图片文件名，hexo会将资源请求重定向到post的同名资源文件夹中。</p>
-<p>值得一提的是也可以在其他post中使用相对路径来索引到这些资源，为post之间共享资源提供了思路。</p>
+<p>网站需要显示一些像网站图标和用户画像，还有文章中的截图这样的资源，参考hexo文档，最后采用的方式是将配置项<code>post_asset_folder</code>设置为true，这会让hexo在新建post时为这个post新建一个同名资源文件夹。</p>
+<p>现在我的博文中更多是直接使用了 <code>&#123;% asset_img [img_name_in_asset_folder] description %&#125;</code>
+语法，已经不太信任外部图床了，时间一久总会挂的 ...</p>
 <p><strong>_config.yml</strong>配置形式如下：</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">post_asset_folder: true
-marked:
-  prependRoot: true
-  postAsset: true</code></pre>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">post_asset_folder: true</code></pre>
 <h2 id="hexo以及next的更新">hexo以及next的更新</h2>
 <p>从各自的官方文档或者npm都能查看到当前的最新版本，据说NexT是每个月都会发布新版本的，遇到问题都可以留意一下是不是最新版本（当然也要做好回退的准备，更新hexo和next时都记得备份<strong>_config.yml</strong>）。</p>
 <p>贴一下npm对应package的链接:</p>
