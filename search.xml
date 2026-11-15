@@ -1716,23 +1716,18 @@ hexo.extend.helper.register(&#39;next_vendors&#39;, function(name) &#123;
 <p><strong>_config.yml</strong>配置形式如下：</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">post_asset_folder: true</code></pre>
 <h2 id="hexo以及next的更新">hexo以及next的更新</h2>
-<p>从各自的官方文档或者npm都能查看到当前的最新版本，据说NexT是每个月都会发布新版本的，遇到问题都可以留意一下是不是最新版本（当然也要做好回退的准备，更新hexo和next时都记得备份<strong>_config.yml</strong>）。</p>
-<p>贴一下npm对应package的链接:</p>
-<ol type="1">
-<li><a href="https://www.npmjs.com/package/hexo" title="" target="">hexo</a>
-<p>npm package</p></li>
-<li><a href="https://www.npmjs.com/package/hexo-theme-next" title="" target="">hexo-theme-next</a>
-<p>npm package</p></li>
-</ol>
-<p>执行npm命令来检查packages是否有新版本：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ cd hexo-site
-$ npm outdated</code></pre>
-<p>使用npm进行package更新（当然，hexo本身也是一个package），并使用参数<code>--save</code>将改动保存到package.json：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ cd hexo-site
-$ npm update &lt;package-name&gt; --save</code></pre>
-<p>或者使用npm-check-updates，来将package.json更新到最新版本，再一次性全部安装最新版</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ npm i npm-check-updates -g # 如果你没有安装过npm-check-updates
-$ ncu # 检查版本更新，类似npm outdated，ncu是npm-check-updates的别名
+<p>从各自的官方文档或者 npm 都能查看到当前的最新版本，据说 NexT
+是每个月都会发布新版本的，遇到问题都可以留意一下是不是最新版本（当然也要做好回退的准备）。</p>
+<p>执行 npm 命令来检查 packages 是否有新版本：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ npm outdated</code></pre>
+<p>使用 npm 进行 package 更新（当然，hexo 本身也是一个
+package），并使用参数 <code>--save</code> 将改动保存到
+package.json：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ npm update &lt;package-name&gt; --save</code></pre>
+<p>或者使用 npm-check-updates，来将 package.json
+更新到最新版本，再一次性全部安装最新版</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ npm i npm-check-updates -g # 全局安装 npm-check-updates
+$ ncu # 检查版本更新，类似 npm outdated，ncu 是 npm-check-updates 的别名
 $ ncu -u # 更新package.json
 $ ncu package_name [-u] # 仅检查单个&#x2F;多个包的更新，添加参数来应用到 package.json
 $ npm install # npm按照更新后的package.json进行安装</code></pre>
