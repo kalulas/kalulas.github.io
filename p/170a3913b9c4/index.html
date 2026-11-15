@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.2">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css" integrity="sha256-4Lad8m4ZWW1Lgb9+sMVLYEfnIh7BjV1NQMEe79Pviks=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":4,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.29.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"codeblock":{"theme":{"light":"atelier-dune-light","dark":"atelier-dune-light"},"prism":{"light":"prism-tomorrow","dark":"prism-tomorrow"},"copy_button":{"enable":true,"style":"default"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":4,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="探究了 .net framework 4.8 下的 StringBuilder 及其常见操作实现。StringBuilder 对象代表一个可变字符串，有时我们需要对字符串进行移除，替换，插入字符等操作，但又不想每个操作都产生一个新的子串，在这样的情境下，StringBuilder 就特别有用。StringBuilder 中的完整字符串被表示为由块（Block）组成的链表，每个块都包含一个字符串块（">
 <meta property="og:type" content="article">
@@ -30,8 +30,8 @@
 <meta property="article:published_time" content="2025-03-31T15:45:56.000Z">
 <meta property="article:modified_time" content="2026-11-15T09:02:45.584Z">
 <meta property="article:author" content="Edward Chen 陈柏铭">
-<meta property="article:tag" content="C#">
 <meta property="article:tag" content=".NET">
+<meta property="article:tag" content="C#">
 <meta property="article:tag" content="源码阅读">
 <meta name="twitter:card" content="summary">
 
@@ -53,13 +53,12 @@
 
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-core.min.js" integrity="sha256-bKrTFt2ZHyT4AE4LnBnAVctYKf9l6XP77kBvltgbjn4=" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/autoloader/prism-autoloader.min.js" integrity="sha256-AjM0J5XIbiB590BrznLEgZGLnOQWrt62s3BEq65Q/I0=" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha256-9cmf7tcLdXpKsPi/2AWE93PbZpTp4M4tqzFk+lWomjU=" crossorigin="anonymous" defer></script>
 <script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
 <script src="/js/third-party/search/local-search.js" defer></script>
 
 
@@ -76,7 +75,7 @@
 
   
 
-  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","display_overflow":"scroll","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-mml-chtml.js","integrity":"sha256-ihPtDDm7pTmSF9ViEsItlvsrBTsNkz0MOXMchzOwCQw="}}</script>
 <script src="/js/third-party/math/mathjax.js" defer></script>
 
 
@@ -94,12 +93,8 @@
   <main class="main">
     <div class="column">
       <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
+  <div class="site-nav-search popup-trigger" aria-label="搜索" role="button">
+      <i class="fa fa-search fa-fw fa-lg"></i>
   </div>
 
   <div class="site-meta">
@@ -112,10 +107,8 @@
       <p class="site-subtitle" itemprop="description">edwardchen's gamedev blog</p>
   </div>
 
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="搜索" role="button">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
+  <div class="site-nav-toggle" aria-label="切换导航栏" role="button">
+      <i class="fa fa-ellipsis fa-fw fa-lg"></i>
   </div>
 </div>
 
@@ -132,7 +125,8 @@
 
 
 
-  <div class="search-pop-overlay">
+  
+  <template id="search-popup-template"><div class="search-pop-overlay">
     <div class="popup search-popup">
       <div class="search-header">
         <span class="search-icon">
@@ -153,7 +147,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div></template>
 
 </header>
         
@@ -311,7 +305,7 @@ string.Format</span></a></li></ol></li><li class="nav-item nav-level-2"><a class
     <span class="post-meta-break"></span>
     <span class="post-meta-item" title="本文字数">
       <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
+        <i class="far fa-file-lines"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
       <span>5.2k</span>
@@ -376,7 +370,7 @@ do.</p>
 在内部表示为由块（Block）组成的链表，每个块都包含一个字符串块（Chunk）。
 实际上完整的字符串也可以仅用一个块来表示，所以我们便这么实现了。</p>
 </blockquote>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public sealed class StringBuilder : ISerializable &#123;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">public sealed class StringBuilder : ISerializable &#123;
     &#x2F;&#x2F; The characters in this block
     internal char[] m_ChunkChars;
     &#x2F;&#x2F; Link to the block logically before this block
@@ -419,7 +413,7 @@ Chunk 的存在，同时在重新设置（setter）Capacity 和 Length
 <h2 id="构造函数">构造函数</h2>
 <p>提供了多个构造函数，可以分别指定初始容量，初始字符串值，指定初始字符串值为给定字符串的一个子串…并且它们均依赖同一份构造函数实现，即
 <code>StringBuilder(String value, int startIndex, int length, int capacity)</code></p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public StringBuilder(String value, int startIndex, int length, int capacity) &#123;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">public StringBuilder(String value, int startIndex, int length, int capacity) &#123;
     &#x2F;&#x2F; 初始参数 startIndex, length, capacity 的一些合法性检测 ...
     if (value &#x3D;&#x3D; null) &#123;
         value &#x3D; String.Empty;
@@ -458,7 +452,7 @@ StringBuilder.ThreadSafeCopy</h3>
 <code>charCount * 2</code> 是因为此版本下 C# 中的字符串是以 UTF-16
 编码存储的（但注意 UTF-16 也是变长编码）。每个字符占用 2 个字节（16
 位），因此需要将字符数乘以 2 来计算字节数。</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ndp\clr\src\BCL\system\text\stringbuilder.cs:1846
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">&#x2F;&#x2F; ndp\clr\src\BCL\system\text\stringbuilder.cs:1846
 
 if ((uint)destinationIndex &lt;&#x3D; (uint)destination.Length &amp;&amp; (destinationIndex + count) &lt;&#x3D; destination.Length)
 &#123;                                                                                                          
@@ -476,13 +470,13 @@ if ((uint)destinationIndex &lt;&#x3D; (uint)destination.Length &amp;&amp; (desti
 中包含字符串数量。</p>
 <p>builder 的 <strong>Capacity</strong>
 是当前chunk的字符偏移值，加上内部数组的大小。</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public int Capacity &#123;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">public int Capacity &#123;
     get &#123; return m_ChunkChars.Length + m_ChunkOffset; &#125;</code></pre>
 <p>容量的设置方法中也考虑了 <strong>m_ChunkOffset</strong>，当前
 StringBuilder
 的字符数组，会被一个新的字符数组取代（由于做了合法性检测保证新的
 Capacity &gt; Length，此处不同担心新的字符数组长度是非法值）</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">if (Capacity !&#x3D; value) &#123;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">if (Capacity !&#x3D; value) &#123;
     int newLen &#x3D; value - m_ChunkOffset;
     char[] newArray &#x3D; new char[newLen];
     Array.Copy(m_ChunkChars, newArray, m_ChunkLength);
@@ -491,7 +485,7 @@ Capacity &gt; Length，此处不同担心新的字符数组长度是非法值）
 <h3 id="长度的获取与设置-length">长度的获取与设置 Length</h3>
 <p>builder 的 <strong>Length</strong>
 是当前chunk的字符偏移值，加上内部数组中有效内容的长度。</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public int Length &#123;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">public int Length &#123;
     get &#123;
         Contract.Ensures(Contract.Result&lt;int&gt;() &gt;&#x3D; 0);
         return m_ChunkOffset + m_ChunkLength;
@@ -499,7 +493,7 @@ Capacity &gt; Length，此处不同担心新的字符数组长度是非法值）
 <p>而从容量的设置我们可以看到 StringBuilder
 在容量更新时是如何处理多个Chunk的情况的：</p>
 <p>首先还是惯例的合法性检测，同时保留当前的容量值</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; Sets the length of the String in this buffer.  If length is less than the current
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">&#x2F;&#x2F; Sets the length of the String in this buffer.  If length is less than the current
 &#x2F;&#x2F; instance, the StringBuilder is truncated.  If length is greater than the current 
 &#x2F;&#x2F; instance, nulls are appended.  The capacity is adjusted to be the same as the length.
 public int Length &#123;
@@ -516,7 +510,7 @@ public int Length &#123;
 <strong>m_ChunkOffset</strong>，没有太多进一步操作了。考虑到将
 StringBuilder 重置是一个发生频率比较高的操作，将
 <strong>m_ChunkChars</strong> 中的内容先做保留或许也是正确的选择。</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">if (value &#x3D;&#x3D; 0 &amp;&amp; m_ChunkPrevious &#x3D;&#x3D; null)
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">if (value &#x3D;&#x3D; 0 &amp;&amp; m_ChunkPrevious &#x3D;&#x3D; null)
 &#123;
     m_ChunkLength &#x3D; 0;
     m_ChunkOffset &#x3D; 0;
@@ -530,7 +524,7 @@ StringBuilder 重置是一个发生频率比较高的操作，将
 实现时我们会发现这里顶多也只会增长一个Chunk。（可以看到注释评价此处的实现是可以改进的，可能做一个简单的
 <strong>m_ChunkChars</strong>
 容量调整，或者直接加上一个新的Chunk都会更简单高效一些）</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">int delta &#x3D; value - Length;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">int delta &#x3D; value - Length;
 &#x2F;&#x2F; if the specified length is greater than the current length
 if (delta &gt; 0)
 &#123;
@@ -552,7 +546,7 @@ if (delta &gt; 0)
 <li>这些被略过，以及被取代掉的chunk，以及它们内部的数组内容都已没有引用，它们所占有的内存空间将在下一次
 GC.Collect 时释放掉</li>
 </ol>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; if the specified length is less than or equal to the current length 
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">&#x2F;&#x2F; if the specified length is less than or equal to the current length 
 else
 &#123;
     StringBuilder chunk &#x3D; FindChunkForIndex(value);
@@ -574,7 +568,7 @@ else
 &#125;</code></pre>
 <h3 id="清空操作-clear">清空操作 Clear</h3>
 <p>简单地提一下，builder的清空操作实际上就是将 Length 设置为0的操作</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; Convenience method for sb.Length&#x3D;0;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">&#x2F;&#x2F; Convenience method for sb.Length&#x3D;0;
 public StringBuilder Clear() &#123;
     this.Length &#x3D; 0;
     return this;
@@ -583,7 +577,7 @@ public StringBuilder Clear() &#123;
 <p>从 index 方法的实现是符合直觉的，如果 index - chunk.offset
 大于等于0，那么，字符就在当前chunk中，直接对 m_ChunkChars
 进行数组索引；如果小于0，说明字符位于先前的chunk中，chunk指向previous，并使用新的offset更新index值，不断循环即可。</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public char this[int index] &#123;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">public char this[int index] &#123;
     &#x2F;&#x2F; 
 
     get &#123;
@@ -605,7 +599,7 @@ public StringBuilder Clear() &#123;
     &#x2F;&#x2F; set 方法是类似的</code></pre>
 <p>这就导致如果对很多的chunk组成的builder进行从头到尾的逐字符遍历，实际执行的指令数可能会很多，比如在
 <strong>System.Net.NetworkingPerfCounters</strong> 中的这个方法。</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ndp\fx\src\net\System\Net\_NetworkingPerfCounters.cs:372
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">&#x2F;&#x2F; ndp\fx\src\net\System\Net\_NetworkingPerfCounters.cs:372
 &#x2F;&#x2F; NetworkingPerfCounters.ReplaceInvalidChars
         private static string ReplaceInvalidChars(string instanceName)
         &#123;
@@ -666,7 +660,7 @@ chunk，以此来保证分配内存操作保留在 small object heap，而不是
 object heap。这里两种不同 heap
 的概念之前没有学习过，可以后续详细了解下。贴上源码中的两处注释以供后续参考：</li>
 </ol>
-<p><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ndp\clr\src\bcl\system\text\stringbuilder.cs:76
+<p><pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">&#x2F;&#x2F; ndp\clr\src\bcl\system\text\stringbuilder.cs:76
         
 &#x2F;&#x2F; We want to keep chunk arrays out of large object heap (&lt; 85K bytes ~ 40K chars) to be sure.   
 &#x2F;&#x2F; Making the maximum chunk size big means less allocation code called, but also more waste      
@@ -733,7 +727,7 @@ sourceIndex, char[] destination, int destinationIndex, int count)</h3>
 <p>合法性校验中值得额外提及的是，插入字符串总长度 value.Length * cout
 加上已有长度 <strong>Length</strong> 仍然不可超过限定长度
 <strong>MaxCapacity</strong></p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">StringBuilder chunk;                                                                   
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">StringBuilder chunk;                                                                   
 int indexInChunk;                                                                      
 MakeRoom(index, (int) insertingChars, out chunk, out indexInChunk, false);             
 unsafe &#123;                                                                               
@@ -749,7 +743,7 @@ unsafe &#123;
 对应的chunk，接下来若此 chunk 存在足够剩余空间容纳大小为 count
 的目标字符串，那么将此处的 count 长度子串移动到 count
 个字符之后，腾出空间。</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">if (!doneMoveFollowingChars &amp;&amp; chunk.m_ChunkLength &lt;&#x3D; DefaultCapacity * 2 &amp;&amp; chunk.m_ChunkChars.Length - chunk.m_ChunkLength &gt;&#x3D; count)
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">if (!doneMoveFollowingChars &amp;&amp; chunk.m_ChunkLength &lt;&#x3D; DefaultCapacity * 2 &amp;&amp; chunk.m_ChunkChars.Length - chunk.m_ChunkLength &gt;&#x3D; count)
 &#123;                                                                                                                                     
     for (int i &#x3D; chunk.m_ChunkLength; i &gt; indexInChunk; )                                                                             
     &#123;                                                                                                                                 
@@ -771,7 +765,7 @@ count 内容通过 ThreadSafeCopy 写入到指定 chunk 中，并且在当前 ch
 <p>不过注意这个操作可行性建立在传入的 chunk 是实际 StringBuilder 的前向
 chunk 的基础上，因为 <code>Next()</code> 实际是先得到传入 chunk 的
 offset+length，再通过最尾部 chunk 向前查找 offset 的形式实现的。</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">int lengthInChunk &#x3D; chunk.m_ChunkLength - indexInChunk;                      
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">int lengthInChunk &#x3D; chunk.m_ChunkLength - indexInChunk;                      
 Contract.Assert(lengthInChunk &gt;&#x3D; 0, &quot;index not in chunk&quot;);                   
                                                                              
 int lengthToCopy &#x3D; Math.Min(lengthInChunk, count);                           
@@ -806,7 +800,7 @@ replacementsCount，以保证这个数组在多次 replace
 <li>int[] 数组 replacements 的增长速度为
 <code>length = 1.5 * length + 4</code>，在起始阶段为更快一些</li>
 </ul>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; Push it on my replacements array (with growth), we will do all replacements in a                        
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">&#x2F;&#x2F; Push it on my replacements array (with growth), we will do all replacements in a                        
 &#x2F;&#x2F; given chunk in one operation below (see ReplaceAllInChunk) so we don&#39;t have to slide                    
 &#x2F;&#x2F; many times.                                                                                             
 if (replacements &#x3D;&#x3D; null)                                                                                  
@@ -858,7 +852,7 @@ string.Format</h3>
 <code>StringBuilder.AppendFormat</code></p>
 <p>注意 <code>StringBuilderCache.Acquire</code> 方法中访问的静态变量
 <strong>CachedInstance</strong> 被标记为 [ThreadStatic]</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ndp\clr\src\BCL\system\String.cs:3054
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">&#x2F;&#x2F; ndp\clr\src\BCL\system\String.cs:3054
 
 public static String Format(IFormatProvider provider, String format, params Object[] args) &#123;
     if (format &#x3D;&#x3D; null || args &#x3D;&#x3D; null)
@@ -1032,7 +1026,6 @@ StringBuilder 视作是最后一个块，前向块都通过内部 m_PreviousChun
     <span class="toggle-line"></span>
     <span class="toggle-line"></span>
   </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>

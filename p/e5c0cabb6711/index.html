@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.2">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css" integrity="sha256-4Lad8m4ZWW1Lgb9+sMVLYEfnIh7BjV1NQMEe79Pviks=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":4,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.29.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"codeblock":{"theme":{"light":"atelier-dune-light","dark":"atelier-dune-light"},"prism":{"light":"prism-tomorrow","dark":"prism-tomorrow"},"copy_button":{"enable":true,"style":"default"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":4,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="System.Collections.Generic.List 参考版本为 .net framework 4.8 https:&#x2F;&#x2F;referencesource.microsoft.com&#x2F;#mscorlib&#x2F;system&#x2F;collections&#x2F;generic&#x2F;list.cs 摘要  泛型类型 List&lt;T&gt;，实现接口 IList&lt;T&gt;，IReadOnlyLi">
 <meta property="og:type" content="article">
@@ -33,10 +33,10 @@
 <meta property="article:published_time" content="2024-08-25T07:12:15.000Z">
 <meta property="article:modified_time" content="2026-11-15T09:02:45.584Z">
 <meta property="article:author" content="Edward Chen 陈柏铭">
-<meta property="article:tag" content="C#">
 <meta property="article:tag" content=".NET">
-<meta property="article:tag" content="源码阅读">
+<meta property="article:tag" content="C#">
 <meta property="article:tag" content="IL2CPP">
+<meta property="article:tag" content="源码阅读">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s2.loli.net/2024/08/29/7LYwAR2mQ9XNdZ4.png">
 
@@ -58,13 +58,12 @@
 
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-core.min.js" integrity="sha256-bKrTFt2ZHyT4AE4LnBnAVctYKf9l6XP77kBvltgbjn4=" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/autoloader/prism-autoloader.min.js" integrity="sha256-AjM0J5XIbiB590BrznLEgZGLnOQWrt62s3BEq65Q/I0=" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha256-9cmf7tcLdXpKsPi/2AWE93PbZpTp4M4tqzFk+lWomjU=" crossorigin="anonymous" defer></script>
 <script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
 <script src="/js/third-party/search/local-search.js" defer></script>
 
 
@@ -81,7 +80,7 @@
 
   
 
-  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","display_overflow":"scroll","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-mml-chtml.js","integrity":"sha256-ihPtDDm7pTmSF9ViEsItlvsrBTsNkz0MOXMchzOwCQw="}}</script>
 <script src="/js/third-party/math/mathjax.js" defer></script>
 
 
@@ -99,12 +98,8 @@
   <main class="main">
     <div class="column">
       <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
+  <div class="site-nav-search popup-trigger" aria-label="搜索" role="button">
+      <i class="fa fa-search fa-fw fa-lg"></i>
   </div>
 
   <div class="site-meta">
@@ -117,10 +112,8 @@
       <p class="site-subtitle" itemprop="description">edwardchen's gamedev blog</p>
   </div>
 
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="搜索" role="button">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
+  <div class="site-nav-toggle" aria-label="切换导航栏" role="button">
+      <i class="fa fa-ellipsis fa-fw fa-lg"></i>
   </div>
 </div>
 
@@ -137,7 +130,8 @@
 
 
 
-  <div class="search-pop-overlay">
+  
+  <template id="search-popup-template"><div class="search-pop-overlay">
     <div class="popup search-popup">
       <div class="search-header">
         <span class="search-icon">
@@ -158,7 +152,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div></template>
 
 </header>
         
@@ -314,7 +308,7 @@ count)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href=
     <span class="post-meta-break"></span>
     <span class="post-meta-item" title="本文字数">
       <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
+        <i class="far fa-file-lines"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
       <span>2.2k</span>
@@ -395,7 +389,7 @@ x2</strong>。</p>
 <h3 id="containst-item">Contains(T item)</h3>
 <p>若传入item为null，则进行内部数组所有元素（转换为Object）的null-check</p>
 <p>若不为null，则获取类型T的默认比较器进行遍历比较</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">EqualityComparer&lt;T&gt; c &#x3D; EqualityComparer&lt;T&gt;.Default;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">EqualityComparer&lt;T&gt; c &#x3D; EqualityComparer&lt;T&gt;.Default;
 for(int i&#x3D;0; i&lt;_size; i++) &#123;
     if (c.Equals(_items[i], item)) return true;
 &#125;
@@ -446,7 +440,7 @@ count)</h3>
 <p>将List的内部数组大小，即容量大小，设置为严格与 _size
 一致。只有用这个方法（或者手动设置Capacity）能够真正缩小List的内部数组内存占用，这在已知List不会再有新元素时相当有用。</p>
 <p>想要完全清空一个List并且释放所有内存，正确的做法是：</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">list.Clear();
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">list.Clear();
 list.TrimExcess();</code></pre>
 <h2 id="enumerator">Enumerator</h2>
 <p>构造 Enumerator 时，内部会存有原 List
@@ -472,7 +466,7 @@ list._version，防止遍历过程中list内容发生改变。</p>
 <code>System.Collections.Generic.List</code> 在低版本 unity / il2cpp
 下的生成内容。</p>
 <p>粗看之下类型成员，以及静态类型成员看上去没有什么不同。</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">&#x2F;&#x2F; System.Collections.Generic.List&#96;1&lt;System.Int32&gt;
+<pre class="line-numbers language-cpp" data-language="cpp" data-start="1"><code class="language-cpp">&#x2F;&#x2F; System.Collections.Generic.List&#96;1&lt;System.Int32&gt;
 struct  List_1_t4A961510635950236678F1B3B2436ECCAF28713A  : public RuntimeObject
 &#123;
 public:
@@ -492,7 +486,7 @@ public:
 &#125;;</code></pre>
 <p>但是没有发现 <code>EnsureCapacity</code>，取而代之的是
 <code>GrowIfNeeded</code> 方法。</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">&#x2F;&#x2F; System.Void System.Collections.Generic.List&#96;1&lt;System.Object&gt;::GrowIfNeeded(System.Int32)
+<pre class="line-numbers language-cpp" data-language="cpp" data-start="1"><code class="language-cpp">&#x2F;&#x2F; System.Void System.Collections.Generic.List&#96;1&lt;System.Object&gt;::GrowIfNeeded(System.Int32)
 extern &quot;C&quot; IL2CPP_METHOD_ATTR void List_1_GrowIfNeeded_m3C3B2872122BDF013830789D49EE77F7880CDEC5_gshared (List_1_tE72A517BD14F52539FF78EA90F58D1387FEED660 * __this, int32_t ___newCount0, const RuntimeMethod* method)
 &#123;
     int32_t V_0 &#x3D; 0;
@@ -560,7 +554,7 @@ target="_blank" rel="noopener" href="https://github.com/mono/mono/blob/mono-2-0/
 源码</a>，就能看到方法 <code>GrowIfNeeded</code> 了。可以发现在实现上与
 <code>EnsureCapacity</code>
 不同的是传入的数值为此次操作的元素个数增量，而不是元素个数的目标大小。</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; https:&#x2F;&#x2F;github.com&#x2F;mono&#x2F;mono&#x2F;blob&#x2F;a1f3cf39287ceaca189ae1b4c06ad1677c8988cf&#x2F;mcs&#x2F;class&#x2F;corlib&#x2F;System.Collections.Generic&#x2F;List.cs#L83
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">&#x2F;&#x2F; https:&#x2F;&#x2F;github.com&#x2F;mono&#x2F;mono&#x2F;blob&#x2F;a1f3cf39287ceaca189ae1b4c06ad1677c8988cf&#x2F;mcs&#x2F;class&#x2F;corlib&#x2F;System.Collections.Generic&#x2F;List.cs#L83
 
         public void Add (T item)
         &#123;
@@ -689,7 +683,6 @@ target="_blank" rel="noopener" href="https://github.com/mono/mono/blob/mono-2-0/
     <span class="toggle-line"></span>
     <span class="toggle-line"></span>
   </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>

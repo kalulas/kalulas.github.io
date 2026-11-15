@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.2">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css" integrity="sha256-4Lad8m4ZWW1Lgb9+sMVLYEfnIh7BjV1NQMEe79Pviks=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":4,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.29.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"codeblock":{"theme":{"light":"atelier-dune-light","dark":"atelier-dune-light"},"prism":{"light":"prism-tomorrow","dark":"prism-tomorrow"},"copy_button":{"enable":true,"style":"default"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":4,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="Chapter1 go语言的发展目标 结合静态语言的安全性和高效性，动态语言的易开发性。 注意，go是静态语言（静态类型语言）。是类型安全和内存安全的编程语言。通过goroutine来实现并发并行编程，通过channel来实现gorountine之间通信。 像其他静态语言一样执行本地代码，但依旧运行某种意义上的虚拟机进行垃圾回收，不需要开发人员考虑内存管理的问题。 语言的特性 没有类和">
 <meta property="og:type" content="article">
@@ -38,8 +38,8 @@
 <meta property="article:published_time" content="2022-07-31T14:24:57.000Z">
 <meta property="article:modified_time" content="2026-11-15T09:02:45.615Z">
 <meta property="article:author" content="Edward Chen 陈柏铭">
-<meta property="article:tag" content="编程语言">
 <meta property="article:tag" content="Go">
+<meta property="article:tag" content="编程语言">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://www.threegates.net/p/e842888b11eb/Untitled.png">
 
@@ -61,13 +61,12 @@
 
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-core.min.js" integrity="sha256-bKrTFt2ZHyT4AE4LnBnAVctYKf9l6XP77kBvltgbjn4=" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/autoloader/prism-autoloader.min.js" integrity="sha256-AjM0J5XIbiB590BrznLEgZGLnOQWrt62s3BEq65Q/I0=" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha256-9cmf7tcLdXpKsPi/2AWE93PbZpTp4M4tqzFk+lWomjU=" crossorigin="anonymous" defer></script>
 <script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
 <script src="/js/third-party/search/local-search.js" defer></script>
 
 
@@ -84,7 +83,7 @@
 
   
 
-  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","display_overflow":"scroll","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-mml-chtml.js","integrity":"sha256-ihPtDDm7pTmSF9ViEsItlvsrBTsNkz0MOXMchzOwCQw="}}</script>
 <script src="/js/third-party/math/mathjax.js" defer></script>
 
 
@@ -102,12 +101,8 @@
   <main class="main">
     <div class="column">
       <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
+  <div class="site-nav-search popup-trigger" aria-label="搜索" role="button">
+      <i class="fa fa-search fa-fw fa-lg"></i>
   </div>
 
   <div class="site-meta">
@@ -120,10 +115,8 @@
       <p class="site-subtitle" itemprop="description">edwardchen's gamedev blog</p>
   </div>
 
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="搜索" role="button">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
+  <div class="site-nav-toggle" aria-label="切换导航栏" role="button">
+      <i class="fa fa-ellipsis fa-fw fa-lg"></i>
   </div>
 </div>
 
@@ -140,7 +133,8 @@
 
 
 
-  <div class="search-pop-overlay">
+  
+  <template id="search-popup-template"><div class="search-pop-overlay">
     <div class="popup search-popup">
       <div class="search-header">
         <span class="search-icon">
@@ -161,7 +155,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div></template>
 
 </header>
         
@@ -181,7 +175,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter1"><span class="nav-number">1.</span> <span class="nav-text">Chapter1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#go%E8%AF%AD%E8%A8%80%E7%9A%84%E5%8F%91%E5%B1%95%E7%9B%AE%E6%A0%87"><span class="nav-number">1.0.1.</span> <span class="nav-text">go语言的发展目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E8%A8%80%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">1.0.2.</span> <span class="nav-text">语言的特性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter2"><span class="nav-number">2.</span> <span class="nav-text">Chapter2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B3%E5%8F%B0%E4%B8%8E%E6%9E%B6%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">平台与架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#go%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">2.2.</span> <span class="nav-text">Go环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#go-%E8%BF%90%E8%A1%8C%E6%97%B6runtime"><span class="nav-number">2.2.1.</span> <span class="nav-text">Go 运行时（runtime）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter4"><span class="nav-number">3.</span> <span class="nav-text">Chapter4</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#go%E7%A8%8B%E5%BA%8F%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E8%A6%81%E7%B4%A0"><span class="nav-number">3.1.</span> <span class="nav-text">Go程序基本结构和要素</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-number">3.1.1.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.1.2.</span> <span class="nav-text">类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F"><span class="nav-number">3.2.</span> <span class="nav-text">常量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F"><span class="nav-number">3.3.</span> <span class="nav-text">变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.3.1.</span> <span class="nav-text">值类型与引用类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">3.3.2.</span> <span class="nav-text">格式字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#init%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.3.</span> <span class="nav-text">init函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">3.4.</span> <span class="nav-text">基本类型与运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.4.1.</span> <span class="nav-text">数字类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">3.4.2.</span> <span class="nav-text">算术运算符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%88%AB%E5%90%8D"><span class="nav-number">3.4.3.</span> <span class="nav-text">类型别名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.4.4.</span> <span class="nav-text">字符类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">3.5.</span> <span class="nav-text">字符串</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter5"><span class="nav-number">4.</span> <span class="nav-text">Chapter5</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#if-else-%E7%BB%93%E6%9E%84"><span class="nav-number">4.1.</span> <span class="nav-text">if-else 结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%A4%9A%E8%BF%94%E5%9B%9E%E5%80%BC%E5%87%BD%E6%95%B0%E7%9A%84%E9%94%99%E8%AF%AF"><span class="nav-number">4.2.</span> <span class="nav-text">测试多返回值函数的错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#switch-%E8%AF%AD%E5%8F%A5"><span class="nav-number">4.3.</span> <span class="nav-text">switch 语句</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for-%E7%BB%93%E6%9E%84"><span class="nav-number">4.4.</span> <span class="nav-text">for 结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter6"><span class="nav-number">5.</span> <span class="nav-text">Chapter6</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0-%E4%BB%8B%E7%BB%8D"><span class="nav-number">5.1.</span> <span class="nav-text">函数-介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">5.2.</span> <span class="nav-text">函数参数与返回值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E9%80%92%E5%8F%98%E9%95%BF%E5%8F%82%E6%95%B0"><span class="nav-number">5.3.</span> <span class="nav-text">传递变长参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#defer-%E5%92%8C%E8%BF%BD%E8%B8%AA"><span class="nav-number">5.4.</span> <span class="nav-text">defer 和追踪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E5%87%BD%E6%95%B0%E4%BD%9C%E4%B8%BA%E5%8F%82%E6%95%B0"><span class="nav-number">5.5.</span> <span class="nav-text">将函数作为参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AD%E5%8C%85"><span class="nav-number">5.6.</span> <span class="nav-text">闭包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%97%AD%E5%8C%85%E8%B0%83%E8%AF%95"><span class="nav-number">5.7.</span> <span class="nav-text">使用闭包调试</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter7"><span class="nav-number">6.</span> <span class="nav-text">Chapter7</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87-%E5%A3%B0%E6%98%8E%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">6.1.</span> <span class="nav-text">数组与切片 声明和初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E5%B8%B8%E9%87%8F"><span class="nav-number">6.1.1.</span> <span class="nav-text">数组常量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%87%E7%89%87"><span class="nav-number">6.2.</span> <span class="nav-text">切片</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#bytes%E5%8C%85"><span class="nav-number">6.2.1.</span> <span class="nav-text">bytes包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for-range-%E7%BB%93%E6%9E%84"><span class="nav-number">6.3.</span> <span class="nav-text">for-range 结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%87%E7%89%87%E9%87%8D%E7%BB%84reslice"><span class="nav-number">6.4.</span> <span class="nav-text">切片重组（reslice）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%87%E7%89%87%E5%A4%8D%E5%88%B6%E4%B8%8E%E8%BF%BD%E5%8A%A0"><span class="nav-number">6.5.</span> <span class="nav-text">切片复制与追加</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">6.6.</span> <span class="nav-text">字符串、数组和切片的应用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter8"><span class="nav-number">7.</span> <span class="nav-text">Chapter8</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#map-%E7%9A%84%E5%A3%B0%E6%98%8E%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8Cmake"><span class="nav-number">7.1.</span> <span class="nav-text">Map 的声明、初始化和make</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%AE%E5%80%BC%E5%AF%B9%E6%A3%80%E6%9F%A5%E5%85%83%E7%B4%A0%E5%88%A0%E9%99%A4"><span class="nav-number">7.2.</span> <span class="nav-text">键值对检查，元素删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for-range-%E9%85%8D%E5%A5%97%E7%94%A8%E6%B3%95%E9%81%8D%E5%8E%86map"><span class="nav-number">7.3.</span> <span class="nav-text">for-range 配套用法（遍历map）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#map%E7%9A%84%E6%8E%92%E5%BA%8F"><span class="nav-number">7.4.</span> <span class="nav-text">map的排序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter9"><span class="nav-number">8.</span> <span class="nav-text">Chapter9</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%BA%93%E6%A6%82%E8%BF%B0"><span class="nav-number">8.1.</span> <span class="nav-text">标准库概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81%E4%B8%8Esync%E5%8C%85"><span class="nav-number">8.2.</span> <span class="nav-text">锁与sync包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B2%BE%E5%AF%86%E8%AE%A1%E7%AE%97%E4%B8%8Ebig%E5%8C%85"><span class="nav-number">8.3.</span> <span class="nav-text">精密计算与big包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8C%85%E4%B8%8E%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="nav-number">8.4.</span> <span class="nav-text">自定义包与可见性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter10"><span class="nav-number">9.</span> <span class="nav-text">Chapter10</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%B8%8E%E6%96%B9%E6%B3%95"><span class="nav-number">9.1.</span> <span class="nav-text">结构与方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9A%E4%B9%89"><span class="nav-number">9.2.</span> <span class="nav-text">结构体定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E5%88%9B%E5%BB%BA%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9E%E4%BE%8B"><span class="nav-number">9.3.</span> <span class="nav-text">使用工厂方法创建结构体实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%A6%E6%A0%87%E7%AD%BE%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">9.4.</span> <span class="nav-text">带标签的结构体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%BF%E5%90%8D%E5%AD%97%E6%AE%B5%E5%92%8C%E5%86%85%E5%B5%8C%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">9.5.</span> <span class="nav-text">匿名字段和内嵌结构体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-number">9.6.</span> <span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-1"><span class="nav-number">9.6.1.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E6%96%B9%E6%B3%95%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">9.6.2.</span> <span class="nav-text">函数方法的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E6%88%96%E5%80%BC%E4%BD%9C%E4%B8%BA%E6%8E%A5%E6%94%B6%E8%80%85"><span class="nav-number">9.6.3.</span> <span class="nav-text">指针或值作为接收者</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%8E%E6%9C%AA%E5%AF%BC%E5%87%BA%E5%AD%97%E6%AE%B5"><span class="nav-number">9.6.4.</span> <span class="nav-text">方法与未导出字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%B5%8C%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%96%B9%E6%B3%95%E5%92%8C%E7%BB%A7%E6%89%BF"><span class="nav-number">9.6.5.</span> <span class="nav-text">内嵌类型的方法和继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A8%E7%B1%BB%E5%9E%8B%E4%B8%AD%E5%B5%8C%E5%85%A5%E5%8A%9F%E8%83%BD"><span class="nav-number">9.6.6.</span> <span class="nav-text">如何在类型中嵌入功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E9%87%8D%E7%BB%A7%E6%89%BF"><span class="nav-number">9.6.7.</span> <span class="nav-text">多重继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E5%85%B6%E4%BB%96%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AF%AD%E8%A8%80%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">9.6.8.</span> <span class="nav-text">与其他面向对象语言的比较…</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8Esetfinalizer"><span class="nav-number">9.7.</span> <span class="nav-text">垃圾回收与SetFinalizer</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter11"><span class="nav-number">10.</span> <span class="nav-text">Chapter11</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3"><span class="nav-number">10.1.</span> <span class="nav-text">接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%E5%B5%8C%E5%A5%97%E6%8E%A5%E5%8F%A3"><span class="nav-number">10.2.</span> <span class="nav-text">接口嵌套接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E6%96%AD%E8%A8%80"><span class="nav-number">10.3.</span> <span class="nav-text">类型断言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%88%A4%E6%96%AD"><span class="nav-number">10.4.</span> <span class="nav-text">类型判断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E6%98%AF%E5%90%A6%E5%AE%9E%E7%8E%B0%E4%BA%86%E6%8E%A5%E5%8F%A3"><span class="nav-number">10.5.</span> <span class="nav-text">测试是否实现了接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95%E9%9B%86%E4%B8%8E%E6%8E%A5%E5%8F%A3"><span class="nav-number">10.6.</span> <span class="nav-text">使用方法集与接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A9%BA%E6%8E%A5%E5%8F%A3"><span class="nav-number">10.7.</span> <span class="nav-text">空接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84"><span class="nav-number">10.8.</span> <span class="nav-text">反射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%E4%B8%8E%E5%8A%A8%E6%80%81%E7%B1%BB%E5%9E%8B"><span class="nav-number">10.9.</span> <span class="nav-text">接口与动态类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#go%E4%B8%AD%E7%9A%84%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E6%80%BB%E7%BB%93"><span class="nav-number">10.10.</span> <span class="nav-text">Go中的面向对象总结</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter1"><span class="nav-number">1.</span> <span class="nav-text">Chapter1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#go%E8%AF%AD%E8%A8%80%E7%9A%84%E5%8F%91%E5%B1%95%E7%9B%AE%E6%A0%87"><span class="nav-number">1.1.</span> <span class="nav-text">go语言的发展目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E8%A8%80%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">1.2.</span> <span class="nav-text">语言的特性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter2"><span class="nav-number">2.</span> <span class="nav-text">Chapter2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B3%E5%8F%B0%E4%B8%8E%E6%9E%B6%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">平台与架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#go%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">2.2.</span> <span class="nav-text">Go环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#go-%E8%BF%90%E8%A1%8C%E6%97%B6runtime"><span class="nav-number">2.2.1.</span> <span class="nav-text">Go 运行时（runtime）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter4"><span class="nav-number">3.</span> <span class="nav-text">Chapter4</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#go%E7%A8%8B%E5%BA%8F%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E8%A6%81%E7%B4%A0"><span class="nav-number">3.1.</span> <span class="nav-text">Go程序基本结构和要素</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-number">3.1.1.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.1.2.</span> <span class="nav-text">类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F"><span class="nav-number">3.2.</span> <span class="nav-text">常量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F"><span class="nav-number">3.3.</span> <span class="nav-text">变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.3.1.</span> <span class="nav-text">值类型与引用类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">3.3.2.</span> <span class="nav-text">格式字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#init%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.3.</span> <span class="nav-text">init函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">3.4.</span> <span class="nav-text">基本类型与运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.4.1.</span> <span class="nav-text">数字类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">3.4.2.</span> <span class="nav-text">算术运算符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%88%AB%E5%90%8D"><span class="nav-number">3.4.3.</span> <span class="nav-text">类型别名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.4.4.</span> <span class="nav-text">字符类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">3.5.</span> <span class="nav-text">字符串</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter5"><span class="nav-number">4.</span> <span class="nav-text">Chapter5</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#if-else-%E7%BB%93%E6%9E%84"><span class="nav-number">4.1.</span> <span class="nav-text">if-else 结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%A4%9A%E8%BF%94%E5%9B%9E%E5%80%BC%E5%87%BD%E6%95%B0%E7%9A%84%E9%94%99%E8%AF%AF"><span class="nav-number">4.2.</span> <span class="nav-text">测试多返回值函数的错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#switch-%E8%AF%AD%E5%8F%A5"><span class="nav-number">4.3.</span> <span class="nav-text">switch 语句</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for-%E7%BB%93%E6%9E%84"><span class="nav-number">4.4.</span> <span class="nav-text">for 结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter6"><span class="nav-number">5.</span> <span class="nav-text">Chapter6</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0-%E4%BB%8B%E7%BB%8D"><span class="nav-number">5.1.</span> <span class="nav-text">函数-介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">5.2.</span> <span class="nav-text">函数参数与返回值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E9%80%92%E5%8F%98%E9%95%BF%E5%8F%82%E6%95%B0"><span class="nav-number">5.3.</span> <span class="nav-text">传递变长参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#defer-%E5%92%8C%E8%BF%BD%E8%B8%AA"><span class="nav-number">5.4.</span> <span class="nav-text">defer 和追踪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E5%87%BD%E6%95%B0%E4%BD%9C%E4%B8%BA%E5%8F%82%E6%95%B0"><span class="nav-number">5.5.</span> <span class="nav-text">将函数作为参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AD%E5%8C%85"><span class="nav-number">5.6.</span> <span class="nav-text">闭包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%97%AD%E5%8C%85%E8%B0%83%E8%AF%95"><span class="nav-number">5.7.</span> <span class="nav-text">使用闭包调试</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter7"><span class="nav-number">6.</span> <span class="nav-text">Chapter7</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87-%E5%A3%B0%E6%98%8E%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">6.1.</span> <span class="nav-text">数组与切片 声明和初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E5%B8%B8%E9%87%8F"><span class="nav-number">6.1.1.</span> <span class="nav-text">数组常量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%87%E7%89%87"><span class="nav-number">6.2.</span> <span class="nav-text">切片</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#bytes%E5%8C%85"><span class="nav-number">6.2.1.</span> <span class="nav-text">bytes包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for-range-%E7%BB%93%E6%9E%84"><span class="nav-number">6.3.</span> <span class="nav-text">for-range 结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%87%E7%89%87%E9%87%8D%E7%BB%84reslice"><span class="nav-number">6.4.</span> <span class="nav-text">切片重组（reslice）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%87%E7%89%87%E5%A4%8D%E5%88%B6%E4%B8%8E%E8%BF%BD%E5%8A%A0"><span class="nav-number">6.5.</span> <span class="nav-text">切片复制与追加</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">6.6.</span> <span class="nav-text">字符串、数组和切片的应用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter8"><span class="nav-number">7.</span> <span class="nav-text">Chapter8</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#map-%E7%9A%84%E5%A3%B0%E6%98%8E%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8Cmake"><span class="nav-number">7.1.</span> <span class="nav-text">Map 的声明、初始化和make</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%AE%E5%80%BC%E5%AF%B9%E6%A3%80%E6%9F%A5%E5%85%83%E7%B4%A0%E5%88%A0%E9%99%A4"><span class="nav-number">7.2.</span> <span class="nav-text">键值对检查，元素删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for-range-%E9%85%8D%E5%A5%97%E7%94%A8%E6%B3%95%E9%81%8D%E5%8E%86map"><span class="nav-number">7.3.</span> <span class="nav-text">for-range 配套用法（遍历map）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#map%E7%9A%84%E6%8E%92%E5%BA%8F"><span class="nav-number">7.4.</span> <span class="nav-text">map的排序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter9"><span class="nav-number">8.</span> <span class="nav-text">Chapter9</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%BA%93%E6%A6%82%E8%BF%B0"><span class="nav-number">8.1.</span> <span class="nav-text">标准库概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81%E4%B8%8Esync%E5%8C%85"><span class="nav-number">8.2.</span> <span class="nav-text">锁与sync包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B2%BE%E5%AF%86%E8%AE%A1%E7%AE%97%E4%B8%8Ebig%E5%8C%85"><span class="nav-number">8.3.</span> <span class="nav-text">精密计算与big包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8C%85%E4%B8%8E%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="nav-number">8.4.</span> <span class="nav-text">自定义包与可见性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter10"><span class="nav-number">9.</span> <span class="nav-text">Chapter10</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%B8%8E%E6%96%B9%E6%B3%95"><span class="nav-number">9.1.</span> <span class="nav-text">结构与方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9A%E4%B9%89"><span class="nav-number">9.2.</span> <span class="nav-text">结构体定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E5%88%9B%E5%BB%BA%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9E%E4%BE%8B"><span class="nav-number">9.3.</span> <span class="nav-text">使用工厂方法创建结构体实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%A6%E6%A0%87%E7%AD%BE%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">9.4.</span> <span class="nav-text">带标签的结构体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%BF%E5%90%8D%E5%AD%97%E6%AE%B5%E5%92%8C%E5%86%85%E5%B5%8C%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">9.5.</span> <span class="nav-text">匿名字段和内嵌结构体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-number">9.6.</span> <span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-1"><span class="nav-number">9.6.1.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E6%96%B9%E6%B3%95%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">9.6.2.</span> <span class="nav-text">函数方法的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E6%88%96%E5%80%BC%E4%BD%9C%E4%B8%BA%E6%8E%A5%E6%94%B6%E8%80%85"><span class="nav-number">9.6.3.</span> <span class="nav-text">指针或值作为接收者</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%8E%E6%9C%AA%E5%AF%BC%E5%87%BA%E5%AD%97%E6%AE%B5"><span class="nav-number">9.6.4.</span> <span class="nav-text">方法与未导出字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%B5%8C%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%96%B9%E6%B3%95%E5%92%8C%E7%BB%A7%E6%89%BF"><span class="nav-number">9.6.5.</span> <span class="nav-text">内嵌类型的方法和继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A8%E7%B1%BB%E5%9E%8B%E4%B8%AD%E5%B5%8C%E5%85%A5%E5%8A%9F%E8%83%BD"><span class="nav-number">9.6.6.</span> <span class="nav-text">如何在类型中嵌入功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E9%87%8D%E7%BB%A7%E6%89%BF"><span class="nav-number">9.6.7.</span> <span class="nav-text">多重继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E5%85%B6%E4%BB%96%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AF%AD%E8%A8%80%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">9.6.8.</span> <span class="nav-text">与其他面向对象语言的比较…</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8Esetfinalizer"><span class="nav-number">9.7.</span> <span class="nav-text">垃圾回收与SetFinalizer</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chapter11"><span class="nav-number">10.</span> <span class="nav-text">Chapter11</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3"><span class="nav-number">10.1.</span> <span class="nav-text">接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%E5%B5%8C%E5%A5%97%E6%8E%A5%E5%8F%A3"><span class="nav-number">10.2.</span> <span class="nav-text">接口嵌套接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E6%96%AD%E8%A8%80"><span class="nav-number">10.3.</span> <span class="nav-text">类型断言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%88%A4%E6%96%AD"><span class="nav-number">10.4.</span> <span class="nav-text">类型判断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E6%98%AF%E5%90%A6%E5%AE%9E%E7%8E%B0%E4%BA%86%E6%8E%A5%E5%8F%A3"><span class="nav-number">10.5.</span> <span class="nav-text">测试是否实现了接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95%E9%9B%86%E4%B8%8E%E6%8E%A5%E5%8F%A3"><span class="nav-number">10.6.</span> <span class="nav-text">使用方法集与接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A9%BA%E6%8E%A5%E5%8F%A3"><span class="nav-number">10.7.</span> <span class="nav-text">空接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84"><span class="nav-number">10.8.</span> <span class="nav-text">反射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%E4%B8%8E%E5%8A%A8%E6%80%81%E7%B1%BB%E5%9E%8B"><span class="nav-number">10.9.</span> <span class="nav-text">接口与动态类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#go%E4%B8%AD%E7%9A%84%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E6%80%BB%E7%BB%93"><span class="nav-number">10.10.</span> <span class="nav-text">Go中的面向对象总结</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -315,7 +309,7 @@
     <span class="post-meta-break"></span>
     <span class="post-meta-item" title="本文字数">
       <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
+        <i class="far fa-file-lines"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
       <span>11k</span>
@@ -382,7 +376,7 @@ Go 会在全局文件进行查找；如果包名以 <code>./</code>开头，则
 <p>每一个可执行程序必须包含main()，是除init()外启动后第一个执行的函数。如果main包的没有包含main函数会引发build
 error。main没有参数也没有返回类型。</p>
 <p>对相同类型的函数参数，可以这样描述函数</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">func Add(param1, param2 int) int &#123;
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">func Add(param1, param2 int) int &#123;
     &#x2F;&#x2F; ...
 &#125;</code></pre>
 <h3 id="类型">类型</h3>
@@ -398,14 +392,14 @@ nil，在 Java 中是 null，在 C 和 C++ 中是NULL或 0）。值得注意的�
 <h2 id="变量">变量</h2>
 <p>使用关键词<code>var</code>来声明一个变量</p>
 <p>在<strong>包级别</strong>声明变量</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">var a int &#x3D; 5 &#x2F;&#x2F; 显式声明类型
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">var a int &#x3D; 5 &#x2F;&#x2F; 显式声明类型
 var b &#x3D; 5 &#x2F;&#x2F; 隐式声明类型</code></pre>
 <p>在<strong>函数内部</strong>的简短形式，省略var</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">func Sample() &#123;
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">func Sample() &#123;
     a :&#x3D; 5
 &#125;</code></pre>
 <p>交换变量，不用写tmp了</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">a, b &#x3D; b, a</code></pre>
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">a, b &#x3D; b, a</code></pre>
 <h3 id="值类型与引用类型">值类型与引用类型</h3>
 <p>基本数值类型，字符串，数组，结构都是值类型，内容直接存放在变量分配得的内存上</p>
 <p>更复杂的类型（？）使用引用类型保存，变量分配得的内存上，存放“内容所在的地址”</p>
@@ -452,7 +446,7 @@ float64）没有double类型。</p>
 <p><code>byte</code>类型是 <code>uint8</code> 的别名，对于只占用 1
 个字节的传统 ASCII 编码的字符来说</p>
 <p><code>\x</code>总是紧跟着长度为 2 的 16 进制数</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">var ch byte &#x3D; 65 或 var ch byte &#x3D; &#39;\x41&#39; &#x2F;&#x2F; one byte</code></pre>
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">var ch byte &#x3D; 65 或 var ch byte &#x3D; &#39;\x41&#39; &#x2F;&#x2F; one byte</code></pre>
 <p>Go 同样支持 Unicode（UTF-8），因此字符同样称为 Unicode 代码点或者
 runes，并在内存中使用 int 来表示。在书写 Unicode 字符时，需要在 16
 进制数之前加上前缀 <code>\u</code> 或者 <code>\U</code>。</p>
@@ -461,7 +455,7 @@ runes，并在内存中使用 int 来表示。在书写 Unicode 字符时，需�
 4
 字节，则会加上 <code>\U</code> 前缀；前缀 <code>\u</code> 则总是紧跟着长度为
 4 的 16 进制数，前缀 <code>\U</code> 紧跟着长度为 8 的 16 进制数。</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">var ch int &#x3D; &#39;\u0041&#39; &#x2F;&#x2F; two bytes
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">var ch int &#x3D; &#39;\u0041&#39; &#x2F;&#x2F; two bytes
 var ch2 int &#x3D; &#39;\u03B2&#39;
 var ch3 int &#x3D; &#39;\U00101234&#39; &#x2F;&#x2F; four bytes</code></pre>
 <p>包<code>unicode</code>包含的测试字符函数</p>
@@ -473,14 +467,14 @@ var ch3 int &#x3D; &#39;\U00101234&#39; &#x2F;&#x2F; four bytes</code></pre>
 <h2 id="字符串">字符串</h2>
 <p>字符串是UTF-8字符的序列，所以字符串内的字符可能根据需要占用1至4字节，与其他语言不同，好处是减少内存、硬盘空间占用，也不需要进行文本编码解码。</p>
 <p>双引号内的转义符照常处理；反引号内的会解释为字符串，会将转义符原样输出</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">&#96;This is a raw string \n&#96; 中的 &#96;\n\&#96; 会被原样输出。</code></pre>
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">&#96;This is a raw string \n&#96; 中的 &#96;\n\&#96; 会被原样输出。</code></pre>
 <ul>
 <li>可以进行索引，但索引到的是字节</li>
 <li>根据长度限定，而不是特殊字符’\0’</li>
 <li>是一种<strong>值类型</strong>，内容不可变，是字节的定长数组</li>
 </ul>
 <p>字符串与[]byte的转换</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; 逆转！
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">&#x2F;&#x2F; 逆转！
 func ReverseString(input string) string &#123;
     c :&#x3D; []byte(input)
     for i :&#x3D; 0; i &lt; len(c)&#x2F;2; i++ &#123;
@@ -494,14 +488,14 @@ func ReverseString(input string) string &#123;
 <h2 id="if-else-结构">if-else 结构</h2>
 <p>特点：条件不需要圆括号，但是语句需要大括号</p>
 <p>可以使用初始化语句，在if语句的作用域中声明一个变量，需要在声明语句后面跟上一个分号</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">if val :&#x3D; 10; val &gt; max &#123;
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">if val :&#x3D; 10; val &gt; max &#123;
     &#x2F;&#x2F; do something
 &#125;</code></pre>
 <h2 id="测试多返回值函数的错误">测试多返回值函数的错误</h2>
 <p>Go语言函数经常使用两个返回值来表示执行是否成功，通常返回零值、nil、false来表示失败，或者使用一个error类型的变量来代替作为第二个返回值；成功执行的话，error值为nil。</p>
 <p>如果判断函数执行一定能成功，可以使用<code>_</code>来接收第二个参数。</p>
 <p>有时当错误没有发生时，继续运行就是唯一要做的事情，所以if语句块后面不需要使用else分支（卫语句）</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">value, err :&#x3D; pack1.Function1(param1)
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">value, err :&#x3D; pack1.Function1(param1)
 if err !&#x3D; nil &#123;
     fmt.Printf(&quot;An error occured in pack1.Function1 with parameter %v&quot;, param1)
     return err
@@ -514,7 +508,7 @@ if err !&#x3D; nil &#123;
 <li><p>匹配某个分支后，会退出整个switch语句，所以不需要特别使用break来结束</p></li>
 <li><p>如果想要执行后续分支的代码，可以使用<code>fallthrough</code>关键字</p></li>
 <li><p>switch语句也可以不提供任何被判断的值，然后在每个case分支中进行不同条件的测试，可用于替代测试条件非常多的<code>if-else</code>语句</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">switch &#123;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">switch &#123;
     case i &lt; 0:
         f1()
     case i &#x3D;&#x3D; 0:
@@ -523,7 +517,7 @@ if err !&#x3D; nil &#123;
         f3()
 &#125;</code></pre></p></li>
 <li><p>同样的类似if-else结构，也可以在switch后跟上一个初始化语句</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">switch result :&#x3D; calculate(); &#123;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">switch result :&#x3D; calculate(); &#123;
     case result &lt; 0:
         ...
     case result &gt; 0:
@@ -557,7 +551,7 @@ if err !&#x3D; nil &#123;
 <li><p>注意指针也是变量，指针变量的值是另一个变量的地址，所以传递指针也是按值传递。当函数内改变一个占用内存较大的变量时，传递指针不需要赋值变量的值，性能优势就更加明显了。</p></li>
 <li><p>使用多重返回值：可以使用命名返回值，或者非命名返回值；<strong>尽量使用命名返回值，使代码更容易读懂</strong></p></li>
 <li><p>使用命名返回值时，可以为返回值变量赋值后return，也可以return对应的返回值变量，但以返回的明确值为准</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">func GetX2AndX3_2(input int) (x2 int, x3 int) &#123; &#x2F;&#x2F; 假设输入为10
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">func GetX2AndX3_2(input int) (x2 int, x3 int) &#123; &#x2F;&#x2F; 假设输入为10
     x2 &#x3D; input * 2
     x3 &#x3D; input * 3
     &#x2F;&#x2F;return &#x2F;&#x2F; 返回 20，30
@@ -568,10 +562,10 @@ if err !&#x3D; nil &#123;
 <h2 id="传递变长参数">传递变长参数</h2>
 <ol type="1">
 <li><p>如果函数最后一个参数采用...type的形式，这个函数就可以处理一个变长参数，接收一个类似于切片（slice）的参数，如下，变量 <code>who</code>的值为 <code>[]string&#123;"Joe", "Anna", "Eileen"&#125;</code></p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">func Greeting(prefix string, who ...string)
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">func Greeting(prefix string, who ...string)
 Greeting(&quot;hello:&quot;, &quot;Joe&quot;, &quot;Anna&quot;, &quot;Eileen&quot;)</code></pre></p></li>
 <li><p>如果参数存储在slice类型变量<code>slice</code>中，可以通过<code>slice...</code>的形式来传递参数，调用变参函数</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">slice :&#x3D; []int&#123;7,9,3,5,1&#125;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">slice :&#x3D; []int&#123;7,9,3,5,1&#125;
 x &#x3D; min(slice...)</code></pre></p></li>
 </ol>
 <h2 id="defer-和追踪">defer 和追踪</h2>
@@ -583,7 +577,7 @@ target="_blank" rel="noopener" href="https://github.com/unknwon/the-way-to-go_ZH
 </ol>
 <h2 id="将函数作为参数">将函数作为参数</h2>
 <p>函数可以作为其他函数的参数进行传递，函数参数的格式如下：</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; strings.IndexFunc
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">&#x2F;&#x2F; strings.IndexFunc
 func IndexFunc(s string, f func(c rune) bool) int
 &#x2F;&#x2F; 函数返回值是字符串s中第一个使f(c)返回true的unicode字符</code></pre>
 <h2 id="闭包">闭包</h2>
@@ -592,7 +586,7 @@ func IndexFunc(s string, f func(c rune) bool) int
 除了没有名字和声明一个函数是一样的</p></li>
 <li><p>这样的一个匿名函数不能独立存在，需要将它赋值于某个变量，再通过这个变量名进行调用；或者直接对这个匿名函数进行调用</p></li>
 <li><p>对下述例子中的函数变量，变量代表的是<code>func(int)</code>，变量的值是一个内存地址</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">    for i :&#x3D; 0; i &lt; 4; i++ &#123;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">    for i :&#x3D; 0; i &lt; 4; i++ &#123;
         g :&#x3D; func(i int) &#123; fmt.Printf(&quot;%d &quot;, i) &#125;
         g(i)
         fmt.Printf(&quot; - g is of type %T and has value %v\n&quot;, g, g)
@@ -611,7 +605,7 @@ func IndexFunc(s string, f func(c rune) bool) int
 <h2 id="数组与切片-声明和初始化">数组与切片 声明和初始化</h2>
 <p>数组：具有相同唯一类型的长度固定的数据项序列，数组长度必须是常量表达式，编译时需要知道数组长度以便分配内存。</p>
 <p>数组的声明方式（值类型，声明和初始化可以同时发生）：</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">var identifier [len]type
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">var identifier [len]type
 &#x2F;&#x2F; 举例一个数组的初始化
 func main() &#123;
     var arr1 [5]int &#x2F;&#x2F; 初始化为全0
@@ -628,7 +622,7 @@ func main() &#123;
 <p>将一个大数组传递给函数会消耗很多内存，通过传递数组的指针，或者使用数组的<strong>切片</strong>来避免这种情况。</p>
 <h3 id="数组常量">数组常量</h3>
 <p>如果数组内容已经提前知道，那么可以用数组常量来初始化而不用依次赋值</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">var arrAge &#x3D; [5]int&#123;18, 20, 15, 22, 16&#125;
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">var arrAge &#x3D; [5]int&#123;18, 20, 15, 22, 16&#125;
 var arrKeyValue &#x3D; [5]string&#123;3: &quot;Chris&quot;, 4: &quot;Ron&quot;&#125; &#x2F;&#x2F; 只有索引3和4被赋予实际的指，其他元素都被设置为空的字符串</code></pre>
 <h2 id="切片">切片</h2>
 <p>切片（slice）是对数组一个连续片段的引用：</p>
@@ -637,7 +631,7 @@ var arrKeyValue &#x3D; [5]string&#123;3: &quot;Chris&quot;, 4: &quot;Ron&quot;&#
 <li><p>切片提供计算容量的函数<code>cap()</code>，对切片<code>s</code>，<code>cap(s)</code>就是从<code>s[0]</code>到切片来源数组<strong>末尾</strong>的长度，对切片s永远成立：<code>0≤len(s)≤cap(s)</code></p></li>
 <li><p>表示同一个数组片段的多个切片之间共享数据，因为是引用，所以不需要使用额外内存</p></li>
 <li><p>声明切片以及初始化切片的方式：</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">var identifier []type &#x2F;&#x2F; 声明，未初始化时为nil
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">var identifier []type &#x2F;&#x2F; 声明，未初始化时为nil
 var slice1 []type &#x3D; arr1[start:end] &#x2F;&#x2F; 初始化，不包含末尾索引，左闭右开
 var slice2 []type &#x3D; arr1[:] &#x2F;&#x2F; 初始化，包含数组内的所有元素
 s :&#x3D; [3]int&#123;1,2,3&#125;[:] &#x2F;&#x2F; （等价于先用 s :&#x3D; [3]int&#123;1, 2, 3&#125; 生成数组, 再使用 s[:] 转成切片）
@@ -647,12 +641,12 @@ type intSlice []int &#x2F;&#x2F; 使用type alias，初始化更简单了
 s :&#x3D; intSlice&#123;1,2,3&#125; &#x2F;&#x2F; 是 s :&#x3D; intSlice([]int&#123;1,2,3&#125;) 的精简形式</code></pre></p></li>
 <li><p>对切片的大小进行操作，切片只能向后移动，向前移动（s2 = s2[-1:]）
 会导致编译错误：</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">slice1 &#x3D; slice1[:len(slice1)-1] &#x2F;&#x2F; 去掉最后一个元素
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">slice1 &#x3D; slice1[:len(slice1)-1] &#x2F;&#x2F; 去掉最后一个元素
 slice1 &#x3D; slice1[:cap(slice1)] &#x2F;&#x2F; 扩大到大小上限
 s2 &#x3D; s2[1:] &#x2F;&#x2F; 可以将 s2 向后移动一位，但是末尾没有移动</code></pre></p></li>
 <li><p><strong>不要用指针指向切片</strong>，切片本身就是一个指针，已经是引用类型</p></li>
 <li><p>当数组没有定义时，使用make来初始化/创建一个切片（当然同时也创建了相关数组）</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">var slice1 []type &#x3D; make([]type, len) &#x2F;&#x2F; len 为切片长度
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">var slice1 []type &#x3D; make([]type, len) &#x2F;&#x2F; len 为切片长度
 slice1 :&#x3D; make([]type, len) &#x2F;&#x2F; 精简形式
 slice1 :&#x3D; make([]type, len, cap) &#x2F;&#x2F; 精简形式, 接收cap为切片容器大小</code></pre></p></li>
 <li><p><strong>new</strong>和<strong>make</strong>的区别：</p>
@@ -669,7 +663,7 @@ slice1 :&#x3D; make([]type, len, cap) &#x2F;&#x2F; 精简形式, 接收cap为切
 <ol type="1">
 <li><p>在for-range结构中使用_来忽略索引 / 变量</p></li>
 <li><p>如果只需要索引，可以直接忽略第二个变量</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">seasons :&#x3D; []string&#123;&quot;Spring&quot;, &quot;Summer&quot;, &quot;Autumn&quot;, &quot;Winter&quot;&#125;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">seasons :&#x3D; []string&#123;&quot;Spring&quot;, &quot;Summer&quot;, &quot;Autumn&quot;, &quot;Winter&quot;&#125;
 for _, season &#x3D; range seasons &#123;
         fmt.Printf(&quot;%s\n&quot;, season)
 &#125;
@@ -700,7 +694,7 @@ append() 函数常见操作</a></li>
 <ol type="1">
 <li><p>自然的，map是引用类型</p></li>
 <li><p>map的声明格式如下，不需要长度，因为大小可以动态增长</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">var map1 map[keytype]valuetype
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">var map1 map[keytype]valuetype
 var map1 map[string]int</code></pre></p></li>
 <li><p>key需要时可以用操作符比较的类型，value可以是任何类型</p></li>
 <li><p>map可以用 <code>map[keyType]valueType&#123;key1: val1, key2: val2&#125;</code>的描述方法来初始化，就像数组和结构体一样</p></li>
@@ -745,7 +739,7 @@ var map1 map[string]int</code></pre></p></li>
 <h2 id="锁与sync包">锁与sync包</h2>
 <ol type="1">
 <li><p><code>sync.Mutex</code>是一个互斥锁，守护在临界区入口保证同一时间只能有一个线程进入临界区</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type Info struct &#123;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">type Info struct &#123;
     mu sync.Mutex
     &#x2F;&#x2F; ... other fields, e.g.: Str string
 &#125;
@@ -792,12 +786,12 @@ mode）</strong>要使用下载的package，需要编辑项目的go.mod（是不
 <h2 id="结构体定义">结构体定义</h2>
 <ol type="1">
 <li><p>结构体的定义方式：</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type identifier struct &#123;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">type identifier struct &#123;
     field1 type1
     field2 type2
 &#125;</code></pre></p></li>
 <li><p>声明结构体变量的方式</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">var t *T
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">var t *T
 t &#x3D; new(T) &#x2F;&#x2F; 使用new()，t的类型是*T
 
 var s T
@@ -809,19 +803,19 @@ ms :&#x3D; &amp;struct1&#123;10, 15.5, &quot;Chris&quot;&#125; &#x2F;&#x2F; 同�
 intr :&#x3D; Interval&#123;end:5, start:1&#125; &#x2F;&#x2F; 可以不按照字段顺序，可以不给每一个字段赋值
 r1 :&#x3D; Rect1&#123;Point&#123;10, 20&#125;, Point&#123;50, 60&#125;&#125; &#x2F;&#x2F; 嵌套</code></pre></p></li>
 <li><p>对于一个结构体类型和一个结构体类型指针，都可以用相同的<strong>选择器符（selector-notation）</strong>，即<code>.</code>符号来引用结构体的字段</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type myStruct struct &#123; i int &#125;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">type myStruct struct &#123; i int &#125;
 var v myStruct    &#x2F;&#x2F; v 是结构体类型变量
 var p *myStruct   &#x2F;&#x2F; p 是指向一个结构体类型变量的指针
 v.i
 p.i &#x2F;&#x2F; 这里会报错，因为p指针为nil</code></pre></p></li>
 <li><p>当为结构体定义了一个<code>alias</code>类型时，结构体和它的<code>alias</code>类型具有相同的底层类型，可以互相转换</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type number struct &#123;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">type number struct &#123;
     f float32
 &#125;
 
 type nr number   &#x2F;&#x2F; alias type</code></pre></p></li>
 <li><p>使用 <code>fmt.Println()</code>打印一个结构体的默认输出可以很好的显示它的内容，类似使用 <code>%v</code>选项。使用<code>%+v</code>选项会先输出字段名字再输出字段的值，使用<code>%#v</code>字段会在前者基础上先输出结构体的名字</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">The name of person is &#123;EDWARD CHEN&#125;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">The name of person is &#123;EDWARD CHEN&#125;
 The name of person is &amp;&#123;firstName:EDWARD lastName:CHEN&#125;
 The name of person is chapter10.Person&#123;firstName:&quot;EDWARD&quot;, lastName:&quot;CHEN&quot;&#125;</code></pre></p></li>
 <li><p><code>fmt.Printf</code> / <code>fmt.Print</code> /
@@ -835,7 +829,7 @@ The name of person is chapter10.Person&#123;firstName:&quot;EDWARD&quot;, lastNa
 </ol>
 <h2 id="带标签的结构体">带标签的结构体</h2>
 <p>类似注释，在结构体的字段类型后面可以用<code>""</code>进行字段的解释，称为标签(tag)</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">type TagType struct &#123; &#x2F;&#x2F; tags
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">type TagType struct &#123; &#x2F;&#x2F; tags
     field1 bool   &quot;An important answer&quot;
     field2 string &quot;The name of the thing&quot;
     field3 int    &quot;How much there are&quot;
@@ -873,14 +867,14 @@ The name of person is chapter10.Person&#123;firstName:&quot;EDWARD&quot;, lastNa
 <li><p>匿名类型被内嵌到结构体中时，匿名类型的可见方法也被内嵌，这相当于实现了继承</p></li>
 <li><p>内嵌将一个已存在类型的字段和方法注入到了另一个类型里：匿名字段上的方法“晋升”成为了外层类型的方法。</p></li>
 <li><p>外层类型的方法会覆写内嵌类型对应的方法，想要调用内嵌类型的方法，用内嵌类型名进行访问</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">func (n *NamedPoint) Abs() float64 &#123;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">func (n *NamedPoint) Abs() float64 &#123;
     return n.Point.Abs() * 100.
 &#125;</code></pre></p></li>
 </ol>
 <h3 id="如何在类型中嵌入功能">如何在类型中嵌入功能</h3>
 <ol type="1">
 <li><p>聚合（组合）：包含所需功能类型的具体字段；内嵌：使用内嵌类型，把所需的功能类型内嵌</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; 聚合（组合）
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">&#x2F;&#x2F; 聚合（组合）
 type Customer struct &#123;
     Name string
     log  *Log
@@ -913,7 +907,7 @@ table ptr指向该类型的方法表）</p>
 <li><p><strong>如果类型的所有方法组成的集合，包含了该接口的方法集，这个类型就实现了这个接口</strong></p></li>
 <li><p>除了接口被<strong>隐式</strong>地实现，其他都与你熟悉的接口差不多</p></li>
 <li><p>接口类型的变量可以指向实现了此接口的实例</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type Shaper interface &#123;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">type Shaper interface &#123;
     Area() float32
 &#125;
 
@@ -945,7 +939,7 @@ func main() &#123;
 <h2 id="类型断言">类型断言</h2>
 <ol type="1">
 <li><p>使用类型断言来检测接口varI是否包含类型T的值</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">if v, ok :&#x3D; varI.(T); ok &#123;  &#x2F;&#x2F; checked type assertion
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">if v, ok :&#x3D; varI.(T); ok &#123;  &#x2F;&#x2F; checked type assertion
     Process(v)
     return
 &#125;
@@ -961,7 +955,7 @@ if _, ok :&#x3D; varI.(T); ok &#123;
 <li>无法进行接口变量的T类型断言</li>
 <li>无法将T类型值赋值给接口变量</li>
 </ol>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">&#x2F;&#x2F; 举例：receiver是*T类型
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">&#x2F;&#x2F; 举例：receiver是*T类型
 type Shaper interface &#123;
     Area() float32
 &#125;
@@ -986,7 +980,7 @@ func main() &#123;
 </ol>
 <h2 id="类型判断">类型判断</h2>
 <p>接口变量的类型可以用以下特殊形式（在11.3的类型处使用<code>type</code>关键字）的switch语句来进行检测：<code>type-switch</code></p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">switch t :&#x3D; areaIntf.(type) &#123; &#x2F;&#x2F; &lt;-
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">switch t :&#x3D; areaIntf.(type) &#123; &#x2F;&#x2F; &lt;-
 case *Square:
     fmt.Printf(&quot;Type Square %T with value %v\n&quot;, t, t)
 case *Circle:
@@ -1020,12 +1014,12 @@ default:
 <p>*实际上是类型A实现了接口还是指针类型A实现了接口本身就是两种情况，不要混为一谈会更好理解。方法调用时不区分值还是指针可以看作是语法糖，而此处指针赋值的接口变量，可以调用接收者是值得方法也是做了额外处理。</p>
 <h2 id="空接口">空接口</h2>
 <p>一个空接口对实现不做任何要求</p>
-<pre class="line-numbers language-go" data-language="go"><code class="language-go">type Any interface &#123;&#125; &#x2F;&#x2F; 对于函数参数 interface &#123;&#125; 也是可行的
+<pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">type Any interface &#123;&#125; &#x2F;&#x2F; 对于函数参数 interface &#123;&#125; 也是可行的
 var val interface &#123;&#125; &#x2F;&#x2F; 空接口类型</code></pre>
 <ol type="1">
 <li><p>空接口类似 <code>Java/C#</code>中所有类的基类： <code>Object</code>类，二者的目标也很相近，可以给一个空接口类型变量赋任何类型的值</p></li>
 <li><p>使用空接口来实现类似泛型的功能，将一个空接口类型作为Element</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type Vector struct &#123;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">type Vector struct &#123;
     a []Element
 &#125;
 
@@ -1038,7 +1032,7 @@ func (p *Vector) Set(i int, e Element) &#123;
 &#125;</code></pre></p></li>
 <li><p>不能将特定类型的切片直接赋值给空接口切片，因为他们的内存布局不一致，需要for-range来一个一个显式赋值</p></li>
 <li><p>一个接口的值可以赋值给另一个接口变量，只要底层类型实现了必要的方法，注意这个转换在<strong>运行时</strong>检查，转换失败将导致一个<strong>运行时错误</strong></p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type myPrintInterface interface &#123;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">type myPrintInterface interface &#123;
     print()
 &#125;
 
@@ -1063,7 +1057,7 @@ func f3(x myInterface) &#123;
 <li><p>使用接口类型作为参数的函数，类似于动态类型，更看重对象能做什么，而不是对象是什么</p></li>
 <li><p>Go的动态方法调用，需要编译器静态检查的支持，变量赋值给接口类型变量时，编译器会检查类型是否实现了接口所有的函数。一般传入像<code>interface&#123;&#125;</code>这样的泛型变量，之后再用类型断言来进行变量的检查。</p></li>
 <li><p>接口的继承：当类型内嵌另一个实现了接口的类型指针时，该类型就可以使用另一个类型的所有接口方法，通过组合的方式实现了继承</p>
-<p><pre class="line-numbers language-go" data-language="go"><code class="language-go">type Task struct &#123;
+<p><pre class="line-numbers language-go" data-language="go" data-start="1"><code class="language-go">type Task struct &#123;
     Command string
     *log.Logger &#x2F;&#x2F; log.Logger实现了Log()方法
 &#125;
@@ -1187,7 +1181,6 @@ OOP</a>
     <span class="toggle-line"></span>
     <span class="toggle-line"></span>
   </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>

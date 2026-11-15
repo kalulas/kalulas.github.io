@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.2">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css" integrity="sha256-4Lad8m4ZWW1Lgb9+sMVLYEfnIh7BjV1NQMEe79Pviks=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":4,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.threegates.net","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.29.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"codeblock":{"theme":{"light":"atelier-dune-light","dark":"atelier-dune-light"},"prism":{"light":"prism-tomorrow","dark":"prism-tomorrow"},"copy_button":{"enable":true,"style":"default"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null,"activeClass":"giscus"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":4,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="探究了 .net framework 4.8 下的dictionary及其常见操作实现">
 <meta property="og:type" content="article">
@@ -34,8 +34,8 @@
 <meta property="article:published_time" content="2024-10-20T09:36:24.000Z">
 <meta property="article:modified_time" content="2026-11-15T09:02:45.568Z">
 <meta property="article:author" content="Edward Chen 陈柏铭">
-<meta property="article:tag" content="C#">
 <meta property="article:tag" content=".NET">
+<meta property="article:tag" content="C#">
 <meta property="article:tag" content="源码阅读">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://www.threegates.net/p/b1b59cb05264/diff-mono2-with-dotnet48.png">
@@ -58,13 +58,12 @@
 
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-core.min.js" integrity="sha256-bKrTFt2ZHyT4AE4LnBnAVctYKf9l6XP77kBvltgbjn4=" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/autoloader/prism-autoloader.min.js" integrity="sha256-AjM0J5XIbiB590BrznLEgZGLnOQWrt62s3BEq65Q/I0=" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha256-9cmf7tcLdXpKsPi/2AWE93PbZpTp4M4tqzFk+lWomjU=" crossorigin="anonymous" defer></script>
 <script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
 <script src="/js/third-party/search/local-search.js" defer></script>
 
 
@@ -81,7 +80,7 @@
 
   
 
-  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","display_overflow":"scroll","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-mml-chtml.js","integrity":"sha256-ihPtDDm7pTmSF9ViEsItlvsrBTsNkz0MOXMchzOwCQw="}}</script>
 <script src="/js/third-party/math/mathjax.js" defer></script>
 
 
@@ -99,12 +98,8 @@
   <main class="main">
     <div class="column">
       <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
+  <div class="site-nav-search popup-trigger" aria-label="搜索" role="button">
+      <i class="fa fa-search fa-fw fa-lg"></i>
   </div>
 
   <div class="site-meta">
@@ -117,10 +112,8 @@
       <p class="site-subtitle" itemprop="description">edwardchen's gamedev blog</p>
   </div>
 
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="搜索" role="button">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
+  <div class="site-nav-toggle" aria-label="切换导航栏" role="button">
+      <i class="fa fa-ellipsis fa-fw fa-lg"></i>
   </div>
 </div>
 
@@ -137,7 +130,8 @@
 
 
 
-  <div class="search-pop-overlay">
+  
+  <template id="search-popup-template"><div class="search-pop-overlay">
     <div class="popup search-popup">
       <div class="search-header">
         <span class="search-icon">
@@ -158,7 +152,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div></template>
 
 </header>
         
@@ -319,7 +313,7 @@ Allocation</span></a></li></ol></li></ol></div>
     <span class="post-meta-break"></span>
     <span class="post-meta-item" title="本文字数">
       <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
+        <i class="far fa-file-lines"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
       <span>4.2k</span>
@@ -365,7 +359,7 @@ target="_blank" rel="noopener" href="https://dotnetos.org/blog/2022-03-28-dictio
 pics）</li>
 </ul>
 <h2 id="摘要">摘要</h2>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class Dictionary&lt;TKey,TValue&gt;: IDictionary&lt;TKey,TValue&gt;, IDictionary, IReadOnlyDictionary&lt;TKey, TValue&gt;, ISerializable, IDeserializationCallback  &#123;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">public class Dictionary&lt;TKey,TValue&gt;: IDictionary&lt;TKey,TValue&gt;, IDictionary, IReadOnlyDictionary&lt;TKey, TValue&gt;, ISerializable, IDeserializationCallback  &#123;
 
     private struct Entry &#123;
         public int hashCode;    &#x2F;&#x2F; Lower 31 bits of hash code, -1 if unused
@@ -420,7 +414,7 @@ separate chaining）</p>
 开辟空间，同时会使用 <code>EqualityComparer&lt;TKey&gt;.Default</code>
 作为默认比较器，用于获取HashCode，以及判断Key之间是否相等。</p>
 <p><strong>IEqualityComparer<TKey></strong> 只需要实现两个方法：</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; The generic IEqualityComparer interface implements methods to if check two objects are equal
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">&#x2F;&#x2F; The generic IEqualityComparer interface implements methods to if check two objects are equal
 &#x2F;&#x2F; and generate Hashcode for an object.
 &#x2F;&#x2F; It is use in Dictionary class.  
 public interface IEqualityComparer&lt;in T&gt;
@@ -429,7 +423,7 @@ public interface IEqualityComparer&lt;in T&gt;
     int GetHashCode(T obj);                
 &#125;</code></pre>
 <h3 id="initializeint-capacity">Initialize(int capacity)</h3>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void Initialize(int capacity) &#123;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">private void Initialize(int capacity) &#123;
     int size &#x3D; HashHelpers.GetPrime(capacity);
     buckets &#x3D; new int[size];
     for (int i &#x3D; 0; i &lt; buckets.Length; i++) buckets[i] &#x3D; -1;
@@ -441,7 +435,7 @@ public interface IEqualityComparer&lt;in T&gt;
 <p>类型 <strong>HashHelpers</strong> 中存在静态整型数组
 <strong>primes，</strong>这是一个特别挑出的质数组成的质数表（为什么选了这些质数？值得研究下），以<strong>3</strong>开始，以<strong>7199369</strong>结束。若提供的min数字小于
 primes 数组中最大值，那么简单地查表就能得到大于它的目标质数。</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; system\Collections\hashtable.cs:1711
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">&#x2F;&#x2F; system\Collections\hashtable.cs:1711
         public static readonly int[] primes &#x3D; &#123;
             3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 293, 353, 431, 521, 631, 761, 919,
             1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 5839, 7013, 8419, 10103, 12143, 14591,
@@ -477,7 +471,7 @@ primes 数组中最大值，那么简单地查表就能得到大于它的目标�
 <code>Int32.MaxValue</code>，进行步长为2的遍历，判断每个数字是否是质数
 <code>HashHelpers.IsPrime(int candidate)</code>。注意，这个判断方法涉及平方根操作，与一个时间复杂度为<span
 class="math inline">\(\bf{O}(\sqrt{\bf{n}})\)</span>的循环。</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; System.Collections.HashHelpers.IsPrime
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">&#x2F;&#x2F; System.Collections.HashHelpers.IsPrime
 &#x2F;&#x2F; system\Collections\hashtable.cs:1738
         public static bool IsPrime(int candidate) 
         &#123;
@@ -495,7 +489,7 @@ class="math inline">\(\bf{O}(\sqrt{\bf{n}})\)</span>的循环。</p>
         &#125;</code></pre>
 <h3 id="插入元素-addtkey-key-tvalue-value-索引器">插入元素 Add(TKey key,
 TValue value) / 索引器</h3>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public TValue this[TKey key] &#123;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">public TValue this[TKey key] &#123;
     get &#123;
         int i &#x3D; FindEntry(key);
         if (i &gt;&#x3D; 0) return entries[i].value;
@@ -522,7 +516,7 @@ Insert(TKey key, TValue value, bool add)</h3>
 <p><strong>获取buckets中下标</strong></p>
 <p>插入的元素通过<strong>comparer</strong>以及自己的key得到hashcode后，通过对<code>buckets.Length</code>取余得到目标bucket在数组中的下标<strong>targetBucket</strong>。</p>
 <p><strong>查找entries中下标</strong></p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">for (int i &#x3D; buckets[targetBucket]; i &gt;&#x3D; 0; i &#x3D; entries[i].next) &#123;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">for (int i &#x3D; buckets[targetBucket]; i &gt;&#x3D; 0; i &#x3D; entries[i].next) &#123;
     if (entries[i].hashCode &#x3D;&#x3D; hashCode &amp;&amp; comparer.Equals(entries[i].key, key)) &#123;
         if (add) &#123; 
             ThrowHelper.ThrowArgumentException(ExceptionResource.Argument_AddingDuplicate);
@@ -544,7 +538,7 @@ Insert(TKey key, TValue value, bool add)</h3>
 <li>注意，当<strong>entries</strong>已满时（<code>count == entries.Length</code>），发生扩容<code>Resize()</code>以及targetBucket的重新计算，毕竟现在的<code>buckets.Length</code>已经不同了</li>
 </ul></li>
 </ul>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">entries[index].hashCode &#x3D; hashCode;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">entries[index].hashCode &#x3D; hashCode;
 entries[index].next &#x3D; buckets[targetBucket];
 entries[index].key &#x3D; key;
 entries[index].value &#x3D; value;
@@ -574,7 +568,7 @@ value信息，将此entries[index]设置为targetBucket的队首（buckets[targe
 <code>Resize(int newSize, bool forceNewHashCodes)</code>。</p>
 <h3 id="扩容-resizeint-newsize-bool-forcenewhashcodes">扩容 Resize(int
 newSize, bool forceNewHashCodes)</h3>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void Resize(int newSize, bool forceNewHashCodes) &#123;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">private void Resize(int newSize, bool forceNewHashCodes) &#123;
     Contract.Assert(newSize &gt;&#x3D; entries.Length);
     int[] newBuckets &#x3D; new int[newSize];
     for (int i &#x3D; 0; i &lt; newBuckets.Length; i++) newBuckets[i] &#x3D; -1;
@@ -610,7 +604,7 @@ entry，随后bucket同样会指向这个entry。</li>
 </ul>
 <p>这样一来，新的entry总是被插入到bucket指向的队首。</p>
 <h3 id="移除元素-removetkey-key">移除元素 Remove(TKey key)</h3>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public bool Remove(TKey key) &#123;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">public bool Remove(TKey key) &#123;
     if(key &#x3D;&#x3D; null) &#123;
         ThrowHelper.ThrowArgumentNullException(ExceptionArgument.key);
     &#125;
@@ -664,7 +658,7 @@ ContainsKey(TKey key) / ContainsValue(TValue value)</h3>
 <p>对字典的直接索引方法 dict[key] 也是基于方法
 <code>FindEntry(TKey key)</code>
 的，这里就不赘述了，唯一需要注意的是索引方法在找不到对应key时会直接<strong>抛出异常</strong>，想要安全的获取值，推荐的是下述<code>TryGetValue</code>方法。</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public TValue this[TKey key] &#123;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">public TValue this[TKey key] &#123;
     get &#123;
         int i &#x3D; FindEntry(key);
         if (i &gt;&#x3D; 0) return entries[i].value;
@@ -704,7 +698,7 @@ version，遍历下标 index，以及当前KeyValuePair&lt;TKey, TValue&gt;
 <h3 id="keycollection-valuecollection">KeyCollection /
 ValueCollection</h3>
 <p>两者返回的Enumerator，及其遍历过程均与字典自身返回KeyValuePair的Enumerator无太大差异，下面直接贴上代码进行比较。</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; Dictionary&lt;TKey,TValue&gt;.Enumerator.MoveNext
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">&#x2F;&#x2F; Dictionary&lt;TKey,TValue&gt;.Enumerator.MoveNext
 public bool MoveNext() &#123;
     &#x2F;&#x2F; ...
 
@@ -773,7 +767,7 @@ public bool MoveNext() &#123;
 <h2 id="mono-2.0-dictionary-allocation">mono 2.0 Dictionary
 Allocation</h2>
 <p>在这里额外记录一个个人觉得在比较过时的.NET环境开发中需要注意的点，就是字典在初始化以及扩容时带来的较大内存开销，从初始化的两个重要方法中我们可以看到：</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">const int INITIAL_SIZE &#x3D; 10;
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">const int INITIAL_SIZE &#x3D; 10;
 const float DEFAULT_LOAD_FACTOR &#x3D; (90f &#x2F; 100);
 
 private void Init (int capacity, IEqualityComparer&lt;TKey&gt; hcp)
@@ -814,7 +808,7 @@ private void InitArrays (int size) &#123;
 </ol>
 <p>因此如果有把握此字典被插入的元素并不多（甚至仅有一个元素），或许可以考虑一开始就传入初始容量1，这样至少分配的数组的大小是最小的。</p>
 <p>测试代码示例：</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class DictionaryAllocationTest : MonoBehaviour
+<pre class="line-numbers language-csharp" data-language="csharp" data-start="1"><code class="language-csharp">public class DictionaryAllocationTest : MonoBehaviour
 &#123;
     private Dictionary&lt;uint, GameObject&gt; m_Objects;
     &#x2F;&#x2F; Start is called before the first frame update
@@ -943,7 +937,6 @@ private void InitArrays (int size) &#123;
     <span class="toggle-line"></span>
     <span class="toggle-line"></span>
   </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
